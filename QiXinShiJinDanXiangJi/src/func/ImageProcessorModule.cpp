@@ -473,20 +473,20 @@ ImageProcessingModuleDuckTongue::~ImageProcessingModuleDuckTongue()
 	}
 }
 
-void ImageProcessingModuleDuckTongue::onFrameCaptured(cv::Mat frame, size_t index)
+void ImageProcessingModuleDuckTongue::onFrameCaptured(rw::rqw::MatInfo matInfo, size_t index)
 {
 	// 手动读取本地图片
 	//std::string imagePath = "C:\\Users\\zzw\\Desktop\\saveimage\\123.jpg"; // 替换为你的图片路径
 	//cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
 	//frame = frame1.clone();
-	if (frame.channels() == 4) {
-		cv::cvtColor(frame, frame, cv::COLOR_BGRA2BGR);
+	if (matInfo.mat.channels() == 4) {
+		cv::cvtColor(matInfo.mat, matInfo.mat, cv::COLOR_BGRA2BGR);
 	}
-	if (frame.type() != CV_8UC3) {
-		frame.convertTo(frame, CV_8UC3);
+	if (matInfo.mat.type() != CV_8UC3) {
+		matInfo.mat.convertTo(matInfo.mat, CV_8UC3);
 	}
 
-	if (frame.empty()) {
+	if (matInfo.mat.empty()) {
 		return; // 跳过空帧
 	}
 
@@ -494,7 +494,7 @@ void ImageProcessingModuleDuckTongue::onFrameCaptured(cv::Mat frame, size_t inde
 
 	QMutexLocker locker(&_mutex);
 	MatInfo mat;
-	mat.image = frame;
+	mat.image = matInfo.mat;
 	mat.index = index;
 	if (index==1)
 	{

@@ -249,19 +249,6 @@ QPushButton:pressed {
                </item>
                <item>
                 <layout class="QGridLayout" name="gLayout_cameraStates">
-                 <item row="0" column="1">
-                  <widget class="QLabel" name="label_camera2State">
-                   <property name="styleSheet">
-                    <string notr="true">QLabel {
-       font-size: 18px;        
-       font-weight: bold;        
-    }</string>
-                   </property>
-                   <property name="text">
-                    <string>TextLabel</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_camera1State">
                    <property name="styleSheet">

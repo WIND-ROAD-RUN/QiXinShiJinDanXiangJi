@@ -11,6 +11,8 @@
 #include <QThread>
 #include <QPixmap>
 #include <imgPro_ImageProcess.hpp>
+
+#include "rqw_CameraObjectCore.hpp"
 #include "rqw_ImageSaveEngine.h"
 
 
@@ -114,7 +116,7 @@ public:
 
 public slots:
 	// 相机回调函数
-	void onFrameCaptured(cv::Mat frame, size_t index);
+	void onFrameCaptured(rw::rqw::MatInfo matInfo, size_t index);
 
 signals:
 	void imageReady(QPixmap image);

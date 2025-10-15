@@ -465,16 +465,6 @@ void QiXinShiJinDanXiangJi::updateCameraLabelState(int cameraIndex, bool state)
 			ui->label_camera1State->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);} "));
 		}
 		break;
-	case 2:
-		if (state) {
-			ui->label_camera2State->setText("连接成功");
-			ui->label_camera2State->setStyleSheet(QString("QLabel{color:rgb(0, 230, 0);} "));
-		}
-		else {
-			ui->label_camera2State->setText("连接失败");
-			ui->label_camera2State->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);} "));
-		}
-		break;
 	default:
 		break;
 	}
