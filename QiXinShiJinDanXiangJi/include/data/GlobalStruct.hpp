@@ -91,7 +91,7 @@ private:
 public:
 	std::unique_ptr<rw::oso::StorageContext> storeContext{ nullptr };
 	void buildConfigManager(rw::oso::StorageType type);
-	void saveDuckTongueConfig();
+	void saveQiXinShiJinDanXiangJiConfig();
 	void saveScoreConfig();
 	void saveSetConfig();
 };
@@ -120,7 +120,8 @@ public:
 	{
 		std::atomic_uint64_t produceCount{ 0 };
 		std::atomic_uint64_t wasteCount{ 0 };
-		std::atomic_uint64_t produceCount1{ 0 };
+		std::atomic_uint64_t bagLength{ 0 };
+		std::atomic_uint64_t bagWidth{ 0 };
 	} statisticalInfo;
 
 public:

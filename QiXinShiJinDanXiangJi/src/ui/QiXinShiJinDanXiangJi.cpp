@@ -26,7 +26,7 @@ QiXinShiJinDanXiangJi::~QiXinShiJinDanXiangJi()
 
 void QiXinShiJinDanXiangJi::build_ui()
 {
-	build_DuckTongueData();
+	build_QiXinShiJinDanXiangJiData();
 	build_DlgProductScore();
 	build_DlgProductSet();
 	build_DlgCloseForm();
@@ -48,12 +48,16 @@ void QiXinShiJinDanXiangJi::build_connect()
 		this, &QiXinShiJinDanXiangJi::ckb_shibiekuang_checked);
 	QObject::connect(ui->ckb_wenzi, &QCheckBox::clicked,
 		this, &QiXinShiJinDanXiangJi::ckb_wenzi_checked);
+	QObject::connect(ui->pbtn_bagLength, &QPushButton::clicked,
+		this, &QiXinShiJinDanXiangJi::pbtn_bagLength_clicked);
+	QObject::connect(ui->pbtn_bagWidth, &QPushButton::clicked,
+		this, &QiXinShiJinDanXiangJi::pbtn_bagWidth_clicked);
 	// 连接显示标题
 	QObject::connect(clickableTitle, &rw::rqw::ClickableLabel::clicked,
 		this, &QiXinShiJinDanXiangJi::lb_title_clicked);
 }
 
-void QiXinShiJinDanXiangJi::build_DuckTongueData()
+void QiXinShiJinDanXiangJi::build_QiXinShiJinDanXiangJiData()
 {
 	auto& globalStruct = GlobalData::getInstance();
 	auto& paperCupsConfig = globalStruct.duckTongueConfig;
@@ -64,6 +68,8 @@ void QiXinShiJinDanXiangJi::build_DuckTongueData()
 
 	ui->label_produceTotalValue->setText(QString::number(paperCupsConfig.totalProductionVolume));
 	ui->label_wasteProductsValue->setText(QString::number(paperCupsConfig.totalDefectiveVolume));
+	ui->pbtn_bagLength->setText(QString::number(paperCupsConfig.setBagLength));
+	ui->pbtn_bagWidth->setText(QString::number(paperCupsConfig.setBagWidth));
 	ui->rbtn_removeFunc->setChecked(paperCupsConfig.isDefect);
 	rbtn_removeFunc_checked(paperCupsConfig.isDefect);
 	ui->ckb_shibiekuang->setChecked(paperCupsConfig.isshibiekuang);
@@ -89,7 +95,7 @@ void QiXinShiJinDanXiangJi::ini_clickableTitle()
 	auto layoutTitle = ui->groupBox_head->layout();
 	layoutTitle->replaceWidget(ui->label_title, clickableTitle);
 	delete ui->label_title;
-	clickableTitle->setText("鸭舌检测");
+	clickableTitle->setText("湿巾检测");
 	clickableTitle->setStyleSheet("QLabel {font-size: 30px;font-weight: bold;color: rgb(255, 255, 255);padding: 5px 5px;border-bottom: 2px solid #cccccc;}");
 }
 
@@ -103,21 +109,21 @@ void QiXinShiJinDanXiangJi::read_config()
 	auto& globalFuncObject = GlobalFuncObject::getInstance();
 	globalFuncObject.buildConfigManager(rw::oso::StorageType::Xml);
 
-	read_config_DuckTongueConfig();
+	read_config_QiXinShiJinDanXiangJiConfig();
 	read_config_DlgProductScoreConfig();
 	read_config_DlgProductSetConfig();
 }
 
-void QiXinShiJinDanXiangJi::read_config_DuckTongueConfig()
+void QiXinShiJinDanXiangJi::read_config_QiXinShiJinDanXiangJiConfig()
 {
 	auto& globalFunc = GlobalFuncObject::getInstance();
 	auto& globalData = GlobalData::getInstance();
 
-	globalFunc.storeContext->ensureFileExistsSafe(globalPath.duckTongueConfigPath.toStdString(), cdm::DuckTongueConfig());
-	auto loadResult = globalFunc.storeContext->loadSafe(globalPath.duckTongueConfigPath.toStdString());
+	globalFunc.storeContext->ensureFileExistsSafe(globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString(), cdm::DuckTongueConfig());
+	auto loadResult = globalFunc.storeContext->loadSafe(globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString());
 	if (!loadResult)
 	{
-		globalFunc.storeContext->saveSafe(cdm::DuckTongueConfig(), globalPath.duckTongueConfigPath.toStdString());
+		globalFunc.storeContext->saveSafe(cdm::DuckTongueConfig(), globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString());
 		return;
 	}
 	globalData.duckTongueConfig = *loadResult;
@@ -157,7 +163,7 @@ void QiXinShiJinDanXiangJi::save_config()
 {
 	auto& globalFuncObject = GlobalFuncObject::getInstance();
 
-	globalFuncObject.saveDuckTongueConfig();
+	globalFuncObject.saveQiXinShiJinDanXiangJiConfig();
 	globalFuncObject.saveScoreConfig();
 	globalFuncObject.saveSetConfig();
 }
@@ -332,26 +338,35 @@ void QiXinShiJinDanXiangJi::updateCameraLabelState(int cameraIndex, bool state)
 	case 0:
 		if (state) {
 			ui->label_cardState->setText("连接成功");
-			ui->label_cardState->setStyleSheet(QString("QLabel{color:rgb(0, 230, 0);} "));
+			ui->label_cardState->setStyleSheet(QString("QLabel{color:rgb(0, 230, 0);font-size: 18px;font - weight: bold;padding: 5px 5px;} "));
 		}
 		else {
 			ui->label_cardState->setText("连接失败");
-			ui->label_cardState->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);} "));
+			ui->label_cardState->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);font-size: 18px;font - weight: bold;padding: 5px 5px;} "));
 		}
 		break;
 	case 1:
 		if (state) {
 			ui->label_camera1State->setText("连接成功");
-			ui->label_camera1State->setStyleSheet(QString("QLabel{color:rgb(0, 230, 0);} "));
+			ui->label_camera1State->setStyleSheet(QString("QLabel{color:rgb(0, 230, 0);font-size: 18px;font - weight: bold;padding: 5px 5px;} "));
 		}
 		else {
 			ui->label_camera1State->setText("连接失败");
-			ui->label_camera1State->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);} "));
+			ui->label_camera1State->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);font-size: 18px;font - weight: bold;padding: 5px 5px;} "));
 		}
 		break;
 	default:
 		break;
 	}
+}
+
+void QiXinShiJinDanXiangJi::onUpdateStatisticalInfoUI()
+{
+	auto& statisticalInfo = GlobalData::getInstance().statisticalInfo;
+	ui->label_produceTotalValue->setText(QString::number(statisticalInfo.produceCount.load()));
+	ui->label_wasteProductsValue->setText(QString::number(statisticalInfo.wasteCount.load()));
+	ui->label_bagLength->setText(QString::number(statisticalInfo.bagLength.load()));
+	ui->label_bagWidth->setText(QString::number(statisticalInfo.bagWidth.load()));
 }
 
 void QiXinShiJinDanXiangJi::onCamera1Display(QPixmap image)
@@ -361,14 +376,7 @@ void QiXinShiJinDanXiangJi::onCamera1Display(QPixmap image)
 
 void QiXinShiJinDanXiangJi::onCameraNGDisplay(QPixmap image, size_t index, bool isbad)
 {
-	if (index == 1)
-	{
-		ui->label_imgDisplay_1->setPixmap(image.scaled(ui->label_imgDisplay_1->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-		if (isbad)
-		{
-			ui->label_imgNgDisplay->setPixmap(image.scaled(ui->label_imgNgDisplay->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-		}
-	}
+	ui->label_imgDisplay_1->setPixmap(image.scaled(ui->label_imgDisplay_1->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void QiXinShiJinDanXiangJi::lb_title_clicked()
@@ -490,4 +498,42 @@ void QiXinShiJinDanXiangJi::ckb_wenzi_checked(bool checked)
 	globalData.duckTongueConfig.iswenzi = ui->ckb_wenzi->isChecked();
 
 	emit wenziChanged();
+}
+
+void QiXinShiJinDanXiangJi::pbtn_bagLength_clicked()
+{
+	NumberKeyboard numKeyBord;
+	numKeyBord.setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+	auto isAccept = numKeyBord.exec();
+	if (isAccept == QDialog::Accepted)
+	{
+		auto value = numKeyBord.getValue();
+		if (value.toDouble() < 0)
+		{
+			QMessageBox::warning(this, "提示", "请输入大于0的数值");
+			return;
+		}
+		auto& duckTongueConfig = GlobalData::getInstance().duckTongueConfig;
+		ui->pbtn_bagLength->setText(value);
+		duckTongueConfig.setBagLength = value.toDouble();
+	}
+}
+
+void QiXinShiJinDanXiangJi::pbtn_bagWidth_clicked()
+{
+	NumberKeyboard numKeyBord;
+	numKeyBord.setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+	auto isAccept = numKeyBord.exec();
+	if (isAccept == QDialog::Accepted)
+	{
+		auto value = numKeyBord.getValue();
+		if (value.toDouble() < 0)
+		{
+			QMessageBox::warning(this, "提示", "请输入大于0的数值");
+			return;
+		}
+		auto& duckTongueConfig = GlobalData::getInstance().duckTongueConfig;
+		ui->pbtn_bagWidth->setText(value);
+		duckTongueConfig.setBagWidth = value.toDouble();
+	}
 }

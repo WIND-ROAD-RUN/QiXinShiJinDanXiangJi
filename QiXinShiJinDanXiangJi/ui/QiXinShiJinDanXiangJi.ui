@@ -23,32 +23,6 @@
          <string/>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="1" column="0">
-          <widget class="Line" name="line_leftDisplay">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_imgNgDisplay">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>999</width>
-             <height>476</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="1">
           <widget class="Line" name="line_rightDisplay">
            <property name="orientation">
@@ -67,7 +41,7 @@
            <property name="maximumSize">
             <size>
              <width>999</width>
-             <height>476</height>
+             <height>999</height>
             </size>
            </property>
            <property name="text">
@@ -123,7 +97,7 @@ QGroupBox::title {
     }</string>
                </property>
                <property name="text">
-                <string>鸭舌检测</string>
+                <string>湿巾检测</string>
                </property>
               </widget>
              </item>
@@ -203,6 +177,7 @@ QPushButton:pressed {
                     <string notr="true">QLabel {
        font-size: 18px;        
        font-weight: bold;        
+		padding: 5px 5px;  
     }</string>
                    </property>
                    <property name="text">
@@ -238,6 +213,7 @@ QPushButton:pressed {
                   <string notr="true">QLabel {
        font-size: 18px;        
        font-weight: bold;        
+padding: 5px 5px;  
     }</string>
                  </property>
                  <property name="text">
@@ -416,7 +392,7 @@ QPushButton:pressed {
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="hLayout_wasteProducts_3" stretch="1,0,2">
+            <layout class="QHBoxLayout" name="hLayout_wasteProducts_3" stretch="1,1,1">
              <item>
               <widget class="QLabel" name="label_wasteProducts_3">
                <property name="styleSheet">
@@ -488,7 +464,7 @@ QPushButton:pressed {
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="hLayout_wasteProducts_4" stretch="1,0,2">
+            <layout class="QHBoxLayout" name="hLayout_wasteProducts_4" stretch="1,1,1">
              <item>
               <widget class="QLabel" name="label_wasteProducts_4">
                <property name="styleSheet">
@@ -931,7 +907,7 @@ QPushButton:pressed {
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="gBox_warningInfo">
+         <widget class="QGroupBox" name="gBox_companyInfo">
           <property name="styleSheet">
            <string notr="true">QGroupBox {
     font-size: 20px;
@@ -954,7 +930,7 @@ QGroupBox::title {
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QLabel" name="label_warningInfo">
+            <widget class="QLabel" name="label_companyInfo">
              <property name="styleSheet">
               <string notr="true">QLabel {
        font-size: 18px;        

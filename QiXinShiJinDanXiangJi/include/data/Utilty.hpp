@@ -4,17 +4,14 @@
 inline struct GlobalPath
 {
 public:
-	QString projectHome = R"(D:\zfkjData\DuckTongue\)";
+	QString projectHome = R"(D:\zfkjData\QiXinShiJinDanXiangJi\)";
 public:
 	QString configRootPath = projectHome + R"(config\)";
 	QString modelRootPath = projectHome + R"(model\)";
-	QString duckTongueConfigPath = configRootPath + R"(DuckTongueConfig.xml)";
+	QString qiXinShiJinDanXiangJiConfigPath = configRootPath + R"(QiXinShiJinDanXiangJiConfig.xml)";
 	QString scoreConfigPath = configRootPath + R"(ScoreConfig.xml)";
 	QString setConfigPath = configRootPath + R"(SetConfig.xml)";
 	QString modelPath = modelRootPath + R"(DuckTongue.engine)";
-public:
-	QString imageSaveRootPath = projectHome + R"(SavedImages\)";
-
 }globalPath;
 
 

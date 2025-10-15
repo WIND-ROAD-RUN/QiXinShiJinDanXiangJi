@@ -21,10 +21,12 @@ namespace cdm {
     public:
         int totalProductionVolume{ 0 };
         int totalDefectiveVolume{ 0 };
-        double productionYield{ 0.0 };
+        double showBagLength{ 0.0 };
+        double showBagWidth{ 0.0 };
+        double setBagLength{ 0.0 };
+        double setBagWidth{ 0.0 };
         bool isDebug{ false };
         bool isDefect{ false };
-        bool isSaveImg{ false };
         bool isshibiekuang{ true };
         bool iswenzi{ true };
     };
@@ -46,11 +48,26 @@ namespace cdm {
             throw std::runtime_error("$variable$totalDefectiveVolume is not found");
         }
         totalDefectiveVolume = totalDefectiveVolumeItem->getValueAsInt();
-        auto productionYieldItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$productionYield$"));
-        if (!productionYieldItem) {
-            throw std::runtime_error("$variable$productionYield is not found");
+        auto showBagLengthItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$showBagLength$"));
+        if (!showBagLengthItem) {
+            throw std::runtime_error("$variable$showBagLength is not found");
         }
-        productionYield = productionYieldItem->getValueAsDouble();
+        showBagLength = showBagLengthItem->getValueAsDouble();
+        auto showBagWidthItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$showBagWidth$"));
+        if (!showBagWidthItem) {
+            throw std::runtime_error("$variable$showBagWidth is not found");
+        }
+        showBagWidth = showBagWidthItem->getValueAsDouble();
+        auto setBagLengthItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$setBagLength$"));
+        if (!setBagLengthItem) {
+            throw std::runtime_error("$variable$setBagLength is not found");
+        }
+        setBagLength = setBagLengthItem->getValueAsDouble();
+        auto setBagWidthItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$setBagWidth$"));
+        if (!setBagWidthItem) {
+            throw std::runtime_error("$variable$setBagWidth is not found");
+        }
+        setBagWidth = setBagWidthItem->getValueAsDouble();
         auto isDebugItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$isDebug$"));
         if (!isDebugItem) {
             throw std::runtime_error("$variable$isDebug is not found");
@@ -61,11 +78,6 @@ namespace cdm {
             throw std::runtime_error("$variable$isDefect is not found");
         }
         isDefect = isDefectItem->getValueAsBool();
-        auto isSaveImgItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$isSaveImg$"));
-        if (!isSaveImgItem) {
-            throw std::runtime_error("$variable$isSaveImg is not found");
-        }
-        isSaveImg = isSaveImgItem->getValueAsBool();
         auto isshibiekuangItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$isshibiekuang$"));
         if (!isshibiekuangItem) {
             throw std::runtime_error("$variable$isshibiekuang is not found");
@@ -82,10 +94,12 @@ namespace cdm {
     {
         totalProductionVolume = obj.totalProductionVolume;
         totalDefectiveVolume = obj.totalDefectiveVolume;
-        productionYield = obj.productionYield;
+        showBagLength = obj.showBagLength;
+        showBagWidth = obj.showBagWidth;
+        setBagLength = obj.setBagLength;
+        setBagWidth = obj.setBagWidth;
         isDebug = obj.isDebug;
         isDefect = obj.isDefect;
-        isSaveImg = obj.isSaveImg;
         isshibiekuang = obj.isshibiekuang;
         iswenzi = obj.iswenzi;
     }
@@ -95,10 +109,12 @@ namespace cdm {
         if (this != &obj) {
             totalProductionVolume = obj.totalProductionVolume;
             totalDefectiveVolume = obj.totalDefectiveVolume;
-            productionYield = obj.productionYield;
+            showBagLength = obj.showBagLength;
+            showBagWidth = obj.showBagWidth;
+            setBagLength = obj.setBagLength;
+            setBagWidth = obj.setBagWidth;
             isDebug = obj.isDebug;
             isDefect = obj.isDefect;
-            isSaveImg = obj.isSaveImg;
             isshibiekuang = obj.isshibiekuang;
             iswenzi = obj.iswenzi;
         }
@@ -117,10 +133,22 @@ namespace cdm {
         totalDefectiveVolumeItem->setName("$variable$totalDefectiveVolume$");
         totalDefectiveVolumeItem->setValueFromInt(totalDefectiveVolume);
         assembly.addItem(totalDefectiveVolumeItem);
-        auto productionYieldItem = std::make_shared<rw::oso::ObjectStoreItem>();
-        productionYieldItem->setName("$variable$productionYield$");
-        productionYieldItem->setValueFromDouble(productionYield);
-        assembly.addItem(productionYieldItem);
+        auto showBagLengthItem = std::make_shared<rw::oso::ObjectStoreItem>();
+        showBagLengthItem->setName("$variable$showBagLength$");
+        showBagLengthItem->setValueFromDouble(showBagLength);
+        assembly.addItem(showBagLengthItem);
+        auto showBagWidthItem = std::make_shared<rw::oso::ObjectStoreItem>();
+        showBagWidthItem->setName("$variable$showBagWidth$");
+        showBagWidthItem->setValueFromDouble(showBagWidth);
+        assembly.addItem(showBagWidthItem);
+        auto setBagLengthItem = std::make_shared<rw::oso::ObjectStoreItem>();
+        setBagLengthItem->setName("$variable$setBagLength$");
+        setBagLengthItem->setValueFromDouble(setBagLength);
+        assembly.addItem(setBagLengthItem);
+        auto setBagWidthItem = std::make_shared<rw::oso::ObjectStoreItem>();
+        setBagWidthItem->setName("$variable$setBagWidth$");
+        setBagWidthItem->setValueFromDouble(setBagWidth);
+        assembly.addItem(setBagWidthItem);
         auto isDebugItem = std::make_shared<rw::oso::ObjectStoreItem>();
         isDebugItem->setName("$variable$isDebug$");
         isDebugItem->setValueFromBool(isDebug);
@@ -129,10 +157,6 @@ namespace cdm {
         isDefectItem->setName("$variable$isDefect$");
         isDefectItem->setValueFromBool(isDefect);
         assembly.addItem(isDefectItem);
-        auto isSaveImgItem = std::make_shared<rw::oso::ObjectStoreItem>();
-        isSaveImgItem->setName("$variable$isSaveImg$");
-        isSaveImgItem->setValueFromBool(isSaveImg);
-        assembly.addItem(isSaveImgItem);
         auto isshibiekuangItem = std::make_shared<rw::oso::ObjectStoreItem>();
         isshibiekuangItem->setName("$variable$isshibiekuang$");
         isshibiekuangItem->setValueFromBool(isshibiekuang);
@@ -146,7 +170,7 @@ namespace cdm {
 
     inline bool DuckTongueConfig::operator==(const DuckTongueConfig& obj) const
     {
-        return totalProductionVolume == obj.totalProductionVolume && totalDefectiveVolume == obj.totalDefectiveVolume && productionYield == obj.productionYield && isDebug == obj.isDebug && isDefect == obj.isDefect && isSaveImg == obj.isSaveImg && isshibiekuang == obj.isshibiekuang && iswenzi == obj.iswenzi;
+        return totalProductionVolume == obj.totalProductionVolume && totalDefectiveVolume == obj.totalDefectiveVolume && showBagLength == obj.showBagLength && showBagWidth == obj.showBagWidth && setBagLength == obj.setBagLength && setBagWidth == obj.setBagWidth && isDebug == obj.isDebug && isDefect == obj.isDefect && isshibiekuang == obj.isshibiekuang && iswenzi == obj.iswenzi;
     }
 
     inline bool DuckTongueConfig::operator!=(const DuckTongueConfig& obj) const

@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     QiXinShiJinDanXiangJi w;
 	// 运行前检查
 #pragma region running software check
-	if (!rw::rqw::RunEnvCheck::isSingleInstance("WetPapers.exe"))
+	if (!rw::rqw::RunEnvCheck::isSingleInstance("QiXinShiJinDanXiangJi.exe"))
 	{
 		QMessageBox::warning(nullptr, "提示", "请勿重复开启软件。");
 		return -1;
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	rw::oso::StorageContext storageContext(rw::oso::StorageType::Xml);
 
 	{
-		auto path = globalPath.duckTongueConfigPath;
+		auto path = globalPath.qiXinShiJinDanXiangJiConfigPath;
 		std::shared_ptr<rw::oso::ObjectStoreAssembly> loadData = nullptr;
 		try
 		{
@@ -62,10 +62,10 @@ int main(int argc, char* argv[])
 				rw::oso::ObjectStoreAssembly oldAssembly = *loadData;
 				rw::oso::ObjectStoreAssembly newAssembly = cdm::DuckTongueConfig();
 				rw::oso::AssemblyMergeTool::Merge(newAssembly, oldAssembly);
-				auto isSuccess = storageContext.saveSafe(newAssembly, globalPath.duckTongueConfigPath.toStdString());
+				auto isSuccess = storageContext.saveSafe(newAssembly, globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString());
 				if (isSuccess)
 				{
-					qDebug() << "配置文件duckTongueConfig.xml更新成功";
+					qDebug() << "配置文件qiXinShiJinDanXiangJiConfigPath.xml更新成功";
 				}
 			}
 		}

@@ -6,10 +6,12 @@ namespace cdm {
 	public:
 		totalProductionVolume : int :default = 0;
 		totalDefectiveVolume : int :default = 0;
-		productionYield : double :default = 0.0;
+		showBagLength : double :default = 0.0;
+		showBagWidth : double :default = 0.0;
+		setBagLength : double :default = 0.0;
+		setBagWidth : double :default = 0.0;
 		isDebug : bool :default = false;
 		isDefect : bool :default = false;
-		isSaveImg : bool :default = false;
 		isshibiekuang : bool :default = true;
 		iswenzi : bool :default = true;
 	};

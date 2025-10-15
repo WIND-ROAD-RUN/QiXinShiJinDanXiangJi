@@ -182,10 +182,10 @@ void GlobalFuncObject::buildConfigManager(rw::oso::StorageType type)
 	storeContext = std::make_unique<rw::oso::StorageContext>(type);
 }
 
-void GlobalFuncObject::saveDuckTongueConfig()
+void GlobalFuncObject::saveQiXinShiJinDanXiangJiConfig()
 {
 	auto& globalStruct = GlobalData::getInstance();
-	std::string generalConfigPath = globalPath.duckTongueConfigPath.toStdString();
+	std::string generalConfigPath = globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString();
 	storeContext->saveSafe(globalStruct.duckTongueConfig, generalConfigPath);
 }
 

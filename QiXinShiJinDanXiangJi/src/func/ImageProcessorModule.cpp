@@ -111,11 +111,6 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc_emitErrorInfo(bool isbad) cons
 		++globalStruct.statisticalInfo.produceCount;
 	}
 
-	if (imageProcessingModuleIndex == 1)
-	{
-		++globalStruct.statisticalInfo.produceCount1;
-	}
-
 	if (isbad)
 	{
 		//globalThread.priorityQueue->push(realLeftLocationDifference);

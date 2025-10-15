@@ -4,7 +4,6 @@
 
 #include "DlgProductScore.h"
 #include "DlgProductSet.h"
-#include "ImageEnlargedDisplay.h"
 #include "PictureViewerThumbnails.h"
 #include "rqw_LabelClickable.h"
 #include "DlgCloseForm.h"
@@ -23,14 +22,14 @@ public:
 public:
 	void build_ui();
 	void build_connect();
-	void build_DuckTongueData();
+	void build_QiXinShiJinDanXiangJiData();
 	void build_DlgProductScore();
 	void build_DlgProductSet();
 	void ini_clickableTitle();
 	void build_DlgCloseForm();
 public:
 	void read_config();
-	void read_config_DuckTongueConfig();
+	void read_config_QiXinShiJinDanXiangJiConfig();
 	void read_config_DlgProductScoreConfig();
 	void read_config_DlgProductSetConfig();
 public:
@@ -49,10 +48,8 @@ public:
 	void build_ImageProcessingModule();
 	void destroy_ImageProcessingModule();
 public:
-public:
 	void build_CameraAndBoardReconnectThread();
 	void destroy_CameraAndBoardReconnectThread();
-public:
 public:
 	void build_PriorityQueue();
 	void destroy_PriorityQueue();
@@ -61,6 +58,8 @@ public:
 	void destroy_DetachDefectThreadDuckTongue();
 private slots:
 	void updateCameraLabelState(int cameraIndex, bool state);
+
+	void onUpdateStatisticalInfoUI();
 
 	void onCamera1Display(QPixmap image);
 
@@ -75,6 +74,8 @@ private slots:
 	void rbtn_removeFunc_checked(bool checked);
 	void ckb_shibiekuang_checked(bool checked);
 	void ckb_wenzi_checked(bool checked);
+	void pbtn_bagLength_clicked();
+	void pbtn_bagWidth_clicked();
 
 signals:
 	void shibiekuangChanged();
