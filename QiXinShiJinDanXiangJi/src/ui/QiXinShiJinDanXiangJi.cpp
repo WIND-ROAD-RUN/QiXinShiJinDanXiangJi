@@ -9,7 +9,7 @@
 #include "NumberKeyboard.h"
 #include "Utilty.hpp"
 
-QiXinShiJinDanXiangJi::QiXinShiJinDanXiangJi(QWidget *parent)
+QiXinShiJinDanXiangJi::QiXinShiJinDanXiangJi(QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::QiXinShiJinDanXiangJiClass())
 {
@@ -38,8 +38,8 @@ void QiXinShiJinDanXiangJi::build_connect()
 		this, &QiXinShiJinDanXiangJi::pbtn_exit_clicked);
 	QObject::connect(ui->pbtn_set, &QPushButton::clicked,
 		this, &QiXinShiJinDanXiangJi::pbtn_set_clicked);
-	QObject::connect(ui->pbtn_score, &QPushButton::clicked,
-		this, &QiXinShiJinDanXiangJi::pbtn_score_clicked);
+	QObject::connect(ui->pbtn_start, &QPushButton::clicked,
+		this, &QiXinShiJinDanXiangJi::pbtn_start_clicked);
 	QObject::connect(ui->rbtn_debug, &QRadioButton::clicked,
 		this, &QiXinShiJinDanXiangJi::rbtn_debug_checked);
 	QObject::connect(ui->rbtn_removeFunc, &QRadioButton::clicked,
@@ -64,15 +64,10 @@ void QiXinShiJinDanXiangJi::build_DuckTongueData()
 
 	ui->label_produceTotalValue->setText(QString::number(paperCupsConfig.totalProductionVolume));
 	ui->label_wasteProductsValue->setText(QString::number(paperCupsConfig.totalDefectiveVolume));
-	ui->label_productionYieldValue->setText(QString::number(paperCupsConfig.productionYield));
-	ui->rbtn_takePicture->setChecked(paperCupsConfig.isSaveImg);
 	ui->rbtn_removeFunc->setChecked(paperCupsConfig.isDefect);
 	rbtn_removeFunc_checked(paperCupsConfig.isDefect);
 	ui->ckb_shibiekuang->setChecked(paperCupsConfig.isshibiekuang);
 	ui->ckb_wenzi->setChecked(paperCupsConfig.iswenzi);
-
-	// 初始化图像查看器
-	_picturesViewer = new PictureViewerThumbnails(this);
 
 	ini_clickableTitle();
 }
@@ -193,8 +188,6 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 
 	build_ui();
 
-	build_ImageEnlargedDisplay();
-
 	build_ImageProcessingModule();
 
 	build_camera();
@@ -230,8 +223,6 @@ void QiXinShiJinDanXiangJi::destroyComponents()
 	destroy_ImageProcessingModule();
 
 	destroy_camera();
-
-	destroy_ImageEnlargedDisplay();
 
 	save_config();
 }
@@ -310,65 +301,6 @@ void QiXinShiJinDanXiangJi::destroy_CameraAndBoardReconnectThread()
 	globalThread.destory_CameraAndCardStateThreadDuckTongue();
 }
 
-void QiXinShiJinDanXiangJi::build_ImageEnlargedDisplay()
-{
-	imgDis1 = new rw::rqw::ClickableLabel(this);
-	imgDis1->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
-
-	imgDis2 = new rw::rqw::ClickableLabel(this);
-	imgDis2->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
-
-	imgNgDis1 = new rw::rqw::ClickableLabel(this);
-	imgNgDis1->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
-
-	imgNgDis2 = new rw::rqw::ClickableLabel(this);
-	imgNgDis2->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
-
-	ui->gBoix_ImageDisplay->layout()->replaceWidget(ui->label_imgDisplay_1, imgDis1);
-	ui->gBoix_ImageDisplay->layout()->replaceWidget(ui->label_imgDisplay_3, imgDis2);
-	ui->gBoix_ImageDisplay->layout()->replaceWidget(ui->label_imgDisplay_2, imgNgDis1);
-	ui->gBoix_ImageDisplay->layout()->replaceWidget(ui->label_imgDisplay_4, imgNgDis2);
-
-	delete ui->label_imgDisplay_1;
-	delete ui->label_imgDisplay_3;
-	delete ui->label_imgDisplay_2;
-	delete ui->label_imgDisplay_4;
-
-	QObject::connect(imgDis1, &rw::rqw::ClickableLabel::clicked
-		, this, &QiXinShiJinDanXiangJi::imgDis1_clicked);
-	QObject::connect(imgDis2, &rw::rqw::ClickableLabel::clicked
-		, this, &QiXinShiJinDanXiangJi::imgDis2_clicked);
-	QObject::connect(imgNgDis1, &rw::rqw::ClickableLabel::clicked
-		, this, &QiXinShiJinDanXiangJi::imgNgDis1_clicked);
-	QObject::connect(imgNgDis2, &rw::rqw::ClickableLabel::clicked
-		, this, &QiXinShiJinDanXiangJi::imgNgDis2_clicked);
-
-	_workStationTitleMap = {
-		{0,"一号工位"},
-		{1,"二号工位"},
-		{2,"一号NG工位"},
-		{3,"二号NG工位"}
-	};
-
-	_imageEnlargedDisplay = new ImageEnlargedDisplay(this);
-	_imageEnlargedDisplay->setMonitorValue(&_isImageEnlargedDisplay);
-	_imageEnlargedDisplay->setMonitorDisImgIndex(&_currentImageEnlargedDisplayIndex);
-	_imageEnlargedDisplay->initWorkStationTitleMap(_workStationTitleMap);
-	_imageEnlargedDisplay->setNum(2);
-	_imageEnlargedDisplay->show();
-	_imageEnlargedDisplay->close();
-}
-
-void QiXinShiJinDanXiangJi::destroy_ImageEnlargedDisplay()
-{
-	if (_imageEnlargedDisplay)
-	{
-		_imageEnlargedDisplay->close();
-		delete _imageEnlargedDisplay;
-		_imageEnlargedDisplay = nullptr;
-	}
-}
-
 void QiXinShiJinDanXiangJi::build_PriorityQueue()
 {
 	auto& globalThread = GlobalThread::getInstance();
@@ -424,67 +356,17 @@ void QiXinShiJinDanXiangJi::updateCameraLabelState(int cameraIndex, bool state)
 
 void QiXinShiJinDanXiangJi::onCamera1Display(QPixmap image)
 {
-	if (!_isImageEnlargedDisplay)
-	{
-		imgDis1->setPixmap(image.scaled(imgDis1->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-	}
-	else
-	{
-		if (0 == _currentImageEnlargedDisplayIndex) {
-			_imageEnlargedDisplay->setShowImg(image);
-		}
-	}
-	_lastImage1 = image;
+	ui->label_imgDisplay_1->setPixmap(image.scaled(ui->label_imgDisplay_1->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void QiXinShiJinDanXiangJi::onCameraNGDisplay(QPixmap image, size_t index, bool isbad)
 {
 	if (index == 1)
 	{
-		if (!_isImageEnlargedDisplay)
+		ui->label_imgDisplay_1->setPixmap(image.scaled(ui->label_imgDisplay_1->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		if (isbad)
 		{
-			imgDis1->setPixmap(image.scaled(imgDis1->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-			if (isbad)
-			{
-				imgNgDis1->setPixmap(image.scaled(imgNgDis1->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-				_lastNgImage1 = image;
-			}
-		}
-		else
-		{
-			if (0 == _currentImageEnlargedDisplayIndex)
-			{
-				_imageEnlargedDisplay->setShowImg(image);
-			}
-			if (isbad && 2 == _currentImageEnlargedDisplayIndex)
-			{
-				_imageEnlargedDisplay->setShowImg(image);
-				_lastNgImage1 = image;
-			}
-		}
-	}
-	else if (index == 2)
-	{
-		if (!_isImageEnlargedDisplay)
-		{
-			imgDis2->setPixmap(image.scaled(imgDis2->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-			if (isbad)
-			{
-				imgNgDis2->setPixmap(image.scaled(imgNgDis2->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-				_lastNgImage2 = image;
-			}
-		}
-		else
-		{
-			if (1 == _currentImageEnlargedDisplayIndex)
-			{
-				_imageEnlargedDisplay->setShowImg(image);
-			}
-			if (isbad && 3 == _currentImageEnlargedDisplayIndex)
-			{
-				_imageEnlargedDisplay->setShowImg(image);
-				_lastNgImage2 = image;
-			}
+			ui->label_imgNgDisplay->setPixmap(image.scaled(ui->label_imgNgDisplay->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 		}
 	}
 }
@@ -505,10 +387,6 @@ void QiXinShiJinDanXiangJi::lb_title_clicked()
 			_dlgProductSet->showMinimized();
 		if (_dlgProductScore && _dlgProductScore->isVisible())
 			_dlgProductScore->showMinimized();
-		if (_picturesViewer && _picturesViewer->isVisible())
-			_picturesViewer->showMinimized();
-		if (_imageEnlargedDisplay && _imageEnlargedDisplay->isVisible())
-			_imageEnlargedDisplay->showMinimized();
 
 		minimizeCount = 3; // 重置最小化计数器
 	}
@@ -545,11 +423,9 @@ void QiXinShiJinDanXiangJi::pbtn_set_clicked()
 	}
 }
 
-void QiXinShiJinDanXiangJi::pbtn_score_clicked()
+void QiXinShiJinDanXiangJi::pbtn_start_clicked()
 {
-	_dlgProductScore->setFixedSize(this->width(), this->height());
-	_dlgProductScore->setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
-	_dlgProductScore->exec();
+
 }
 
 void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
@@ -566,7 +442,6 @@ void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
 				globalThread.camera1->setTriggerState(false);
 				globalThread.camera1->setFrameRate(5);
 			}
-			ui->rbtn_takePicture->setChecked(false);
 		}
 		else {
 			globalData.runningState = RunningState::Stop;
@@ -616,64 +491,3 @@ void QiXinShiJinDanXiangJi::ckb_wenzi_checked(bool checked)
 
 	emit wenziChanged();
 }
-
-void QiXinShiJinDanXiangJi::imgDis1_clicked()
-{
-	if (!_lastImage1.isNull())
-	{
-		_imageEnlargedDisplay->setShowImg(_lastImage1);
-	}
-	else
-	{
-		_imageEnlargedDisplay->clearImgDis();
-	}
-	_currentImageEnlargedDisplayIndex = 0;
-	_imageEnlargedDisplay->setGboxTitle(_workStationTitleMap[_currentImageEnlargedDisplayIndex]);
-	_imageEnlargedDisplay->show();
-}
-
-void QiXinShiJinDanXiangJi::imgDis2_clicked()
-{
-	if (!_lastImage2.isNull())
-	{
-		_imageEnlargedDisplay->setShowImg(_lastImage2);
-	}
-	else
-	{
-		_imageEnlargedDisplay->clearImgDis();
-	}
-	_currentImageEnlargedDisplayIndex = 1;
-	_imageEnlargedDisplay->setGboxTitle(_workStationTitleMap[_currentImageEnlargedDisplayIndex]);
-	_imageEnlargedDisplay->show();
-}
-
-void QiXinShiJinDanXiangJi::imgNgDis1_clicked()
-{
-	if (!_lastNgImage1.isNull())
-	{
-		_imageEnlargedDisplay->setShowImg(_lastNgImage1);
-	}
-	else
-	{
-		_imageEnlargedDisplay->clearImgDis();
-	}
-	_currentImageEnlargedDisplayIndex = 2;
-	_imageEnlargedDisplay->setGboxTitle(_workStationTitleMap[_currentImageEnlargedDisplayIndex]);
-	_imageEnlargedDisplay->show();
-}
-
-void QiXinShiJinDanXiangJi::imgNgDis2_clicked()
-{
-	if (!_lastNgImage2.isNull())
-	{
-		_imageEnlargedDisplay->setShowImg(_lastNgImage2);
-	}
-	else
-	{
-		_imageEnlargedDisplay->clearImgDis();
-	}
-	_currentImageEnlargedDisplayIndex = 3;
-	_imageEnlargedDisplay->setGboxTitle(_workStationTitleMap[_currentImageEnlargedDisplayIndex]);
-	_imageEnlargedDisplay->show();
-}
-

@@ -53,8 +53,6 @@ public:
 	void build_CameraAndBoardReconnectThread();
 	void destroy_CameraAndBoardReconnectThread();
 public:
-	void build_ImageEnlargedDisplay();
-	void destroy_ImageEnlargedDisplay();
 public:
 	void build_PriorityQueue();
 	void destroy_PriorityQueue();
@@ -72,7 +70,7 @@ private slots:
 private slots:
 	void pbtn_exit_clicked();
 	void pbtn_set_clicked();
-	void pbtn_score_clicked();
+	void pbtn_start_clicked();
 	void rbtn_debug_checked(bool checked);
 	void rbtn_removeFunc_checked(bool checked);
 	void ckb_shibiekuang_checked(bool checked);
@@ -83,27 +81,6 @@ signals:
 	void wenziChanged();
 
 private:
-	bool _isImageEnlargedDisplay{ false };
-	int _currentImageEnlargedDisplayIndex{ 0 };
-	std::map<int, QString> _workStationTitleMap{};
-
-	QPixmap _lastImage1{};
-	QPixmap _lastImage2{};
-	QPixmap _lastNgImage1{};
-	QPixmap _lastNgImage2{};
-
-	rw::rqw::ClickableLabel* imgDis1 = nullptr;
-	rw::rqw::ClickableLabel* imgDis2 = nullptr;
-	rw::rqw::ClickableLabel* imgNgDis1 = nullptr;
-	rw::rqw::ClickableLabel* imgNgDis2 = nullptr;
-private slots:
-	void imgDis1_clicked();
-	void imgDis2_clicked();
-	void imgNgDis1_clicked();
-	void imgNgDis2_clicked();
-private:
-	PictureViewerThumbnails* _picturesViewer = nullptr;
-	ImageEnlargedDisplay* _imageEnlargedDisplay = nullptr;
 	rw::rqw::ClickableLabel* clickableTitle = nullptr;
 public:
 	DlgProductScore* _dlgProductScore = nullptr;
