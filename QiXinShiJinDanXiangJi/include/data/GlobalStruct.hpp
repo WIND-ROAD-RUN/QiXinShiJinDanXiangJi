@@ -124,12 +124,8 @@ public:
 	{
 		std::atomic_uint64_t produceCount{ 0 };
 		std::atomic_uint64_t wasteCount{ 0 };
-		std::atomic<double> productionYield{ 0 };
 		std::atomic_uint64_t produceCount1{ 0 };
-		std::atomic_uint64_t produceCount2{ 0 };
 	} statisticalInfo;
-public:
-	std::atomic_bool isTakePictures{ false };
 
 public:
 	cdm::DuckTongueConfig duckTongueConfig;
