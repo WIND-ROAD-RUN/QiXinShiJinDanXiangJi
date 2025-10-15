@@ -116,6 +116,20 @@ void GlobalThread::destroy_DetachDefectThreadDuckTongue()
 	}
 }
 
+void GlobalThread::build_DetachUtiltyThread()
+{
+	detachUtiltyThread = new DetachUtiltyThread(this);
+}
+
+void GlobalThread::destroy_DetachUtiltyThread()
+{
+	if (detachUtiltyThread)
+	{
+		delete detachUtiltyThread;
+		detachUtiltyThread = nullptr;
+	}
+}
+
 void GlobalThread::build_CameraAndCardStateThreadDuckTongue()
 {
 	cameraAndCardStateThreadDuckTongue = new CameraAndCardStateThreadDuckTongue(this);

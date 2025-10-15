@@ -176,6 +176,8 @@ void QiXinShiJinDanXiangJi::start_Threads()
 	globalThread.detachDefectThreadDuckTongue->startThread();
 	// 启动相机重连线程
 	globalThread.cameraAndCardStateThreadDuckTongue->startThread();
+	// 启动异步统计线程
+	globalThread.detachUtiltyThread->startThread();
 }
 
 void QiXinShiJinDanXiangJi::stop_Threads()
@@ -185,6 +187,8 @@ void QiXinShiJinDanXiangJi::stop_Threads()
 	globalThread.detachDefectThreadDuckTongue->stopThread();
 
 	globalThread.cameraAndCardStateThreadDuckTongue->stopThread();
+
+	globalThread.detachUtiltyThread->stopThread();
 }
 
 void QiXinShiJinDanXiangJi::initializeComponents()
@@ -202,6 +206,8 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 	build_PriorityQueue();
 
 	build_DetachDefectThreadDuckTongue();
+
+	build_DetachUtiltyThread();
 
 	build_CameraAndBoardReconnectThread();
 
@@ -222,6 +228,8 @@ void QiXinShiJinDanXiangJi::destroyComponents()
 	stop_Threads();
 
 	destroy_CameraAndBoardReconnectThread();
+
+	destroy_DetachUtiltyThread();
 
 	destroy_DetachDefectThreadDuckTongue();
 
@@ -330,6 +338,22 @@ void QiXinShiJinDanXiangJi::destroy_DetachDefectThreadDuckTongue()
 {
 	auto& globalThread = GlobalThread::getInstance();
 	globalThread.destroy_DetachDefectThreadDuckTongue();
+}
+
+void QiXinShiJinDanXiangJi::build_DetachUtiltyThread()
+{
+	auto& globalThread = GlobalThread::getInstance();
+	globalThread.build_DetachUtiltyThread();
+
+	// 连接统计信息更新信号槽
+	QObject::connect(globalThread.detachUtiltyThread, &DetachUtiltyThread::updateStatisticalInfo,
+		this, &QiXinShiJinDanXiangJi::onUpdateStatisticalInfoUI);
+}
+
+void QiXinShiJinDanXiangJi::destroy_DetachUtiltyThread()
+{
+	auto& globalThread = GlobalThread::getInstance();
+	globalThread.destroy_DetachUtiltyThread();
 }
 
 void QiXinShiJinDanXiangJi::updateCameraLabelState(int cameraIndex, bool state)

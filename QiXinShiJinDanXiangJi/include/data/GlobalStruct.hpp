@@ -3,6 +3,7 @@
 #include <qobject.h>
 
 #include "DetachDefectThread.h"
+#include "DetachUtiltyThread.h"
 #include "dsl_Heap.hpp"
 #include "QiXinShiJinDanXiangJi.h"
 #include "QiXinShiJinDanXiangJi.hpp"
@@ -58,6 +59,11 @@ public:
 
 	void build_DetachDefectThreadDuckTongue();
 	void destroy_DetachDefectThreadDuckTongue();
+public:
+	DetachUtiltyThread* detachUtiltyThread;
+
+	void build_DetachUtiltyThread();
+	void destroy_DetachUtiltyThread();
 public:
 	CameraAndCardStateThreadDuckTongue* cameraAndCardStateThreadDuckTongue;
 public:

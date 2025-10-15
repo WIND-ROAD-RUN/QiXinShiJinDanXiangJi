@@ -59,6 +59,9 @@ public:
 public:
 	void build_DetachDefectThreadDuckTongue();
 	void destroy_DetachDefectThreadDuckTongue();
+public:
+	void build_DetachUtiltyThread();
+	void destroy_DetachUtiltyThread();
 private slots:
 	void updateCameraLabelState(int cameraIndex, bool state);
 
