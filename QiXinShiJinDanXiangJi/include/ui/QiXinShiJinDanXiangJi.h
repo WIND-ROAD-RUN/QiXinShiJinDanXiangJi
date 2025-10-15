@@ -49,8 +49,6 @@ public:
 	void build_ImageProcessingModule();
 	void destroy_ImageProcessingModule();
 public:
-	void build_ImageSaveEngine();
-	void destroy_ImageSaveEngine();
 public:
 	void build_CameraAndBoardReconnectThread();
 	void destroy_CameraAndBoardReconnectThread();
@@ -76,8 +74,6 @@ private slots:
 	void pbtn_set_clicked();
 	void pbtn_score_clicked();
 	void rbtn_debug_checked(bool checked);
-	void pbtn_openSaveLocation_clicked();
-	void rbtn_takePicture_checked();
 	void rbtn_removeFunc_checked(bool checked);
 	void ckb_shibiekuang_checked(bool checked);
 	void ckb_wenzi_checked(bool checked);

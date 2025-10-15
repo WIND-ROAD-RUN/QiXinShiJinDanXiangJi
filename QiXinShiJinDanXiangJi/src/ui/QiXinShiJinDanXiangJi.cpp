@@ -42,10 +42,6 @@ void QiXinShiJinDanXiangJi::build_connect()
 		this, &QiXinShiJinDanXiangJi::pbtn_score_clicked);
 	QObject::connect(ui->rbtn_debug, &QRadioButton::clicked,
 		this, &QiXinShiJinDanXiangJi::rbtn_debug_checked);
-	QObject::connect(ui->pbtn_openSaveLocation, &QPushButton::clicked,
-		this, &QiXinShiJinDanXiangJi::pbtn_openSaveLocation_clicked);
-	QObject::connect(ui->rbtn_takePicture, &QRadioButton::clicked,
-		this, &QiXinShiJinDanXiangJi::rbtn_takePicture_checked);
 	QObject::connect(ui->rbtn_removeFunc, &QRadioButton::clicked,
 		this, &QiXinShiJinDanXiangJi::rbtn_removeFunc_checked);
 	QObject::connect(ui->ckb_shibiekuang, &QCheckBox::clicked,
@@ -74,8 +70,6 @@ void QiXinShiJinDanXiangJi::build_DuckTongueData()
 	rbtn_removeFunc_checked(paperCupsConfig.isDefect);
 	ui->ckb_shibiekuang->setChecked(paperCupsConfig.isshibiekuang);
 	ui->ckb_wenzi->setChecked(paperCupsConfig.iswenzi);
-
-	globalStruct.isTakePictures = ui->rbtn_takePicture->isChecked();
 
 	// 初始化图像查看器
 	_picturesViewer = new PictureViewerThumbnails(this);
@@ -199,8 +193,6 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 
 	build_ui();
 
-	build_ImageSaveEngine();
-
 	build_ImageEnlargedDisplay();
 
 	build_ImageProcessingModule();
@@ -240,8 +232,6 @@ void QiXinShiJinDanXiangJi::destroyComponents()
 	destroy_camera();
 
 	destroy_ImageEnlargedDisplay();
-
-	destroy_ImageSaveEngine();
 
 	save_config();
 }
@@ -303,29 +293,6 @@ void QiXinShiJinDanXiangJi::destroy_ImageProcessingModule()
 {
 	auto& globalThread = GlobalThread::getInstance();
 	globalThread.destroyImageProcessingModule();
-}
-
-void QiXinShiJinDanXiangJi::build_ImageSaveEngine()
-{
-	QDir dir;
-	QString imageSavePath = globalPath.imageSaveRootPath;
-	//清理旧的数据
-
-	//获取当前日期并设置保存路径
-	QString currentDate = QDate::currentDate().toString("yyyy_MM_dd");
-	auto& globalFunc = GlobalFuncObject::getInstance();
-	globalFunc.buildImageSaveEngine();
-	QString imageSaveEnginePath = imageSavePath + currentDate;
-
-	QString imagesFilePathFilePathFull = dir.absoluteFilePath(imageSaveEnginePath);
-	globalFunc.imageSaveEngine->setRootPath(imagesFilePathFilePathFull);
-	globalFunc.imageSaveEngine->startEngine();
-}
-
-void QiXinShiJinDanXiangJi::destroy_ImageSaveEngine()
-{
-	auto& globalFunc = GlobalFuncObject::getInstance();
-	globalFunc.destroyImageSaveEngine();
 }
 
 void QiXinShiJinDanXiangJi::build_CameraAndBoardReconnectThread()
@@ -610,28 +577,6 @@ void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
 	else {
 		ui->rbtn_debug->setChecked(false);
 	}
-}
-
-void QiXinShiJinDanXiangJi::pbtn_openSaveLocation_clicked()
-{
-	auto& globalFunc = GlobalFuncObject::getInstance();
-	QString imageSavePath = globalFunc.imageSaveEngine->getRootPath();
-
-	_picturesViewer->setRootPath(imageSavePath);
-	_picturesViewer->setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
-	_picturesViewer->show();
-}
-
-void QiXinShiJinDanXiangJi::rbtn_takePicture_checked()
-{
-	if (ui->rbtn_debug->isChecked() == true)
-	{
-		ui->rbtn_takePicture->setChecked(false);
-	}
-	auto& duckTongueConfig = GlobalData::getInstance().duckTongueConfig;
-	auto& globalStruct = GlobalData::getInstance();
-	duckTongueConfig.isSaveImg = ui->rbtn_takePicture->isChecked();
-	globalStruct.isTakePictures = ui->rbtn_takePicture->isChecked();
 }
 
 void QiXinShiJinDanXiangJi::rbtn_removeFunc_checked(bool checked)

@@ -203,21 +203,6 @@ void GlobalFuncObject::saveSetConfig()
 	storeContext->saveSafe(globalStruct.setConfig, setConfigPath);
 }
 
-void GlobalFuncObject::buildImageSaveEngine()
-{
-	imageSaveEngine = std::make_unique<rw::rqw::ImageSaveEngine>(this, 2);
-}
-
-void GlobalFuncObject::destroyImageSaveEngine()
-{
-	if (imageSaveEngine)
-	{
-		imageSaveEngine->stop();
-		imageSaveEngine.reset();
-	}
-}
-
-
 bool GlobalThread::isTargetCamera(const QString& cameraIndex, const QString& targetName)
 {
 	QRegularExpression regex(R"((\d+)\.(\d+)\.(\d+)\.(\d+))");

@@ -94,21 +94,6 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 	{
 		_isbad = true;
 	}
-	rw::rqw::ImageInfo imageInfo(rw::rqw::cvMatToQImage(frame.image));
-
-	// 记得删除
-	if (1 == imageProcessingModuleIndex)
-	{
-		index1Num++;
-		qDebug() << "index1Num: " << index1Num;
-	}
-	else if (2 == imageProcessingModuleIndex)
-	{
-		index2Num++;
-		qDebug() << "index2Num: " << index2Num;
-	}
-
-	save_image(imageInfo, maskImg);
 }
 
 void ImageProcessorDuckTongue::run_OpenRemoveFunc_emitErrorInfo(bool isbad) const
@@ -130,80 +115,10 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc_emitErrorInfo(bool isbad) cons
 	{
 		++globalStruct.statisticalInfo.produceCount1;
 	}
-	else if (imageProcessingModuleIndex == 2)
-	{
-		++globalStruct.statisticalInfo.produceCount2;
-	}
 
 	if (isbad)
 	{
 		//globalThread.priorityQueue->push(realLeftLocationDifference);
-	}
-}
-
-void ImageProcessorDuckTongue::save_image(rw::rqw::ImageInfo& imageInfo, const QImage& image)
-{
-	auto& globalStruct = GlobalData::getInstance();
-	auto& setConfig = globalStruct.setConfig;
-
-	if (!globalStruct.isTakePictures)
-	{
-		return;
-	}
-
-	if ((imageProcessingModuleIndex == 1 && setConfig.takeWork1Pictures) || (imageProcessingModuleIndex == 2 && setConfig.takeWork2Pictures))
-	{
-		save_image_work(imageInfo, image);
-	}
-}
-
-void ImageProcessorDuckTongue::save_image_work(rw::rqw::ImageInfo& imageInfo, const QImage& image)
-{
-	auto& globalFunc = GlobalFuncObject::getInstance();
-	auto& setConfig = GlobalData::getInstance().setConfig;
-	if (_isbad) {
-		if (setConfig.saveNGImg)
-		{
-			if (1 == imageProcessingModuleIndex)
-			{
-				imageInfo.classify = "NG1";
-				globalFunc.imageSaveEngine->pushImage(imageInfo);
-			}
-			else if (2 == imageProcessingModuleIndex)
-			{
-				imageInfo.classify = "NG2";
-				globalFunc.imageSaveEngine->pushImage(imageInfo);
-			}
-		}
-		if (setConfig.saveMaskImg)
-		{
-			rw::rqw::ImageInfo mask(image);
-			if (1 == imageProcessingModuleIndex)
-			{
-				mask.classify = "Mask1";
-				globalFunc.imageSaveEngine->pushImage(mask);
-			}
-			else if (2 == imageProcessingModuleIndex)
-			{
-				mask.classify = "Mask2";
-				globalFunc.imageSaveEngine->pushImage(mask);
-			}
-		}
-	}
-	else {
-		if (setConfig.saveOKImg)
-		{
-			if (1 == imageProcessingModuleIndex)
-			{
-				imageInfo.classify = "OK1";
-				globalFunc.imageSaveEngine->pushImage(imageInfo);
-			}
-			else if (2 == imageProcessingModuleIndex)
-			{
-				imageInfo.classify = "OK2";
-				globalFunc.imageSaveEngine->pushImage(imageInfo);
-			}
-		}
 	}
 }
 

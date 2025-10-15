@@ -94,10 +94,6 @@ public:
 	void saveDuckTongueConfig();
 	void saveScoreConfig();
 	void saveSetConfig();
-public:
-	void buildImageSaveEngine();
-	void destroyImageSaveEngine();
-	std::unique_ptr<rw::rqw::ImageSaveEngine> imageSaveEngine{ nullptr };
 };
 
 class GlobalData

@@ -44,11 +44,6 @@ private:
 	void run_OpenRemoveFunc(MatInfo& frame);	// 开启剔废功能时的处理模式
 
 	void run_OpenRemoveFunc_emitErrorInfo(bool isbad) const;
-
-	// 存图
-	void save_image(rw::rqw::ImageInfo& imageInfo, const QImage& image);
-	void save_image_work(rw::rqw::ImageInfo& imageInfo, const QImage& image);
-
 signals:
 	void imageReady(QPixmap image);
 	void imageNGReady(QPixmap image, size_t index, bool isbad);
