@@ -5,7 +5,7 @@
 #include "DetachDefectThread.h"
 #include "dsl_Heap.hpp"
 #include "QiXinShiJinDanXiangJi.h"
-#include "DuckTongue.hpp"
+#include "QiXinShiJinDanXiangJi.hpp"
 #include "SetConfig.hpp"
 #include "ScoreConfig.hpp"
 
@@ -125,7 +125,7 @@ public:
 	} statisticalInfo;
 
 public:
-	cdm::DuckTongueConfig duckTongueConfig;
+	cdm::QiXinShiJinDanXiangJiConfig qiXinShiJinDanXiangJiConfig;
 	cdm::ScoreConfig scoreConfig;
 	cdm::SetConfig setConfig;
 };

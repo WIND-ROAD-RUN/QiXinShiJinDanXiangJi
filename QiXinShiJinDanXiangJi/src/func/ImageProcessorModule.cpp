@@ -268,7 +268,7 @@ void ImageProcessorDuckTongue::updateDrawRec()
 {
 	auto& globalStruct = GlobalData::getInstance();
 	auto& context = _imgProcess->context();
-	if (globalStruct.duckTongueConfig.isshibiekuang)
+	if (globalStruct.qiXinShiJinDanXiangJiConfig.isshibiekuang)
 	{
 		context.defectDrawCfg.isDrawDefects = true;
 		context.defectDrawCfg.isDrawDisableDefects = true;
@@ -288,7 +288,7 @@ void ImageProcessorDuckTongue::updateDrawText()
 {
 	auto& globalStruct = GlobalData::getInstance();
 	auto& context = _imgProcess->context();
-	if (globalStruct.duckTongueConfig.iswenzi)
+	if (globalStruct.qiXinShiJinDanXiangJiConfig.iswenzi)
 	{
 		context.runTextCfg.isDrawExtraText = true;
 	}

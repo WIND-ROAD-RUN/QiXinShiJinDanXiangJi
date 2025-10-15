@@ -7,6 +7,9 @@
 #include "PictureViewerThumbnails.h"
 #include "rqw_LabelClickable.h"
 #include "DlgCloseForm.h"
+#include "oso_func.hpp"
+#include "oso_StorageContext.hpp"
+#include "rqw_RunEnvCheck.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class QiXinShiJinDanXiangJiClass; };
@@ -81,6 +84,11 @@ signals:
 	void shibiekuangChanged();
 	void wenziChanged();
 
+public:
+	static bool check();
+	template<class TypeCanToAssembly>
+	static void checkFileExistAndFormat(const QString& path, const rw::oso::StorageContext& context);
+	static bool EnsureDirectoryExists(const QString& dirPath);
 private:
 	rw::rqw::ClickableLabel* clickableTitle = nullptr;
 public:
@@ -91,4 +99,30 @@ private:
 	Ui::QiXinShiJinDanXiangJiClass *ui;
 	int minimizeCount{ 3 };
 };
+
+template <class TypeCanToAssembly>
+void QiXinShiJinDanXiangJi::checkFileExistAndFormat(const QString& path, const rw::oso::StorageContext& context)
+{
+	if (rw::rqw::RunEnvCheck::isFileExist(path))
+	{
+		if (!rw::rqw::RunEnvCheck::isFileFormatCorrectWithSafe<TypeCanToAssembly>(path, context))
+		{
+			auto assembly = context.load(path.toStdString());
+			bool isMerge{ false };
+			auto mergeAssembly = rw::oso::AssemblyMergeTool::Merge(TypeCanToAssembly(), *assembly, isMerge);
+			if (isMerge)
+			{
+				context.saveSafe(mergeAssembly, path.toStdString());
+			}
+			else
+			{
+				context.saveSafe(TypeCanToAssembly(), path.toStdString());
+			}
+		}
+	}
+	else
+	{
+		context.saveSafe(TypeCanToAssembly(), path.toStdString());
+	}
+}
 

@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include "GlobalStruct.hpp"
 #include "NumberKeyboard.h"
+#include "rqw_RunEnvCheck.hpp"
 #include "Utilty.hpp"
 
 QiXinShiJinDanXiangJi::QiXinShiJinDanXiangJi(QWidget* parent)
@@ -60,7 +61,7 @@ void QiXinShiJinDanXiangJi::build_connect()
 void QiXinShiJinDanXiangJi::build_QiXinShiJinDanXiangJiData()
 {
 	auto& globalStruct = GlobalData::getInstance();
-	auto& paperCupsConfig = globalStruct.duckTongueConfig;
+	auto& paperCupsConfig = globalStruct.qiXinShiJinDanXiangJiConfig;
 	paperCupsConfig.isDebug = false;
 	paperCupsConfig.isDefect = true;		// 默认开启剔废
 	paperCupsConfig.isshibiekuang = true;
@@ -119,14 +120,14 @@ void QiXinShiJinDanXiangJi::read_config_QiXinShiJinDanXiangJiConfig()
 	auto& globalFunc = GlobalFuncObject::getInstance();
 	auto& globalData = GlobalData::getInstance();
 
-	globalFunc.storeContext->ensureFileExistsSafe(globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString(), cdm::DuckTongueConfig());
+	globalFunc.storeContext->ensureFileExistsSafe(globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString(), cdm::QiXinShiJinDanXiangJiConfig());
 	auto loadResult = globalFunc.storeContext->loadSafe(globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString());
 	if (!loadResult)
 	{
-		globalFunc.storeContext->saveSafe(cdm::DuckTongueConfig(), globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString());
+		globalFunc.storeContext->saveSafe(cdm::QiXinShiJinDanXiangJiConfig(), globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString());
 		return;
 	}
-	globalData.duckTongueConfig = *loadResult;
+	globalData.qiXinShiJinDanXiangJiConfig = *loadResult;
 }
 
 void QiXinShiJinDanXiangJi::read_config_DlgProductScoreConfig()
@@ -487,7 +488,7 @@ void QiXinShiJinDanXiangJi::rbtn_removeFunc_checked(bool checked)
 void QiXinShiJinDanXiangJi::ckb_shibiekuang_checked(bool checked)
 {
 	auto& globalData = GlobalData::getInstance();
-	globalData.duckTongueConfig.isshibiekuang = ui->ckb_shibiekuang->isChecked();
+	globalData.qiXinShiJinDanXiangJiConfig.isshibiekuang = ui->ckb_shibiekuang->isChecked();
 
 	emit shibiekuangChanged();
 }
@@ -495,7 +496,7 @@ void QiXinShiJinDanXiangJi::ckb_shibiekuang_checked(bool checked)
 void QiXinShiJinDanXiangJi::ckb_wenzi_checked(bool checked)
 {
 	auto& globalData = GlobalData::getInstance();
-	globalData.duckTongueConfig.iswenzi = ui->ckb_wenzi->isChecked();
+	globalData.qiXinShiJinDanXiangJiConfig.iswenzi = ui->ckb_wenzi->isChecked();
 
 	emit wenziChanged();
 }
@@ -513,7 +514,7 @@ void QiXinShiJinDanXiangJi::pbtn_bagLength_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于0的数值");
 			return;
 		}
-		auto& duckTongueConfig = GlobalData::getInstance().duckTongueConfig;
+		auto& duckTongueConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
 		ui->pbtn_bagLength->setText(value);
 		duckTongueConfig.setBagLength = value.toDouble();
 	}
@@ -532,8 +533,65 @@ void QiXinShiJinDanXiangJi::pbtn_bagWidth_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于0的数值");
 			return;
 		}
-		auto& duckTongueConfig = GlobalData::getInstance().duckTongueConfig;
+		auto& duckTongueConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
 		ui->pbtn_bagWidth->setText(value);
 		duckTongueConfig.setBagWidth = value.toDouble();
 	}
+}
+
+bool QiXinShiJinDanXiangJi::check()
+{
+#pragma region check single instance
+	if (!rw::rqw::RunEnvCheck::isSingleInstance("QiXinShiJinDanXiangJi.exe"))
+	{
+		QMessageBox::warning(nullptr, "错误", "已经有程序在运行，请勿多次打开");
+		return false;
+	}
+#pragma endregion
+
+#pragma region check run env
+	if (rw::rqw::RunEnvCheck::isProcessRunning("MVS.exe"))
+	{
+		QMessageBox::warning(nullptr, "错误", "检测到海康威视软件正在运行，请先关闭后再启动本程序。");
+		return false;
+	}
+
+	if (rw::rqw::RunEnvCheck::isProcessRunning("BasedCam3.exe"))
+	{
+		QMessageBox::warning(nullptr, "错误", "检测到度申相机平台软件正在运行，请先关闭后再启动本程序。");
+		return false;
+	}
+#pragma endregion
+
+#pragma region check directory exist
+	EnsureDirectoryExists(globalPath.projectHome);
+	EnsureDirectoryExists(globalPath.configRootPath);
+	EnsureDirectoryExists(globalPath.modelRootPath);
+#pragma endregion
+
+#pragma region check model exist
+	if (!rw::rqw::RunEnvCheck::isFileExist(globalPath.modelPath))
+	{
+		QMessageBox::warning(nullptr, "错误", "模型文件缺失");
+		return false;
+	}
+#pragma endregion
+
+#pragma region check config format and exist
+	rw::oso::StorageContext storageContext(rw::oso::StorageType::Xml);
+
+	checkFileExistAndFormat<cdm::QiXinShiJinDanXiangJiConfig>(globalPath.qiXinShiJinDanXiangJiConfigPath, storageContext);
+	checkFileExistAndFormat<cdm::SetConfig>(globalPath.setConfigPath, storageContext);
+#pragma endregion
+
+	return true;
+}
+
+bool QiXinShiJinDanXiangJi::EnsureDirectoryExists(const QString& dirPath)
+{
+	QDir dir(dirPath);
+	if (!dir.exists()) {
+		return dir.mkpath(".");
+	}
+	return true;
 }

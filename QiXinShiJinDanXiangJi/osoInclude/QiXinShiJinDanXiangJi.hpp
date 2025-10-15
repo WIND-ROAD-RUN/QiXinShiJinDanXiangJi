@@ -4,19 +4,19 @@
 #include <string>
 
 namespace cdm {
-    class DuckTongueConfig
+    class QiXinShiJinDanXiangJiConfig
     {
     public:
-        DuckTongueConfig() = default;
-        ~DuckTongueConfig() = default;
+        QiXinShiJinDanXiangJiConfig() = default;
+        ~QiXinShiJinDanXiangJiConfig() = default;
 
-        DuckTongueConfig(const rw::oso::ObjectStoreAssembly& assembly);
-        DuckTongueConfig(const DuckTongueConfig& obj);
+        QiXinShiJinDanXiangJiConfig(const rw::oso::ObjectStoreAssembly& assembly);
+        QiXinShiJinDanXiangJiConfig(const QiXinShiJinDanXiangJiConfig& obj);
 
-        DuckTongueConfig& operator=(const DuckTongueConfig& obj);
+        QiXinShiJinDanXiangJiConfig& operator=(const QiXinShiJinDanXiangJiConfig& obj);
         operator rw::oso::ObjectStoreAssembly() const;
-        bool operator==(const DuckTongueConfig& obj) const;
-        bool operator!=(const DuckTongueConfig& obj) const;
+        bool operator==(const QiXinShiJinDanXiangJiConfig& obj) const;
+        bool operator!=(const QiXinShiJinDanXiangJiConfig& obj) const;
 
     public:
         int totalProductionVolume{ 0 };
@@ -31,12 +31,12 @@ namespace cdm {
         bool iswenzi{ true };
     };
 
-    inline DuckTongueConfig::DuckTongueConfig(const rw::oso::ObjectStoreAssembly& assembly)
+    inline QiXinShiJinDanXiangJiConfig::QiXinShiJinDanXiangJiConfig(const rw::oso::ObjectStoreAssembly& assembly)
     {
         auto isAccountAssembly = assembly.getName();
-        if (isAccountAssembly != "$class$DuckTongueConfig$")
+        if (isAccountAssembly != "$class$QiXinShiJinDanXiangJiConfig$")
         {
-            throw std::runtime_error("Assembly is not $class$DuckTongueConfig$");
+            throw std::runtime_error("Assembly is not $class$QiXinShiJinDanXiangJiConfig$");
         }
         auto totalProductionVolumeItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$totalProductionVolume$"));
         if (!totalProductionVolumeItem) {
@@ -90,7 +90,7 @@ namespace cdm {
         iswenzi = iswenziItem->getValueAsBool();
     }
 
-    inline DuckTongueConfig::DuckTongueConfig(const DuckTongueConfig& obj)
+    inline QiXinShiJinDanXiangJiConfig::QiXinShiJinDanXiangJiConfig(const QiXinShiJinDanXiangJiConfig& obj)
     {
         totalProductionVolume = obj.totalProductionVolume;
         totalDefectiveVolume = obj.totalDefectiveVolume;
@@ -104,7 +104,7 @@ namespace cdm {
         iswenzi = obj.iswenzi;
     }
 
-    inline DuckTongueConfig& DuckTongueConfig::operator=(const DuckTongueConfig& obj)
+    inline QiXinShiJinDanXiangJiConfig& QiXinShiJinDanXiangJiConfig::operator=(const QiXinShiJinDanXiangJiConfig& obj)
     {
         if (this != &obj) {
             totalProductionVolume = obj.totalProductionVolume;
@@ -121,10 +121,10 @@ namespace cdm {
         return *this;
     }
 
-    inline DuckTongueConfig::operator rw::oso::ObjectStoreAssembly() const
+    inline QiXinShiJinDanXiangJiConfig::operator rw::oso::ObjectStoreAssembly() const
     {
         rw::oso::ObjectStoreAssembly assembly;
-        assembly.setName("$class$DuckTongueConfig$");
+        assembly.setName("$class$QiXinShiJinDanXiangJiConfig$");
         auto totalProductionVolumeItem = std::make_shared<rw::oso::ObjectStoreItem>();
         totalProductionVolumeItem->setName("$variable$totalProductionVolume$");
         totalProductionVolumeItem->setValueFromInt(totalProductionVolume);
@@ -168,12 +168,12 @@ namespace cdm {
         return assembly;
     }
 
-    inline bool DuckTongueConfig::operator==(const DuckTongueConfig& obj) const
+    inline bool QiXinShiJinDanXiangJiConfig::operator==(const QiXinShiJinDanXiangJiConfig& obj) const
     {
         return totalProductionVolume == obj.totalProductionVolume && totalDefectiveVolume == obj.totalDefectiveVolume && showBagLength == obj.showBagLength && showBagWidth == obj.showBagWidth && setBagLength == obj.setBagLength && setBagWidth == obj.setBagWidth && isDebug == obj.isDebug && isDefect == obj.isDefect && isshibiekuang == obj.isshibiekuang && iswenzi == obj.iswenzi;
     }
 
-    inline bool DuckTongueConfig::operator!=(const DuckTongueConfig& obj) const
+    inline bool QiXinShiJinDanXiangJiConfig::operator!=(const QiXinShiJinDanXiangJiConfig& obj) const
     {
         return !(*this == obj);
     }
