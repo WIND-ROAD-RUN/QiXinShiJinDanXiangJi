@@ -72,22 +72,17 @@ void GlobalThread::destroyCamera1()
 void GlobalThread::buildImageProcessorModules(const QString& path)
 {
 	modelCamera1 = std::make_unique<ImageProcessingModuleDuckTongue>(1);
-	modelCamera2 = std::make_unique<ImageProcessingModuleDuckTongue>(1);
 
 	modelCamera1->modelEnginePath = path;
-	modelCamera2->modelEnginePath = path;
 
 	modelCamera1->index = 1;
-	modelCamera2->index = 2;
 
 	modelCamera1->BuildModule();
-	modelCamera2->BuildModule();
 }
 
 void GlobalThread::destroyImageProcessingModule()
 {
 	modelCamera1.reset();
-	modelCamera2.reset();
 }
 
 void GlobalThread::build_PriorityQueue()

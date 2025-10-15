@@ -291,19 +291,12 @@ void QiXinShiJinDanXiangJi::build_ImageProcessingModule()
 	globalThread.buildImageProcessorModules(enginePathFull);
 
 	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::imageReady, this, &QiXinShiJinDanXiangJi::onCamera1Display);
-	QObject::connect(globalThread.modelCamera2.get(), &ImageProcessingModuleDuckTongue::imageReady, this, &QiXinShiJinDanXiangJi::onCamera2Display);
 	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::imageNGReady, this, &QiXinShiJinDanXiangJi::onCameraNGDisplay);
-	QObject::connect(globalThread.modelCamera2.get(), &ImageProcessingModuleDuckTongue::imageNGReady, this, &QiXinShiJinDanXiangJi::onCameraNGDisplay);
 	QObject::connect(this, &QiXinShiJinDanXiangJi::shibiekuangChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::shibiekuangChanged);
-	QObject::connect(this, &QiXinShiJinDanXiangJi::shibiekuangChanged, globalThread.modelCamera2.get(), &ImageProcessingModuleDuckTongue::shibiekuangChanged);
 	QObject::connect(this, &QiXinShiJinDanXiangJi::wenziChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::wenziChanged);
-	QObject::connect(this, &QiXinShiJinDanXiangJi::wenziChanged, globalThread.modelCamera2.get(), &ImageProcessingModuleDuckTongue::wenziChanged);
 	QObject::connect(_dlgProductSet, &DlgProductSet::pixToWorldChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
-	QObject::connect(_dlgProductSet, &DlgProductSet::pixToWorldChanged, globalThread.modelCamera2.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
 	QObject::connect(_dlgProductSet, &DlgProductSet::tifeijuliChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
-	QObject::connect(_dlgProductSet, &DlgProductSet::tifeijuliChanged, globalThread.modelCamera2.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
 	QObject::connect(_dlgProductScore, &DlgProductScore::scoreFormClosed, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
-	QObject::connect(_dlgProductScore, &DlgProductScore::scoreFormClosed, globalThread.modelCamera2.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
 }
 
 void QiXinShiJinDanXiangJi::destroy_ImageProcessingModule()
@@ -475,21 +468,6 @@ void QiXinShiJinDanXiangJi::onCamera1Display(QPixmap image)
 		}
 	}
 	_lastImage1 = image;
-}
-
-void QiXinShiJinDanXiangJi::onCamera2Display(QPixmap image)
-{
-	if (!_isImageEnlargedDisplay)
-	{
-		imgDis2->setPixmap(image.scaled(imgDis2->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-	}
-	else
-	{
-		if (1 == _currentImageEnlargedDisplayIndex) {
-			_imageEnlargedDisplay->setShowImg(image);
-		}
-	}
-	_lastImage2 = image;
 }
 
 void QiXinShiJinDanXiangJi::onCameraNGDisplay(QPixmap image, size_t index, bool isbad)

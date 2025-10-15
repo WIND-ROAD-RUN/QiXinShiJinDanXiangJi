@@ -45,7 +45,6 @@ public:
 public:
 	// 图像处理模块
 	std::unique_ptr<ImageProcessingModuleDuckTongue> modelCamera1 = nullptr;
-	std::unique_ptr<ImageProcessingModuleDuckTongue> modelCamera2 = nullptr;
 
 	void buildImageProcessorModules(const QString& path);
 	void destroyImageProcessingModule();

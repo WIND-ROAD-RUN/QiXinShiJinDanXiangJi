@@ -33,14 +33,10 @@ signals:
 
 signals:
 	void buildCamera1();
-	void buildCamera2();
 
 	void destroyCamera1();
-	void destroyCamera2();
 
 	void startMonitor1();
-	void startMonitor2();
-
 private:
 	std::atomic<bool> running; // 使用原子变量保证线程安全
 };
