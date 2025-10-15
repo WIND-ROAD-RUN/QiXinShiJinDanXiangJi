@@ -46,10 +46,6 @@ void CameraAndCardStateThreadDuckTongue::run()
 void CameraAndCardStateThreadDuckTongue::check_cameraState()
 {
 	check_cameraState1();
-	if (_dlgProductSet.qiyongerxiangji)
-	{
-		check_cameraState2();
-	}
 }
 
 void CameraAndCardStateThreadDuckTongue::check_cameraState1()
@@ -77,34 +73,5 @@ void CameraAndCardStateThreadDuckTongue::check_cameraState1()
 		emit buildCamera1();
 		emit updateCameraLabelState(1, false);
 		isUpdateState = false;
-	}
-}
-
-void CameraAndCardStateThreadDuckTongue::check_cameraState2()
-{
-	static bool isUpdateSate = false;
-
-	auto& globalThread = GlobalThread::getInstance();
-
-	if (runtimeCounts != 1) {
-		return;
-	}
-
-	if (globalThread.camera2) {
-		if (globalThread.camera2->getConnectState()) {
-			if (!isUpdateSate) {
-				emit updateCameraLabelState(2, true);
-				isUpdateSate = true;
-			}
-		}
-		else {
-			emit destroyCamera2();
-			emit updateCameraLabelState(2, false);
-		}
-	}
-	else {
-		emit buildCamera2();
-		emit updateCameraLabelState(2, false);
-		isUpdateSate = false;
 	}
 }

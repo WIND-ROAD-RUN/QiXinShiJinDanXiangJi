@@ -450,13 +450,8 @@ void DlgProductSet::pbtn_baoguang2_clicked()
 			return;
 		}
 		auto& globalStructSetConfig = GlobalData::getInstance().setConfig;
-		auto& globalThread = GlobalThread::getInstance();
 		ui->pbtn_baoguang2->setText(value);
 		globalStructSetConfig.baoguang2 = value.toDouble();
-		if (globalThread.camera2)
-		{
-			globalThread.camera2->setExposureTime(static_cast<size_t>(value.toDouble()));
-		}
 	}
 }
 
@@ -474,13 +469,8 @@ void DlgProductSet::pbtn_zengyi2_clicked()
 			return;
 		}
 		auto& globalStructSetConfig = GlobalData::getInstance().setConfig;
-		auto& globalThread = GlobalThread::getInstance();
 		ui->pbtn_zengyi2->setText(value);
 		globalStructSetConfig.zengyi2 = value.toDouble();
-		if (globalThread.camera2)
-		{
-			globalThread.camera2->setGain(static_cast<size_t>(value.toDouble()));
-		}
 	}
 }
 

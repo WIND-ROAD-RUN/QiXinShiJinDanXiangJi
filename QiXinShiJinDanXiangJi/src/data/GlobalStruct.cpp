@@ -21,13 +21,11 @@ GlobalThread::~GlobalThread()
 void GlobalThread::buildCamera()
 {
 	buildCamera1();
-	buildCamera2();
 }
 
 void GlobalThread::destroyCamera()
 {
 	destroyCamera1();
-	destroyCamera2();
 }
 
 bool GlobalThread::buildCamera1()
@@ -64,52 +62,11 @@ bool GlobalThread::buildCamera1()
 	return false;
 }
 
-bool GlobalThread::buildCamera2()
-{
-	auto cameraList = rw::rqw::CheckCameraList();
-
-	auto cameraMetaData2 = cameraMetaDataCheck(cameraIp2, cameraList);
-
-	auto& globalDataSetConfig = GlobalData::getInstance().setConfig;
-
-	if (cameraMetaData2.ip != "0")
-	{
-		try
-		{
-			camera2 = std::make_unique<rw::rqw::CameraPassiveThread>(this);
-			camera2->initCamera(cameraMetaData2, rw::rqw::CameraObjectTrigger::Hardware);
-			camera2->setTriggerState(true);
-			camera2->cameraIndex = 2;
-			camera2->setFrameRate(50);
-			camera2->setHeartbeatTime(5000);
-			camera2->setExposureTime(static_cast<size_t>(globalDataSetConfig.baoguang2));
-			camera2->setGain(static_cast<size_t>(globalDataSetConfig.zengyi2));
-
-			QObject::connect(camera2.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
-				modelCamera2.get(), &ImageProcessingModuleDuckTongue::onFrameCaptured, Qt::DirectConnection);
-
-			return true;
-		}
-		catch (const std::exception&)
-		{
-			return false;
-		}
-	}
-	return false;
-}
-
 void GlobalThread::destroyCamera1()
 {
 	QObject::disconnect(camera1.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
 		modelCamera1.get(), &ImageProcessingModuleDuckTongue::onFrameCaptured);
 	camera1.reset();
-}
-
-void GlobalThread::destroyCamera2()
-{
-	QObject::disconnect(camera2.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
-		modelCamera2.get(), &ImageProcessingModuleDuckTongue::onFrameCaptured);
-	camera2.reset();
 }
 
 void GlobalThread::buildImageProcessorModules(const QString& path)
@@ -173,13 +130,9 @@ void GlobalThread::build_CameraAndCardStateThreadDuckTongue()
 	// 相机重连
 	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::buildCamera1,
 		this, &GlobalThread::rebuild_Camera1, Qt::QueuedConnection);
-	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::buildCamera2,
-		this, &GlobalThread::rebuild_Camera2, Qt::QueuedConnection);
 	// 相机销毁
 	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::destroyCamera1,
 		this, &GlobalThread::destroy_Camera1, Qt::QueuedConnection);
-	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::destroyCamera2,
-		this, &GlobalThread::destroy_Camera2, Qt::QueuedConnection);
 }
 
 void GlobalThread::destory_CameraAndCardStateThreadDuckTongue()
@@ -200,23 +153,9 @@ void GlobalThread::rebuild_Camera1()
 	}
 }
 
-void GlobalThread::rebuild_Camera2()
-{
-	buildCamera2();
-	if (camera2)
-	{
-		camera2->startMonitor();
-	}
-}
-
 void GlobalThread::destroy_Camera1()
 {
 	destroyCamera1();
-}
-
-void GlobalThread::destroy_Camera2()
-{
-	destroyCamera2();
 }
 
 GlobalFuncObject& GlobalFuncObject::getInstance()

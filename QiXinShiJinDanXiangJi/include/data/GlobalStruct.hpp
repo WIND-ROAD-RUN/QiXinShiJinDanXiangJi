@@ -36,16 +36,12 @@ private:
 	~GlobalThread() override;
 public:
 	std::unique_ptr<rw::rqw::CameraPassiveThread> camera1{ nullptr };
-	std::unique_ptr<rw::rqw::CameraPassiveThread> camera2{ nullptr };
 	QString cameraIp1{ "1" };
-	QString cameraIp2{ "2" };
 	void buildCamera();
 	bool buildCamera1();
-	bool buildCamera2();
 
 	void destroyCamera();
 	void destroyCamera1();
-	void destroyCamera2();
 public:
 	// 图像处理模块
 	std::unique_ptr<ImageProcessingModuleDuckTongue> modelCamera1 = nullptr;
@@ -74,9 +70,7 @@ signals:
 public slots:
 	// 相机重连
 	void rebuild_Camera1();
-	void rebuild_Camera2();
 	void destroy_Camera1();
-	void destroy_Camera2();
 public:
 	bool isTargetCamera(const QString& cameraIndex, const QString& targetName);
 	rw::rqw::CameraMetaData cameraMetaDataCheck(const QString& cameraIndex, const QVector<rw::rqw::CameraMetaData>& cameraInfo);

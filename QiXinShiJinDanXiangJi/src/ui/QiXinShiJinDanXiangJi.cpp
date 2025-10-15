@@ -251,13 +251,9 @@ void QiXinShiJinDanXiangJi::build_camera()
 	auto& globalThread = GlobalThread::getInstance();
 
 	globalThread.cameraIp1 = "1";
-	globalThread.cameraIp2 = "2";
 
 	auto build1Result = globalThread.buildCamera1();
 	updateCameraLabelState(1, build1Result);
-
-	auto build2Result = globalThread.buildCamera2();
-	updateCameraLabelState(2, build2Result);
 }
 
 void QiXinShiJinDanXiangJi::start_camera()
@@ -266,10 +262,6 @@ void QiXinShiJinDanXiangJi::start_camera()
 	if (globalThread.camera1 != nullptr)
 	{
 		globalThread.camera1->startMonitor();
-	}
-	if (globalThread.camera2 != nullptr)
-	{
-		globalThread.camera2->startMonitor();
 	}
 }
 
@@ -629,11 +621,6 @@ void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
 				globalThread.camera1->setTriggerState(false);
 				globalThread.camera1->setFrameRate(5);
 			}
-			if (globalThread.camera2)
-			{
-				globalThread.camera2->setTriggerState(false);
-				globalThread.camera2->setFrameRate(5);
-			}
 			ui->rbtn_takePicture->setChecked(false);
 		}
 		else {
@@ -680,11 +667,6 @@ void QiXinShiJinDanXiangJi::rbtn_removeFunc_checked(bool checked)
 		{
 			globalThread.camera1->setTriggerState(true);
 			globalThread.camera1->setFrameRate(50);
-		}
-		if (globalThread.camera2)
-		{
-			globalThread.camera2->setTriggerState(true);
-			globalThread.camera2->setFrameRate(50);
 		}
 		ui->rbtn_debug->setChecked(false);
 		ui->ckb_shibiekuang->setVisible(false);
