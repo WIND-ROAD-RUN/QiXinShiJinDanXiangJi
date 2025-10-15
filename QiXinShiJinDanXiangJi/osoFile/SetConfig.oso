@@ -1,0 +1,38 @@
+#include <string>
+
+namespace cdm {
+	class SetConfig
+	{
+	public:
+		tiFeiChiXuShiJian1 : double :default = 0;
+		tifeijuli1 : double :default = 0;
+
+		tiFeiChiXuShiJian2 : double :default = 0;
+		tifeijuli2 : double :default = 0;
+
+		shangXianWei1 : double :default = 0;
+		xiaXianWei1 : double :default = 0;
+		zuoXianWei1 : double :default = 0;
+		youXianWei1 : double :default = 0;
+		baoguang1 : double :default = 0;
+		zengyi1 : double :default = 0;
+		xiangSuDangLiang1 : double :default = 0;
+
+		shangXianWei2 : double :default = 0;
+		xiaXianWei2 : double :default = 0;
+		zuoXianWei2 : double :default = 0;
+		youXianWei2 : double :default = 0;
+		baoguang2 : double :default = 0;
+		zengyi2 : double :default = 0;
+		xiangSuDangLiang2 : double :default = 0;
+
+		takeWork1Pictures : bool :default = false;
+		takeWork2Pictures : bool :default = false;
+		saveNGImg : bool :default = false;
+		saveMaskImg : bool :default = false;
+		saveOKImg : bool :default = false;
+
+		qiyongerxiangji : bool :default = false;
+		qiyongxiangjichonglian : bool :default = false;
+	};
+}

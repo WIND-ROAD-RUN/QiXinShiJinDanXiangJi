@@ -1,0 +1,11 @@
+#include <string>
+
+namespace cdm {
+	class ScoreConfig
+	{
+	public:
+		Ng : bool :default = false;
+		NgScore : double :default = 0;
+		NgArea : double :default = 0;
+	};
+}
