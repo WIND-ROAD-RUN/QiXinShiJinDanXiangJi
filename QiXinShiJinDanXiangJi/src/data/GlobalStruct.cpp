@@ -32,7 +32,7 @@ bool GlobalThread::buildCamera1()
 {
 	auto cameraList = rw::rqw::CheckCameraList();
 
-	auto cameraMetaData1 = cameraMetaDataCheck(cameraIp1, cameraList);
+	auto cameraMetaData1 = cameraMetaDataCheck(Utility::cameraIp1, cameraList);
 
 	auto& globalDataSetConfig = GlobalData::getInstance().setConfig;
 
@@ -142,6 +142,12 @@ void GlobalThread::build_CameraAndCardStateThreadDuckTongue()
 	// 相机销毁
 	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::destroyCamera1,
 		this, &GlobalThread::destroy_Camera1, Qt::QueuedConnection);
+	// 运动控制器重连
+	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::buildZMotion,
+		this, &GlobalThread::rebuild_ZMotion, Qt::QueuedConnection);
+	// 运动控制器销毁
+	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::destroyZMotion,
+		this, &GlobalThread::destroy_ZMotion, Qt::QueuedConnection);
 }
 
 void GlobalThread::destroy_CameraAndCardStateThreadDuckTongue()
@@ -182,6 +188,16 @@ void GlobalThread::rebuild_Camera1()
 void GlobalThread::destroy_Camera1()
 {
 	destroyCamera1();
+}
+
+void GlobalThread::rebuild_ZMotion()
+{
+	build_ZMotion();
+}
+
+void GlobalThread::destroy_ZMotion()
+{
+	Destroy_ZMotion();
 }
 
 GlobalFuncObject& GlobalFuncObject::getInstance()

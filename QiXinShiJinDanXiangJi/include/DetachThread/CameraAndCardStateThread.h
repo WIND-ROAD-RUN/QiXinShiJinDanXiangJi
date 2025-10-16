@@ -26,6 +26,8 @@ protected:
 private:
 	void check_cameraState();
 	void check_cameraState1();
+
+	void check_cardState();
 signals:
 	void updateCameraLabelState(int cameraIndex, bool state);
 	void updateCardLabelState(bool state);
@@ -33,10 +35,11 @@ signals:
 
 signals:
 	void buildCamera1();
-
 	void destroyCamera1();
-
 	void startMonitor1();
+
+	void buildZMotion();
+	void destroyZMotion();
 private:
 	std::atomic<bool> running; // 使用原子变量保证线程安全
 };

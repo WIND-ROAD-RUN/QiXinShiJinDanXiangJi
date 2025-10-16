@@ -5,7 +5,6 @@
 #include "DetachDefectThread.h"
 #include "DetachUtiltyThread.h"
 #include "dsl_Heap.hpp"
-#include "QiXinShiJinDanXiangJi.h"
 #include "QiXinShiJinDanXiangJi.hpp"
 #include "SetConfig.hpp"
 #include "oso_StorageContext.hpp"
@@ -37,7 +36,6 @@ private:
 	~GlobalThread() override;
 public:
 	std::unique_ptr<rw::rqw::CameraPassiveThread> camera1{ nullptr };
-	QString cameraIp1{ "1" };
 	void buildCamera();
 	bool buildCamera1();
 
@@ -81,6 +79,9 @@ public slots:
 	// 相机重连
 	void rebuild_Camera1();
 	void destroy_Camera1();
+	// 运动控制器重连
+	void rebuild_ZMotion();
+	void destroy_ZMotion();
 public:
 	bool isTargetCamera(const QString& cameraIndex, const QString& targetName);
 	rw::rqw::CameraMetaData cameraMetaDataCheck(const QString& cameraIndex, const QVector<rw::rqw::CameraMetaData>& cameraInfo);

@@ -232,8 +232,6 @@ void QiXinShiJinDanXiangJi::build_camera()
 {
 	auto& globalThread = GlobalThread::getInstance();
 
-	globalThread.cameraIp1 = "1";
-
 	auto build1Result = globalThread.buildCamera1();
 	updateCameraLabelState(1, build1Result);
 }
