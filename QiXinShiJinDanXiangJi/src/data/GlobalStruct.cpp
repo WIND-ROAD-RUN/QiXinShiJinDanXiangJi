@@ -203,13 +203,6 @@ void GlobalFuncObject::saveQiXinShiJinDanXiangJiConfig()
 	storeContext->saveSafe(globalStruct.qiXinShiJinDanXiangJiConfig, generalConfigPath);
 }
 
-void GlobalFuncObject::saveScoreConfig()
-{
-	auto& globalStruct = GlobalData::getInstance();
-	std::string scoreConfigPath = globalPath.scoreConfigPath.toStdString();
-	storeContext->saveSafe(globalStruct.scoreConfig, scoreConfigPath);
-}
-
 void GlobalFuncObject::saveSetConfig()
 {
 	auto& globalStruct = GlobalData::getInstance();

@@ -9,7 +9,6 @@ public:
 	QString configRootPath = projectHome + R"(config\)";
 	QString modelRootPath = projectHome + R"(model\)";
 	QString qiXinShiJinDanXiangJiConfigPath = configRootPath + R"(QiXinShiJinDanXiangJiConfig.xml)";
-	QString scoreConfigPath = configRootPath + R"(ScoreConfig.xml)";
 	QString setConfigPath = configRootPath + R"(SetConfig.xml)";
 	QString modelPath = modelRootPath + R"(DuckTongue.engine)";
 }globalPath;

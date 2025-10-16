@@ -28,7 +28,6 @@ QiXinShiJinDanXiangJi::~QiXinShiJinDanXiangJi()
 void QiXinShiJinDanXiangJi::build_ui()
 {
 	build_QiXinShiJinDanXiangJiData();
-	build_DlgProductScore();
 	build_DlgProductSet();
 	build_DlgCloseForm();
 }
@@ -81,11 +80,6 @@ void QiXinShiJinDanXiangJi::build_QiXinShiJinDanXiangJiData()
 	ini_clickableTitle();
 }
 
-void QiXinShiJinDanXiangJi::build_DlgProductScore()
-{
-	_dlgProductScore = new DlgProductScore(this);
-}
-
 void QiXinShiJinDanXiangJi::build_DlgProductSet()
 {
 	_dlgProductSet = new DlgProductSet(this);
@@ -113,7 +107,6 @@ void QiXinShiJinDanXiangJi::read_config()
 	globalFuncObject.buildConfigManager(rw::oso::StorageType::Xml);
 
 	read_config_QiXinShiJinDanXiangJiConfig();
-	read_config_DlgProductScoreConfig();
 	read_config_DlgProductSetConfig();
 }
 
@@ -130,21 +123,6 @@ void QiXinShiJinDanXiangJi::read_config_QiXinShiJinDanXiangJiConfig()
 		return;
 	}
 	globalData.qiXinShiJinDanXiangJiConfig = *loadResult;
-}
-
-void QiXinShiJinDanXiangJi::read_config_DlgProductScoreConfig()
-{
-	auto& globalFunc = GlobalFuncObject::getInstance();
-	auto& globalData = GlobalData::getInstance();
-
-	globalFunc.storeContext->ensureFileExistsSafe(globalPath.scoreConfigPath.toStdString(), cdm::ScoreConfig());
-	auto loadResult = globalFunc.storeContext->loadSafe(globalPath.scoreConfigPath.toStdString());
-	if (!loadResult)
-	{
-		globalFunc.storeContext->saveSafe(cdm::ScoreConfig(), globalPath.scoreConfigPath.toStdString());
-		return;
-	}
-	globalData.scoreConfig = *loadResult;
 }
 
 void QiXinShiJinDanXiangJi::read_config_DlgProductSetConfig()
@@ -167,7 +145,6 @@ void QiXinShiJinDanXiangJi::save_config()
 	auto& globalFuncObject = GlobalFuncObject::getInstance();
 
 	globalFuncObject.saveQiXinShiJinDanXiangJiConfig();
-	globalFuncObject.saveScoreConfig();
 	globalFuncObject.saveSetConfig();
 }
 
@@ -294,7 +271,6 @@ void QiXinShiJinDanXiangJi::build_ImageProcessingModule()
 	QObject::connect(this, &QiXinShiJinDanXiangJi::wenziChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::wenziChanged);
 	QObject::connect(_dlgProductSet, &DlgProductSet::pixToWorldChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
 	QObject::connect(_dlgProductSet, &DlgProductSet::tifeijuliChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
-	QObject::connect(_dlgProductScore, &DlgProductScore::scoreFormClosed, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
 }
 
 void QiXinShiJinDanXiangJi::destroy_ImageProcessingModule()
@@ -420,8 +396,6 @@ void QiXinShiJinDanXiangJi::lb_title_clicked()
 		// 最小化所有子窗体（如果已创建且可见）
 		if (_dlgProductSet && _dlgProductSet->isVisible())
 			_dlgProductSet->showMinimized();
-		if (_dlgProductScore && _dlgProductScore->isVisible())
-			_dlgProductScore->showMinimized();
 
 		minimizeCount = 3; // 重置最小化计数器
 	}

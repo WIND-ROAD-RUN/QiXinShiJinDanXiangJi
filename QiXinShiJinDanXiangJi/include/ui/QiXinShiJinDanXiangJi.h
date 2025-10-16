@@ -2,7 +2,6 @@
 
 #include <QMainWindow>
 
-#include "DlgProductScore.h"
 #include "DlgProductSet.h"
 #include "PictureViewerThumbnails.h"
 #include "rqw_LabelClickable.h"
@@ -26,14 +25,12 @@ public:
 	void build_ui();
 	void build_connect();
 	void build_QiXinShiJinDanXiangJiData();
-	void build_DlgProductScore();
 	void build_DlgProductSet();
 	void ini_clickableTitle();
 	void build_DlgCloseForm();
 public:
 	void read_config();
 	void read_config_QiXinShiJinDanXiangJiConfig();
-	void read_config_DlgProductScoreConfig();
 	void read_config_DlgProductSetConfig();
 public:
 	void save_config();
@@ -96,7 +93,6 @@ public:
 private:
 	rw::rqw::ClickableLabel* clickableTitle = nullptr;
 public:
-	DlgProductScore* _dlgProductScore = nullptr;
 	DlgProductSet* _dlgProductSet = nullptr;
 	DlgCloseForm* _dlgCloseForm = nullptr;
 private:

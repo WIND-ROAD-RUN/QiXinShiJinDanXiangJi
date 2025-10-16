@@ -98,7 +98,6 @@ public:
 	std::unique_ptr<rw::oso::StorageContext> storeContext{ nullptr };
 	void buildConfigManager(rw::oso::StorageType type);
 	void saveQiXinShiJinDanXiangJiConfig();
-	void saveScoreConfig();
 	void saveSetConfig();
 };
 
