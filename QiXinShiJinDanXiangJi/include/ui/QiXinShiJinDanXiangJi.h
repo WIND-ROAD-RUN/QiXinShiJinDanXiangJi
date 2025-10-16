@@ -59,6 +59,8 @@ public:
 public:
 	void build_DetachUtiltyThread();
 	void destroy_DetachUtiltyThread();
+public slots:
+	void changeLanguage(int index);
 private slots:
 	void updateCameraLabelState(int cameraIndex, bool state);
 

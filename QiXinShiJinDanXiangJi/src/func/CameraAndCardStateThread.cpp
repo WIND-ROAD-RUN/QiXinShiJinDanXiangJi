@@ -2,10 +2,10 @@
 
 #include "GlobalStruct.hpp"
 
-size_t CameraAndCardStateThreadDuckTongue::runtimeCounts=0;
+size_t CameraAndCardStateThreadDuckTongue::runtimeCounts = 0;
 
 CameraAndCardStateThreadDuckTongue::CameraAndCardStateThreadDuckTongue(QObject* parent)
-	: QThread(parent), running(false), _dlgProductSet(GlobalData::getInstance().setConfig){
+	: QThread(parent), running(false), _dlgProductSet(GlobalData::getInstance().setConfig) {
 }
 
 CameraAndCardStateThreadDuckTongue::~CameraAndCardStateThreadDuckTongue()
@@ -31,10 +31,8 @@ void CameraAndCardStateThreadDuckTongue::run()
 {
 	while (running) {
 		QThread::msleep(2000);
-		if (_dlgProductSet.qiyongxiangjichonglian)
-		{
-			check_cameraState();
-		}
+
+		check_cameraState();
 
 		runtimeCounts++;
 		if (runtimeCounts == 4) {

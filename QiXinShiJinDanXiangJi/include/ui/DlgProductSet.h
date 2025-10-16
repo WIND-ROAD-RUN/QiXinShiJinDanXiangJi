@@ -24,36 +24,27 @@ signals:
 	void pixToWorldChanged();
 	void tifeijuliChanged();
 
+	void emit_changeLanguage(int index);
+public slots:
+	void changeLanguage(int index);
 private slots:
-	void pbtn_close_clicked();
+	void btn_close_clicked();
 
-	void pbtn_tifeichixushijian1_clicked();
-	void pbtn_tifeijuli1_clicked();
-	void pbtn_tifeichixushijian2_clicked();
-	void pbtn_tifeijuli2_clicked();
-	void pbtn_shangxianwei1_clicked();
-	void pbtn_xiaxianwei1_clicked();
-	void pbtn_zuoxianwei1_clicked();
-	void pbtn_youxianwei1_clicked();
-	void pbtn_baoguang1_clicked();
-	void pbtn_zengyi1_clicked();
-	void pbtn_xiangsudangliang1_clicked();
-	void pbtn_shangxianwei2_clicked();
-	void pbtn_xiaxianwei2_clicked();
-	void pbtn_zuoxianwei2_clicked();
-	void pbtn_youxianwei2_clicked();
-	void pbtn_baoguang2_clicked();
-	void pbtn_zengyi2_clicked();
-	void pbtn_xiangsudangliang2_clicked();
+	void btn_chuiqishijian_clicked();
+	void btn_xiangsudangliang_clicked();
+	void btn_jishuguangdianyanshi_clicked();
+	void btn_paizhaoyanshi_clicked();
+	void btn_tifeiyanshi_clicked();
+	void btn_score_clicked();
+	void btn_cipinguangdianjiange_clicked();
+	void btn_fenliaojishu_clicked();
+	void btn_xiangjiguangdianpingbishijian_clicked();
+	void btn_pidaiduibiyanse_clicked();
 
-	void cBox_takeNgPictures_checked();
-	void cBox_takeMaskPictures_checked();
-	void cBox_takeOkPictures_checked();
-	void cBox_takeCamera1Pictures_checked();
-	void cBox_takeCamera2Pictures_checked();
-	void cbox_qiyongerxiangji_checked();
-	void cbox_qiyongxiangjichonglian_checked();
-
+	void btn_shangxianwei_clicked();
+	void btn_xiaxianwei_clicked();
+	void btn_baoguang_clicked();
+	void btn_zengyi_clicked();
 private:
 	Ui::DlgProductSetClass* ui;
 };

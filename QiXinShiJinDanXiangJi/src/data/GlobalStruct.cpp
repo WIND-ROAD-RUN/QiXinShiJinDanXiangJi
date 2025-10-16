@@ -46,8 +46,8 @@ bool GlobalThread::buildCamera1()
 			camera1->cameraIndex = 1;
 			camera1->setFrameRate(50);
 			camera1->setHeartbeatTime(5000);
-			camera1->setExposureTime(static_cast<size_t>(globalDataSetConfig.baoguang1));
-			camera1->setGain(static_cast<size_t>(globalDataSetConfig.zengyi1));
+			camera1->setExposureTime(static_cast<size_t>(globalDataSetConfig.baoguang));
+			camera1->setGain(static_cast<size_t>(globalDataSetConfig.zengyi));
 
 			QObject::connect(camera1.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
 				modelCamera1.get(), &ImageProcessingModuleDuckTongue::onFrameCaptured, Qt::DirectConnection);

@@ -221,25 +221,10 @@ void ImageProcessorDuckTongue::drawBoundariesLines(QImage& image)
 	configDrawLine.thickness = 20;
 	if (index == 1)
 	{
-		configDrawLine.position = setConfig.shangXianWei1;
+		configDrawLine.position = setConfig.shangxianwei;
 		rw::imgPro::ImagePainter::drawHorizontalLine(image, configDrawLine);
-		configDrawLine.position = setConfig.xiaXianWei1;
+		configDrawLine.position = setConfig.xiaxianwei;
 		rw::imgPro::ImagePainter::drawHorizontalLine(image, configDrawLine);
-		configDrawLine.position = setConfig.zuoXianWei1;
-		rw::imgPro::ImagePainter::drawVerticalLine(image, configDrawLine);
-		configDrawLine.position = setConfig.youXianWei1;
-		rw::imgPro::ImagePainter::drawVerticalLine(image, configDrawLine);
-	}
-	else if (index == 2)
-	{
-		configDrawLine.position = setConfig.shangXianWei2;
-		rw::imgPro::ImagePainter::drawHorizontalLine(image, configDrawLine);
-		configDrawLine.position = setConfig.xiaXianWei2;
-		rw::imgPro::ImagePainter::drawHorizontalLine(image, configDrawLine);
-		configDrawLine.position = setConfig.zuoXianWei2;
-		rw::imgPro::ImagePainter::drawVerticalLine(image, configDrawLine);
-		configDrawLine.position = setConfig.youXianWei2;
-		rw::imgPro::ImagePainter::drawVerticalLine(image, configDrawLine);
 	}
 }
 
@@ -249,17 +234,8 @@ void ImageProcessorDuckTongue::updateShieldWires()
 	auto& index = imageProcessingModuleIndex;
 	if (1 == index)
 	{
-		leftShieldWire = globalStructSetConfig.zuoXianWei1;
-		rightShieldWire = globalStructSetConfig.youXianWei1;
-		topShieldWire = globalStructSetConfig.shangXianWei1;
-		bottomShieldWire = globalStructSetConfig.xiaXianWei1;
-	}
-	else
-	{
-		leftShieldWire = globalStructSetConfig.zuoXianWei2;
-		rightShieldWire = globalStructSetConfig.youXianWei2;
-		topShieldWire = globalStructSetConfig.shangXianWei2;
-		bottomShieldWire = globalStructSetConfig.xiaXianWei2;
+		topShieldWire = globalStructSetConfig.shangxianwei;
+		bottomShieldWire = globalStructSetConfig.xiaxianwei;
 	}
 
 }
@@ -309,15 +285,8 @@ void ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct()
 	NgMap["enable"] = globalStruct.scoreConfig.Ng;*/
 	if (1 == imageProcessingModuleIndex)
 	{
-		NgMap["pixToWorld"] = globalStruct.setConfig.xiangSuDangLiang1;
-		pixToWorld = globalStruct.setConfig.xiangSuDangLiang1;
-		tifeijuli = globalStruct.setConfig.tifeijuli1;
-	}
-	else
-	{
-		NgMap["pixToWorld"] = globalStruct.setConfig.xiangSuDangLiang2;
-		pixToWorld = globalStruct.setConfig.xiangSuDangLiang2;
-		tifeijuli = globalStruct.setConfig.tifeijuli2;
+		NgMap["pixToWorld"] = globalStruct.setConfig.xiangsudangliang;
+		pixToWorld = globalStruct.setConfig.xiangsudangliang;
 	}
 
 	rw::imgPro::EliminationInfoFunc::ClassIdWithConfigMap eliminationInfoGetConfigs;
