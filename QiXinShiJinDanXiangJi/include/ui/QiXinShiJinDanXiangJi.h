@@ -59,6 +59,9 @@ public:
 public:
 	void build_DetachUtiltyThread();
 	void destroy_DetachUtiltyThread();
+public:
+	void build_zmotion();
+	void destroy_zmotion();
 public slots:
 	void changeLanguage(int index);
 private slots:

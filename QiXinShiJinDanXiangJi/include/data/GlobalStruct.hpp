@@ -13,6 +13,8 @@
 #include "rqw_ImageSaveEngine.h"
 #include "ImageProcessorModule.hpp"
 #include "CameraAndCardStateThread.h"
+#include "rqw_ZMotion.hpp"
+
 
 enum class RunningState
 {
@@ -66,7 +68,12 @@ public:
 	CameraAndCardStateThreadDuckTongue* cameraAndCardStateThreadDuckTongue;
 public:
 	void build_CameraAndCardStateThreadDuckTongue();
-	void destory_CameraAndCardStateThreadDuckTongue();
+	void destroy_CameraAndCardStateThreadDuckTongue();
+public:
+	std::shared_ptr<rw::rqw::ZMotion> zmotion{ nullptr };
+
+	bool build_ZMotion();
+	void Destroy_ZMotion();
 signals:
 	// 更新UI
 	void emit_updateUiLabels(int index, bool isConnected);

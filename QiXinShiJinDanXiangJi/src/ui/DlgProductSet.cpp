@@ -52,6 +52,7 @@ void DlgProductSet::read_config()
 	ui->btn_zengyi->setText(QString::number(setConfig.zengyi));
 
 	ui->cbox_changeLanguage->setCurrentIndex(setConfig.changeLanguageIndex);
+	changeLanguage(setConfig.changeLanguageIndex);
 }
 
 void DlgProductSet::build_connect()

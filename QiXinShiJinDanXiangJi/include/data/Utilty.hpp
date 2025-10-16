@@ -23,3 +23,9 @@ private:
 	static int min() { return Ng; }
 };
 
+struct Utility
+{
+	static QString cameraIp1;
+	static QString zmotionIp;
+};
+

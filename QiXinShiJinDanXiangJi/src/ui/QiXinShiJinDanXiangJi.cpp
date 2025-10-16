@@ -62,21 +62,22 @@ void QiXinShiJinDanXiangJi::build_connect()
 void QiXinShiJinDanXiangJi::build_QiXinShiJinDanXiangJiData()
 {
 	auto& globalStruct = GlobalData::getInstance();
-	auto& paperCupsConfig = globalStruct.qiXinShiJinDanXiangJiConfig;
-	paperCupsConfig.isDebug = false;
-	paperCupsConfig.isDefect = true;		// 默认开启剔废
-	paperCupsConfig.isshibiekuang = true;
-	paperCupsConfig.iswenzi = false;
+	auto& qiXinShiJinDanXiangJiConfig = globalStruct.qiXinShiJinDanXiangJiConfig;
+	auto& setConfig = globalStruct.setConfig;
+	qiXinShiJinDanXiangJiConfig.isDebug = false;
+	qiXinShiJinDanXiangJiConfig.isDefect = true;		// 默认开启剔废
+	qiXinShiJinDanXiangJiConfig.isshibiekuang = true;
+	qiXinShiJinDanXiangJiConfig.iswenzi = false;
 
-	ui->label_produceTotalValue->setText(QString::number(paperCupsConfig.totalProductionVolume));
-	ui->label_wasteProductsValue->setText(QString::number(paperCupsConfig.totalDefectiveVolume));
-	ui->pbtn_bagLength->setText(QString::number(paperCupsConfig.setBagLength));
-	ui->pbtn_bagWidth->setText(QString::number(paperCupsConfig.setBagWidth));
-	ui->rbtn_removeFunc->setChecked(paperCupsConfig.isDefect);
-	rbtn_removeFunc_checked(paperCupsConfig.isDefect);
-	ui->ckb_shibiekuang->setChecked(paperCupsConfig.isshibiekuang);
-	ui->ckb_wenzi->setChecked(paperCupsConfig.iswenzi);
-
+	ui->label_produceTotalValue->setText(QString::number(qiXinShiJinDanXiangJiConfig.totalProductionVolume));
+	ui->label_wasteProductsValue->setText(QString::number(qiXinShiJinDanXiangJiConfig.totalDefectiveVolume));
+	ui->pbtn_bagLength->setText(QString::number(qiXinShiJinDanXiangJiConfig.setBagLength));
+	ui->pbtn_bagWidth->setText(QString::number(qiXinShiJinDanXiangJiConfig.setBagWidth));
+	ui->rbtn_removeFunc->setChecked(qiXinShiJinDanXiangJiConfig.isDefect);
+	rbtn_removeFunc_checked(qiXinShiJinDanXiangJiConfig.isDefect);
+	ui->ckb_shibiekuang->setChecked(qiXinShiJinDanXiangJiConfig.isshibiekuang);
+	ui->ckb_wenzi->setChecked(qiXinShiJinDanXiangJiConfig.iswenzi);
+	changeLanguage(setConfig.changeLanguageIndex);
 	ini_clickableTitle();
 }
 
@@ -184,6 +185,8 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 
 	build_camera();
 
+	build_zmotion();
+
 	build_PriorityQueue();
 
 	build_DetachDefectThreadDuckTongue();
@@ -217,6 +220,8 @@ void QiXinShiJinDanXiangJi::destroyComponents()
 	destroy_PriorityQueue();
 
 	destroy_ImageProcessingModule();
+
+	destroy_zmotion();
 
 	destroy_camera();
 
@@ -293,7 +298,7 @@ void QiXinShiJinDanXiangJi::build_CameraAndBoardReconnectThread()
 void QiXinShiJinDanXiangJi::destroy_CameraAndBoardReconnectThread()
 {
 	auto& globalThread = GlobalThread::getInstance();
-	globalThread.destory_CameraAndCardStateThreadDuckTongue();
+	globalThread.destroy_CameraAndCardStateThreadDuckTongue();
 }
 
 void QiXinShiJinDanXiangJi::build_PriorityQueue()
@@ -334,6 +339,20 @@ void QiXinShiJinDanXiangJi::destroy_DetachUtiltyThread()
 {
 	auto& globalThread = GlobalThread::getInstance();
 	globalThread.destroy_DetachUtiltyThread();
+}
+
+void QiXinShiJinDanXiangJi::build_zmotion()
+{
+	auto& globalThread = GlobalThread::getInstance();
+	auto buildResult = globalThread.build_ZMotion();
+
+	updateCameraLabelState(0, buildResult);
+}
+
+void QiXinShiJinDanXiangJi::destroy_zmotion()
+{
+	auto& globalThread = GlobalThread::getInstance();
+	globalThread.Destroy_ZMotion();
 }
 
 void QiXinShiJinDanXiangJi::changeLanguage(int index)

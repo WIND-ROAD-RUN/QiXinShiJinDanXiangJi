@@ -144,12 +144,29 @@ void GlobalThread::build_CameraAndCardStateThreadDuckTongue()
 		this, &GlobalThread::destroy_Camera1, Qt::QueuedConnection);
 }
 
-void GlobalThread::destory_CameraAndCardStateThreadDuckTongue()
+void GlobalThread::destroy_CameraAndCardStateThreadDuckTongue()
 {
 	if (cameraAndCardStateThreadDuckTongue)
 	{
 		delete cameraAndCardStateThreadDuckTongue;
 		cameraAndCardStateThreadDuckTongue = nullptr;
+	}
+}
+
+bool GlobalThread::build_ZMotion()
+{
+	zmotion = std::make_shared<rw::rqw::ZMotion>(Utility::zmotionIp);
+	zmotion->setIp(Utility::zmotionIp);
+	bool isConnected = zmotion->connect();
+	return isConnected;
+}
+
+void GlobalThread::Destroy_ZMotion()
+{
+	if (zmotion)
+	{
+		bool isDisconnect = zmotion->disConnect();
+		zmotion.reset();
 	}
 }
 
