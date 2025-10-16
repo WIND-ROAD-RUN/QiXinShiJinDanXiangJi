@@ -304,9 +304,9 @@ void ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct()
 	auto& globalStruct = GlobalData::getInstance();
 
 	NgMap["classId"] = 0;
-	NgMap["maxArea"] = globalStruct.scoreConfig.NgArea;
+	/*NgMap["maxArea"] = globalStruct.scoreConfig.NgArea;
 	NgMap["maxScore"] = globalStruct.scoreConfig.NgScore;
-	NgMap["enable"] = globalStruct.scoreConfig.Ng;
+	NgMap["enable"] = globalStruct.scoreConfig.Ng;*/
 	if (1 == imageProcessingModuleIndex)
 	{
 		NgMap["pixToWorld"] = globalStruct.setConfig.xiangSuDangLiang1;

@@ -8,8 +8,6 @@
 #include "QiXinShiJinDanXiangJi.h"
 #include "QiXinShiJinDanXiangJi.hpp"
 #include "SetConfig.hpp"
-#include "ScoreConfig.hpp"
-
 #include "oso_StorageContext.hpp"
 #include "rqw_CameraObjectThread.hpp"
 #include "rqw_ImageSaveEngine.h"
@@ -131,6 +129,5 @@ public:
 
 public:
 	cdm::QiXinShiJinDanXiangJiConfig qiXinShiJinDanXiangJiConfig;
-	cdm::ScoreConfig scoreConfig;
 	cdm::SetConfig setConfig;
 };
