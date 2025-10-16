@@ -53,6 +53,8 @@ void QiXinShiJinDanXiangJi::build_connect()
 		this, &QiXinShiJinDanXiangJi::pbtn_bagLength_clicked);
 	QObject::connect(ui->pbtn_bagWidth, &QPushButton::clicked,
 		this, &QiXinShiJinDanXiangJi::pbtn_bagWidth_clicked);
+	QObject::connect(ui->pbtn_resetProduct, &QPushButton::clicked,
+		this, &QiXinShiJinDanXiangJi::pbtn_resetProduct_clicked);
 	// 连接显示标题
 	QObject::connect(clickableTitle, &rw::rqw::ClickableLabel::clicked,
 		this, &QiXinShiJinDanXiangJi::lb_title_clicked);
@@ -561,6 +563,16 @@ void QiXinShiJinDanXiangJi::pbtn_bagWidth_clicked()
 		ui->pbtn_bagWidth->setText(value);
 		duckTongueConfig.setBagWidth = value.toDouble();
 	}
+}
+
+void QiXinShiJinDanXiangJi::pbtn_resetProduct_clicked()
+{
+	auto& qiXinShiJinDanXiangJiConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
+
+	qiXinShiJinDanXiangJiConfig.totalProductionVolume = 0;
+	qiXinShiJinDanXiangJiConfig.totalDefectiveVolume = 0;
+
+	onUpdateStatisticalInfoUI();
 }
 
 bool QiXinShiJinDanXiangJi::check()

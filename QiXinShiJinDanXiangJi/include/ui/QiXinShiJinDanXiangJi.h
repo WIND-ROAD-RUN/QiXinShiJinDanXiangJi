@@ -82,6 +82,7 @@ private slots:
 	void ckb_wenzi_checked(bool checked);
 	void pbtn_bagLength_clicked();
 	void pbtn_bagWidth_clicked();
+	void pbtn_resetProduct_clicked();
 
 signals:
 	void shibiekuangChanged();
