@@ -13,7 +13,6 @@
 #include <imgPro_ImageProcess.hpp>
 
 #include "rqw_CameraObjectCore.hpp"
-#include "rqw_ImageSaveEngine.h"
 
 
 // 图片信息
@@ -52,7 +51,7 @@ private:
 	std::unique_ptr<rw::imgPro::ImageProcess> _imgProcess;
 public:
 	// 构建模型引擎
-	void buildSegModelEngine(const QString& enginePath);		// Segmentation 模型
+	void buildDetModelEngine(const QString& enginePath);
 
 	void iniIndexGetContext();
 	void iniEliminationInfoFunc();
@@ -76,7 +75,9 @@ public slots:
 private:
 	// 判断是否有缺陷
 	bool _isbad{ false };
-	std::map<std::string, double> NgMap{};
+	std::map<std::string, double> BadMap{};
+	std::map<std::string, double> FengKouMap{};
+	std::map<std::string, double> JiaoDaiMap{};
 
 private:
 	QQueue<MatInfo>& _queue;
@@ -85,15 +86,8 @@ private:
 	int _workIndex;
 public:
 	int imageProcessingModuleIndex;
-	int leftShieldWire{ -1 };
-	int rightShieldWire{ -1 };
 	int topShieldWire{ -1 };
 	int bottomShieldWire{ -1 };
-	double pixToWorld{ 0 };
-	double tifeijuli{ 0 };
-
-	int index1Num{ 0 };
-	int index2Num{ 0 };
 };
 
 

@@ -17,10 +17,13 @@ public:
 struct ClassId
 {
 public:
-	static constexpr int Ng = 0;
-private:
-	static int max() { return Ng; }
-	static int min() { return Ng; }
+	static constexpr int Bad = 0;
+	static constexpr int FengKou = 1;
+	static constexpr int JiaoDai = 2;
+
+	static constexpr int min = 0;
+	static constexpr int max = 2;
+	static constexpr int num = 3;
 };
 
 struct Utility

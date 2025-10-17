@@ -117,7 +117,7 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc_emitErrorInfo(bool isbad) cons
 	}
 }
 
-void ImageProcessorDuckTongue::buildSegModelEngine(const QString& enginePath)
+void ImageProcessorDuckTongue::buildDetModelEngine(const QString& enginePath)
 {
 	rw::ModelEngineConfig modelEngineConfig;
 	modelEngineConfig.conf_threshold = 0.1f;
@@ -125,7 +125,7 @@ void ImageProcessorDuckTongue::buildSegModelEngine(const QString& enginePath)
 	modelEngineConfig.imagePretreatmentPolicy = rw::ImagePretreatmentPolicy::LetterBox;
 	modelEngineConfig.letterBoxColor = cv::Scalar(114, 114, 114);
 	modelEngineConfig.modelPath = enginePath.toStdString();
-	auto engine = rw::ModelEngineFactory::createModelEngine(modelEngineConfig, rw::ModelType::Yolov11_Seg_CudaAcc, rw::ModelEngineDeployType::TensorRT);
+	auto engine = rw::ModelEngineFactory::createModelEngine(modelEngineConfig, rw::ModelType::Yolov11_Det_CudaAcc, rw::ModelEngineDeployType::TensorRT);
 
 	_imgProcess = std::make_unique<rw::imgPro::ImageProcess>(engine);
 
@@ -142,18 +142,16 @@ void ImageProcessorDuckTongue::iniIndexGetContext()
 {
 	auto& context = _imgProcess->context();
 
-	context.indexGetContext.removeIndicesIfByInfo = [this](const rw::DetectionRectangleInfo& info,const rw::imgPro::ImageProcessContext& imageProcessContext) {
+	context.indexGetContext.removeIndicesIfByInfo = [this](const rw::DetectionRectangleInfo& info, const rw::imgPro::ImageProcessContext& imageProcessContext) {
 		bool isInShieldWires = false;
-		if (-1 == leftShieldWire || -1 == rightShieldWire || -1 == topShieldWire || -1 == bottomShieldWire)
+		if (-1 == topShieldWire || -1 == bottomShieldWire)
 		{
 			return false;
 		}
-		if (info.center_x < rightShieldWire && info.center_x > leftShieldWire)
+
+		if (info.center_y > topShieldWire && info.center_y < bottomShieldWire)
 		{
-			if (info.center_y > topShieldWire && info.center_y < bottomShieldWire)
-			{
-				isInShieldWires = true;
-			}
+			isInShieldWires = true;
 		}
 		return !isInShieldWires;
 		};
@@ -171,7 +169,7 @@ void ImageProcessorDuckTongue::iniEliminationInfoGetContext()
 	context.eliminationInfoGetContext.getEliminationItemFuncSpecialOperator = [this](rw::imgPro::EliminationItem& item,
 		const rw::DetectionRectangleInfo& info,
 		const rw::imgPro::EliminationInfoGetConfig& cfg) {
-			
+
 		};
 }
 
@@ -181,8 +179,12 @@ void ImageProcessorDuckTongue::iniDefectResultInfoFunc()
 
 	rw::imgPro::DefectResultInfoFunc::Config defectConfig;
 	rw::imgPro::DefectResultInfoFunc::ClassIdWithConfigMap defectConfigs;
-	defectConfig.isEnable = NgMap["enable"];
-	defectConfigs[ClassId::Ng] = defectConfig;
+	defectConfig.isEnable = BadMap["enable"];
+	defectConfigs[ClassId::Bad] = defectConfig;
+	defectConfig.isEnable = FengKouMap["enable"];
+	defectConfigs[ClassId::FengKou] = defectConfig;
+	defectConfig.isEnable = JiaoDaiMap["enable"];
+	defectConfigs[ClassId::JiaoDai] = defectConfig;
 	context.defectCfg = defectConfigs;
 }
 
@@ -190,7 +192,7 @@ void ImageProcessorDuckTongue::iniDefectResultGetContext()
 {
 	auto& context = _imgProcess->context();
 	context.defectResultGetContext.getDefectResultExtraOperate = [this](const rw::imgPro::EliminationItem& item, const rw::DetectionRectangleInfo& detectionRectangleInfo) {
-		
+
 		};
 }
 
@@ -202,8 +204,10 @@ void ImageProcessorDuckTongue::iniDefectDrawConfig()
 	updateDrawRec();
 	drawConfig.setAllIdsWithSameColor({ 0,1,2 }, rw::rqw::RQWColor::Green, true);
 	drawConfig.setAllIdsWithSameColor({ 0,1,2 }, rw::rqw::RQWColor::Red, false);
-	drawConfig.fontSize = 105;
-	drawConfig.classIdNameMap[0] = "重包";
+	drawConfig.fontSize = 30;
+	drawConfig.classIdNameMap[0] = "Bad";
+	drawConfig.classIdNameMap[1] = "封口";
+	drawConfig.classIdNameMap[2] = "胶带";
 	context.defectDrawCfg = drawConfig;
 }
 
@@ -218,7 +222,7 @@ void ImageProcessorDuckTongue::drawBoundariesLines(QImage& image)
 	auto& setConfig = GlobalData::getInstance().setConfig;
 	rw::imgPro::ConfigDrawLine configDrawLine;
 	configDrawLine.color = rw::imgPro::Color::Red;
-	configDrawLine.thickness = 20;
+	configDrawLine.thickness = 3;
 	if (index == 1)
 	{
 		configDrawLine.position = setConfig.shangxianwei;
@@ -279,27 +283,64 @@ void ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct()
 	auto& context = _imgProcess->context();
 	auto& globalStruct = GlobalData::getInstance();
 
-	NgMap["classId"] = 0;
-	/*NgMap["maxArea"] = globalStruct.scoreConfig.NgArea;
-	NgMap["maxScore"] = globalStruct.scoreConfig.NgScore;
-	NgMap["enable"] = globalStruct.scoreConfig.Ng;*/
+	BadMap["classId"] = 0;
+	BadMap["maxArea"] = 0;
+	BadMap["maxScore"] = globalStruct.setConfig.score;
+	BadMap["enable"] = true;
 	if (1 == imageProcessingModuleIndex)
 	{
-		NgMap["pixToWorld"] = globalStruct.setConfig.xiangsudangliang;
-		pixToWorld = globalStruct.setConfig.xiangsudangliang;
+		BadMap["pixToWorld"] = globalStruct.setConfig.xiangsudangliang;
+	}
+
+	FengKouMap["classId"] = 1;
+	FengKouMap["maxArea"] = 0;
+	FengKouMap["maxScore"] = globalStruct.setConfig.score;
+	FengKouMap["enable"] = true;
+	if (1 == imageProcessingModuleIndex)
+	{
+		FengKouMap["pixToWorld"] = globalStruct.setConfig.xiangsudangliang;
+	}
+
+	JiaoDaiMap["classId"] = 2;
+	JiaoDaiMap["maxArea"] = 0;
+	JiaoDaiMap["maxScore"] = globalStruct.setConfig.score;
+	JiaoDaiMap["enable"] = true;
+	if (1 == imageProcessingModuleIndex)
+	{
+		JiaoDaiMap["pixToWorld"] = globalStruct.setConfig.xiangsudangliang;
 	}
 
 	rw::imgPro::EliminationInfoFunc::ClassIdWithConfigMap eliminationInfoGetConfigs;
 	rw::imgPro::EliminationInfoGetConfig NgEliminationInfoGetConfig;
+	rw::imgPro::EliminationInfoGetConfig FengKouEliminationInfoGetConfig;
+	rw::imgPro::EliminationInfoGetConfig JiaoDaiEliminationInfoGetConfig;
 
-	NgEliminationInfoGetConfig.areaFactor = NgMap["pixToWorld"];//这里设置为像素当量
+	NgEliminationInfoGetConfig.areaFactor = BadMap["pixToWorld"];//这里设置为像素当量
 	NgEliminationInfoGetConfig.scoreFactor = 100;//这里设置为百分比当量
-	NgEliminationInfoGetConfig.isUsingArea = true;//这里设置为使用面积
+	NgEliminationInfoGetConfig.isUsingArea = false;//这里设置为使用面积
 	NgEliminationInfoGetConfig.isUsingScore = true;//这里设置为使用分数
-	NgEliminationInfoGetConfig.scoreRange = { 0,NgMap["maxScore"] };
-	NgEliminationInfoGetConfig.areaRange = { 0,NgMap["maxArea"] };
+	NgEliminationInfoGetConfig.scoreRange = { 0,BadMap["maxScore"] };
+	NgEliminationInfoGetConfig.areaRange = { 0,BadMap["maxArea"] };
 	NgEliminationInfoGetConfig.scoreIsUsingComplementarySet = false;
-	eliminationInfoGetConfigs[ClassId::Ng] = NgEliminationInfoGetConfig;
+	eliminationInfoGetConfigs[ClassId::Bad] = NgEliminationInfoGetConfig;
+
+	FengKouEliminationInfoGetConfig.areaFactor = FengKouMap["pixToWorld"];//这里设置为像素当量
+	FengKouEliminationInfoGetConfig.scoreFactor = 100;//这里设置为百分比当量
+	FengKouEliminationInfoGetConfig.isUsingArea = false;//这里设置为使用面积
+	FengKouEliminationInfoGetConfig.isUsingScore = true;//这里设置为使用分数
+	FengKouEliminationInfoGetConfig.scoreRange = { 0,FengKouMap["maxScore"] };
+	FengKouEliminationInfoGetConfig.areaRange = { 0,FengKouMap["maxArea"] };
+	FengKouEliminationInfoGetConfig.scoreIsUsingComplementarySet = false;
+	eliminationInfoGetConfigs[ClassId::Bad] = FengKouEliminationInfoGetConfig;
+
+	JiaoDaiEliminationInfoGetConfig.areaFactor = JiaoDaiMap["pixToWorld"];//这里设置为像素当量
+	JiaoDaiEliminationInfoGetConfig.scoreFactor = 100;//这里设置为百分比当量
+	JiaoDaiEliminationInfoGetConfig.isUsingArea = false;//这里设置为使用面积
+	JiaoDaiEliminationInfoGetConfig.isUsingScore = true;//这里设置为使用分数
+	JiaoDaiEliminationInfoGetConfig.scoreRange = { 0,JiaoDaiMap["maxScore"] };
+	JiaoDaiEliminationInfoGetConfig.areaRange = { 0,JiaoDaiMap["maxArea"] };
+	JiaoDaiEliminationInfoGetConfig.scoreIsUsingComplementarySet = false;
+	eliminationInfoGetConfigs[ClassId::Bad] = JiaoDaiEliminationInfoGetConfig;
 
 	context.eliminationCfg = eliminationInfoGetConfigs;
 
@@ -312,7 +353,7 @@ void ImageProcessingModuleDuckTongue::BuildModule()
 		static size_t workIndexCount = 0;
 		ImageProcessorDuckTongue* processor = new ImageProcessorDuckTongue(_queue, _mutex, _condition, workIndexCount, this);
 		workIndexCount++;
-		processor->buildSegModelEngine(modelEnginePath);
+		processor->buildDetModelEngine(modelEnginePath);
 		processor->imageProcessingModuleIndex = index;
 		connect(processor, &ImageProcessorDuckTongue::imageReady, this, &ImageProcessingModuleDuckTongue::imageReady, Qt::QueuedConnection);
 		connect(processor, &ImageProcessorDuckTongue::imageNGReady, this, &ImageProcessingModuleDuckTongue::imageNGReady, Qt::QueuedConnection);
@@ -355,9 +396,9 @@ ImageProcessingModuleDuckTongue::~ImageProcessingModuleDuckTongue()
 void ImageProcessingModuleDuckTongue::onFrameCaptured(rw::rqw::MatInfo matInfo, size_t index)
 {
 	// 手动读取本地图片
-	//std::string imagePath = "C:\\Users\\zzw\\Desktop\\saveimage\\123.jpg"; // 替换为你的图片路径
-	//cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
-	//frame = frame1.clone();
+	std::string imagePath = R"(C:\Users\zfkj4090\Desktop\Image_20241024165512138.jpg)"; // 替换为你的图片路径
+	cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
+	matInfo.mat = frame1.clone();
 	if (matInfo.mat.channels() == 4) {
 		cv::cvtColor(matInfo.mat, matInfo.mat, cv::COLOR_BGRA2BGR);
 	}
@@ -375,7 +416,7 @@ void ImageProcessingModuleDuckTongue::onFrameCaptured(rw::rqw::MatInfo matInfo, 
 	MatInfo mat;
 	mat.image = matInfo.mat;
 	mat.index = index;
-	if (index==1)
+	if (index == 1)
 	{
 		//mat.location = globalThread.zmotion.getModbus(2, 1);	// 获取拍照的位置
 	}

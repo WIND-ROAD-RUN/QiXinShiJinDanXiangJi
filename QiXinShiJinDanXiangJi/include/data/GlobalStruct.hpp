@@ -53,20 +53,20 @@ public:
 	void build_PriorityQueue();
 	void destroy_PriorityQueue();
 public:
-	DetachDefectThreadDuckTongue* detachDefectThreadDuckTongue;
+	DetachDefectThreadQiXinShiJin* detachDefectThreadQiXinShiJin;
 
-	void build_DetachDefectThreadDuckTongue();
-	void destroy_DetachDefectThreadDuckTongue();
+	void build_DetachDefectThread();
+	void destroy_DetachDefectThread();
 public:
 	DetachUtiltyThread* detachUtiltyThread;
 
 	void build_DetachUtiltyThread();
 	void destroy_DetachUtiltyThread();
 public:
-	CameraAndCardStateThreadDuckTongue* cameraAndCardStateThreadDuckTongue;
+	CameraAndCardStateThreadQiXinShiJin* cameraAndCardStateThreadQiXinShiJin;
 public:
-	void build_CameraAndCardStateThreadDuckTongue();
-	void destroy_CameraAndCardStateThreadDuckTongue();
+	void build_CameraAndCardStateThread();
+	void destroy_CameraAndCardStateThread();
 public:
 	std::shared_ptr<rw::rqw::ZMotion> zmotion{ nullptr };
 

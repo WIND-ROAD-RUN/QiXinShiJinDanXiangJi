@@ -2,18 +2,18 @@
 #include "GlobalStruct.hpp"
 #include <chrono>
 
-DetachDefectThreadDuckTongue::DetachDefectThreadDuckTongue(QObject* parent)
+DetachDefectThreadQiXinShiJin::DetachDefectThreadQiXinShiJin(QObject* parent)
 {
 
 }
 
-DetachDefectThreadDuckTongue::~DetachDefectThreadDuckTongue()
+DetachDefectThreadQiXinShiJin::~DetachDefectThreadQiXinShiJin()
 {
 	stopThread();
 	wait(); // 等待线程安全退出
 }
 
-void DetachDefectThreadDuckTongue::startThread()
+void DetachDefectThreadQiXinShiJin::startThread()
 {
 	running = true;
 	if (!isRunning()) {
@@ -21,12 +21,12 @@ void DetachDefectThreadDuckTongue::startThread()
 	}
 }
 
-void DetachDefectThreadDuckTongue::stopThread()
+void DetachDefectThreadQiXinShiJin::stopThread()
 {
 	running = false; // 停止线程
 }
 
-void DetachDefectThreadDuckTongue::processQueue(std::unique_ptr<rw::dsl::ThreadSafeHeap<float>>& queue)
+void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::ThreadSafeHeap<float>>& queue)
 {
 #ifdef BUILD_WITHOUT_HARDWARE
 	// 记录开始时间
@@ -58,7 +58,7 @@ void DetachDefectThreadDuckTongue::processQueue(std::unique_ptr<rw::dsl::ThreadS
 	#endif
 }
 
-void DetachDefectThreadDuckTongue::run()
+void DetachDefectThreadQiXinShiJin::run()
 {
 	auto& globalThread = GlobalThread::getInstance();
 	auto& priorityQueue = globalThread.priorityQueue;

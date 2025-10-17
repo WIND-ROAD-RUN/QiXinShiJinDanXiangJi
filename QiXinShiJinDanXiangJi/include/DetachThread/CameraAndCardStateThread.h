@@ -4,16 +4,16 @@
 #include <atomic>
 #include "SetConfig.hpp"
 
-class CameraAndCardStateThreadDuckTongue : public QThread
+class CameraAndCardStateThreadQiXinShiJin : public QThread
 {
 	Q_OBJECT
 private:
 	static size_t runtimeCounts;
 
 public:
-	explicit CameraAndCardStateThreadDuckTongue(QObject* parent = nullptr);
+	explicit CameraAndCardStateThreadQiXinShiJin(QObject* parent = nullptr);
 
-	~CameraAndCardStateThreadDuckTongue() override;
+	~CameraAndCardStateThreadQiXinShiJin() override;
 
 	void startThread();
 

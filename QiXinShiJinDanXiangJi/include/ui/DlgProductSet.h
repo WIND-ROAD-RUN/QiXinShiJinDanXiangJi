@@ -21,8 +21,7 @@ public:
 	void build_connect();
 
 signals:
-	void pixToWorldChanged();
-	void tifeijuliChanged();
+	void paramsChanged();
 
 	void emit_changeLanguage(int index);
 public slots:

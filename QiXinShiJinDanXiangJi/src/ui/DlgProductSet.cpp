@@ -129,6 +129,7 @@ void DlgProductSet::btn_close_clicked()
 	auto& globalFunc = GlobalFuncObject::getInstance();
 
 	globalFunc.saveSetConfig();
+	emit paramsChanged();
 	this->close();
 }
 
@@ -167,7 +168,6 @@ void DlgProductSet::btn_xiangsudangliang_clicked()
 		auto& setConfig = GlobalData::getInstance().setConfig;
 		ui->btn_xiangsudangliang->setText(value);
 		setConfig.xiangsudangliang = value.toDouble();
-		emit pixToWorldChanged();
 	}
 }
 
@@ -225,7 +225,6 @@ void DlgProductSet::btn_tifeiyanshi_clicked()
 		auto& setConfig = GlobalData::getInstance().setConfig;
 		ui->btn_tifeiyanshi->setText(value);
 		setConfig.tifeiyanshi = value.toDouble();
-		emit tifeijuliChanged();
 	}
 }
 

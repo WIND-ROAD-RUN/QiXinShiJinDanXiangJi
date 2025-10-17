@@ -2,19 +2,19 @@
 
 #include "GlobalStruct.hpp"
 
-size_t CameraAndCardStateThreadDuckTongue::runtimeCounts = 0;
+size_t CameraAndCardStateThreadQiXinShiJin::runtimeCounts = 0;
 
-CameraAndCardStateThreadDuckTongue::CameraAndCardStateThreadDuckTongue(QObject* parent)
+CameraAndCardStateThreadQiXinShiJin::CameraAndCardStateThreadQiXinShiJin(QObject* parent)
 	: QThread(parent), running(false), _dlgProductSet(GlobalData::getInstance().setConfig) {
 }
 
-CameraAndCardStateThreadDuckTongue::~CameraAndCardStateThreadDuckTongue()
+CameraAndCardStateThreadQiXinShiJin::~CameraAndCardStateThreadQiXinShiJin()
 {
 	stopThread();
 	wait();
 }
 
-void CameraAndCardStateThreadDuckTongue::startThread()
+void CameraAndCardStateThreadQiXinShiJin::startThread()
 {
 	running = true;
 	if (!isRunning()) {
@@ -22,12 +22,12 @@ void CameraAndCardStateThreadDuckTongue::startThread()
 	}
 }
 
-void CameraAndCardStateThreadDuckTongue::stopThread()
+void CameraAndCardStateThreadQiXinShiJin::stopThread()
 {
 	running = false;
 }
 
-void CameraAndCardStateThreadDuckTongue::run()
+void CameraAndCardStateThreadQiXinShiJin::run()
 {
 	while (running) {
 		QThread::msleep(2000);
@@ -42,12 +42,12 @@ void CameraAndCardStateThreadDuckTongue::run()
 	}
 }
 
-void CameraAndCardStateThreadDuckTongue::check_cameraState()
+void CameraAndCardStateThreadQiXinShiJin::check_cameraState()
 {
 	check_cameraState1();
 }
 
-void CameraAndCardStateThreadDuckTongue::check_cameraState1()
+void CameraAndCardStateThreadQiXinShiJin::check_cameraState1()
 {
 	static bool isUpdateState = false;
 
@@ -75,7 +75,7 @@ void CameraAndCardStateThreadDuckTongue::check_cameraState1()
 	}
 }
 
-void CameraAndCardStateThreadDuckTongue::check_cardState()
+void CameraAndCardStateThreadQiXinShiJin::check_cardState()
 {
 	static bool isUpdateState = false;
 

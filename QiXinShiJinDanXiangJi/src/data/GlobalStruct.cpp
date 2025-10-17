@@ -102,17 +102,17 @@ void GlobalThread::destroy_PriorityQueue()
 	priorityQueue.reset();
 }
 
-void GlobalThread::build_DetachDefectThreadDuckTongue()
+void GlobalThread::build_DetachDefectThread()
 {
-	detachDefectThreadDuckTongue = new DetachDefectThreadDuckTongue(this);
+	detachDefectThreadQiXinShiJin = new DetachDefectThreadQiXinShiJin(this);
 }
 
-void GlobalThread::destroy_DetachDefectThreadDuckTongue()
+void GlobalThread::destroy_DetachDefectThread()
 {
-	if (detachDefectThreadDuckTongue)
+	if (detachDefectThreadQiXinShiJin)
 	{
-		delete detachDefectThreadDuckTongue;
-		detachDefectThreadDuckTongue = nullptr;
+		delete detachDefectThreadQiXinShiJin;
+		detachDefectThreadQiXinShiJin = nullptr;
 	}
 }
 
@@ -130,32 +130,32 @@ void GlobalThread::destroy_DetachUtiltyThread()
 	}
 }
 
-void GlobalThread::build_CameraAndCardStateThreadDuckTongue()
+void GlobalThread::build_CameraAndCardStateThread()
 {
-	cameraAndCardStateThreadDuckTongue = new CameraAndCardStateThreadDuckTongue(this);
+	cameraAndCardStateThreadQiXinShiJin = new CameraAndCardStateThreadQiXinShiJin(this);
 	// 更新UI界面
-	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::updateCameraLabelState,
+	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::updateCameraLabelState,
 		this, &GlobalThread::emit_updateUiLabels, Qt::QueuedConnection);
 	// 相机重连
-	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::buildCamera1,
+	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::buildCamera1,
 		this, &GlobalThread::rebuild_Camera1, Qt::QueuedConnection);
 	// 相机销毁
-	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::destroyCamera1,
+	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::destroyCamera1,
 		this, &GlobalThread::destroy_Camera1, Qt::QueuedConnection);
 	// 运动控制器重连
-	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::buildZMotion,
+	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::buildZMotion,
 		this, &GlobalThread::rebuild_ZMotion, Qt::QueuedConnection);
 	// 运动控制器销毁
-	QObject::connect(cameraAndCardStateThreadDuckTongue, &CameraAndCardStateThreadDuckTongue::destroyZMotion,
+	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::destroyZMotion,
 		this, &GlobalThread::destroy_ZMotion, Qt::QueuedConnection);
 }
 
-void GlobalThread::destroy_CameraAndCardStateThreadDuckTongue()
+void GlobalThread::destroy_CameraAndCardStateThread()
 {
-	if (cameraAndCardStateThreadDuckTongue)
+	if (cameraAndCardStateThreadQiXinShiJin)
 	{
-		delete cameraAndCardStateThreadDuckTongue;
-		cameraAndCardStateThreadDuckTongue = nullptr;
+		delete cameraAndCardStateThreadQiXinShiJin;
+		cameraAndCardStateThreadQiXinShiJin = nullptr;
 	}
 }
 

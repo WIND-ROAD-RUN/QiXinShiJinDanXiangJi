@@ -9,16 +9,16 @@
 #include"Utilty.hpp"
 
 
-class DetachDefectThreadDuckTongue : public QThread
+class DetachDefectThreadQiXinShiJin : public QThread
 {
 	Q_OBJECT
 public:
 	std::atomic_bool isProcessing{ false };
 	std::atomic_bool isProcessFinish{ false };
 public:
-	explicit DetachDefectThreadDuckTongue(QObject* parent = nullptr);
+	explicit DetachDefectThreadQiXinShiJin(QObject* parent = nullptr);
 
-	~DetachDefectThreadDuckTongue() override;
+	~DetachDefectThreadQiXinShiJin() override;
 
 	void startThread();
 
