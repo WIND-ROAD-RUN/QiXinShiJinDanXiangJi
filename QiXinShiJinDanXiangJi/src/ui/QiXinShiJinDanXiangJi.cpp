@@ -1,5 +1,6 @@
 #include "QiXinShiJinDanXiangJi.h"
 
+#include <QDir>
 #include <QMessageBox>
 #include <QProcess>
 
@@ -9,6 +10,10 @@
 #include "NumberKeyboard.h"
 #include "rqw_RunEnvCheck.hpp"
 #include "Utilty.hpp"
+
+std::shared_ptr<const HalconCpp::HObject> QiXinShiJinDanXiangJi::modelImage{};
+std::atomic_bool QiXinShiJinDanXiangJi::isModelImageLoaded{ false };
+
 
 QiXinShiJinDanXiangJi::QiXinShiJinDanXiangJi(QWidget* parent)
 	: QMainWindow(parent)
@@ -510,7 +515,17 @@ void QiXinShiJinDanXiangJi::pbtn_set_clicked()
 
 void QiXinShiJinDanXiangJi::pbtn_start_clicked()
 {
+	setIsModelImageLoaded(false);
 
+	const std::string path = R"(C:\Users\zfkj4090\Desktop\Image_202410241655121382.jpg)";
+	cv::Mat diskImg = cv::imread(path, cv::IMREAD_COLOR);
+	if (diskImg.empty()) {
+		//读取失败，直接返回
+		return;
+	}
+
+	auto& camera = GlobalThread::getInstance().camera1;
+	camera->softwareTrigger();
 }
 
 void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
@@ -680,4 +695,28 @@ bool QiXinShiJinDanXiangJi::EnsureDirectoryExists(const QString& dirPath)
 		return dir.mkpath(".");
 	}
 	return true;
+}
+
+void QiXinShiJinDanXiangJi::setModelImage(const HalconCpp::HObject& img)
+{
+	auto sp = std::make_shared<HalconCpp::HObject>(img);
+	std::shared_ptr<const HalconCpp::HObject> csp = sp;
+
+	std::atomic_store_explicit(&modelImage, csp, std::memory_order_release);
+	isModelImageLoaded.store(img.IsInitialized(), std::memory_order_relaxed);
+}
+
+std::shared_ptr<const HalconCpp::HObject> QiXinShiJinDanXiangJi::getModelImage()
+{
+	return std::atomic_load_explicit(&modelImage, std::memory_order_acquire);
+}
+
+void QiXinShiJinDanXiangJi::setIsModelImageLoaded(bool isLoaded)
+{
+	isModelImageLoaded.store(isLoaded, std::memory_order_relaxed);
+}
+
+bool QiXinShiJinDanXiangJi::getIsModelImageLoaded()
+{
+	return isModelImageLoaded.load(std::memory_order_relaxed);
 }

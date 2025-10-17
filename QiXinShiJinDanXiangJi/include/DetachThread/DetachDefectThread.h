@@ -3,6 +3,8 @@
 #include <atomic>
 #include<QThread>
 
+#include "DetachDefectThread.h"
+#include "DetachDefectThread.h"
 #include"rqw_LabelWarning.h"
 #include"dsl_Heap.hpp"
 
@@ -24,7 +26,7 @@ public:
 
 	void stopThread();
 
-	void processQueue(std::unique_ptr<rw::dsl::ThreadSafeHeap<float>>& queue);
+	void processQueue(std::unique_ptr<rw::dsl::ThreadSafeHeap<bool>>& queue);
 
 protected:
 	void run() override;

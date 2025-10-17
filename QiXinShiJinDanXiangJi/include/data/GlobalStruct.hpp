@@ -48,7 +48,7 @@ public:
 	void buildImageProcessorModules(const QString& path);
 	void destroyImageProcessingModule();
 public:
-	std::unique_ptr<rw::dsl::ThreadSafeHeap<float>> priorityQueue;
+	std::unique_ptr<rw::dsl::ThreadSafeHeap<bool>> priorityQueue;
 
 	void build_PriorityQueue();
 	void destroy_PriorityQueue();

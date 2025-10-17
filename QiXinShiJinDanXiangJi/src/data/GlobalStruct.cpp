@@ -94,7 +94,7 @@ void GlobalThread::build_PriorityQueue()
 		return a < b;
 		};
 
-	priorityQueue = std::make_unique<rw::dsl::ThreadSafeHeap<float>>();
+	priorityQueue = std::make_unique<rw::dsl::ThreadSafeHeap<bool>>();
 }
 
 void GlobalThread::destroy_PriorityQueue()

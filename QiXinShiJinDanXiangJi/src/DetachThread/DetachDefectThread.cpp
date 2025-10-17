@@ -26,18 +26,25 @@ void DetachDefectThreadQiXinShiJin::stopThread()
 	running = false; // 停止线程
 }
 
-void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::ThreadSafeHeap<float>>& queue)
+void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::ThreadSafeHeap<bool>>& queue)
 {
 #ifdef BUILD_WITHOUT_HARDWARE
 	// 记录开始时间
 	auto start = std::chrono::high_resolution_clock::now();
 #endif
 
-	auto& globalData = GlobalData::getInstance();
-	auto& globalThread = GlobalThread::getInstance();
 	try
 	{
+		auto isBad = false;
+		queue->tryGetTop(isBad);
 
+		if (isBad)
+		{
+			auto& setConfig = GlobalData::getInstance().setConfig;
+			auto& camera = GlobalThread::getInstance().camera1;
+			queue->tryPopTop(isBad);
+			QThread::msleep(setConfig.tifeiyanshi);
+		}
 	}
 	catch (const std::runtime_error&)
 	{

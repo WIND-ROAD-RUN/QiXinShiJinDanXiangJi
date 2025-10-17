@@ -1,9 +1,10 @@
 #pragma once
 
 #include <QMainWindow>
-
+#include <HalconCpp/HalconCpp.h>
+#include <memory>
+#include <atomic>
 #include "DlgProductSet.h"
-#include "PictureViewerThumbnails.h"
 #include "rqw_LabelClickable.h"
 #include "DlgCloseForm.h"
 #include "oso_func.hpp"
@@ -95,6 +96,15 @@ public:
 	template<class TypeCanToAssembly>
 	static void checkFileExistAndFormat(const QString& path, const rw::oso::StorageContext& context);
 	static bool EnsureDirectoryExists(const QString& dirPath);
+
+public:
+	static void setModelImage(const HalconCpp::HObject& img);
+	static std::shared_ptr<const HalconCpp::HObject> getModelImage();
+	static void setIsModelImageLoaded(bool isLoaded);
+	static bool getIsModelImageLoaded();
+private:
+	static std::shared_ptr<const HalconCpp::HObject> modelImage;
+	static std::atomic_bool isModelImageLoaded;
 private:
 	rw::rqw::ClickableLabel* clickableTitle = nullptr;
 public:

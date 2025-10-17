@@ -1,6 +1,18 @@
 #include "ImageProcessorModule.hpp"
+
+#include <qfuture.h>
+#include <qtconcurrentrun.h>
+
 #include "GlobalStruct.hpp"
 #include "Utilty.hpp"
+#include "halconcpp/HalconCpp.h"
+#include "Halcon.h"
+#include <QPainter>
+#include <QPen>
+#include <cmath>
+
+#include "QiXinShiJinDanXiangJi.h"
+
 
 ImageProcessorDuckTongue::ImageProcessorDuckTongue(QQueue<MatInfo>& queue, QMutex& mutex, QWaitCondition& condition, int workIndex, QObject* parent)
 	: QThread(parent), _queue(queue), _mutex(mutex), _condition(condition), _workIndex(workIndex)
@@ -70,12 +82,244 @@ void ImageProcessorDuckTongue::run_debug(MatInfo& frame)
 
 	emit imageReady(QPixmap::fromImage(maskImg));
 }
+static HalconCpp::HObject MatToHImage(cv::Mat& cv_img)
+{
+	HalconCpp::HObject H_img;
+
+	if (cv_img.channels() == 1)
+	{
+		int height = cv_img.rows, width = cv_img.cols;
+		int size = height * width;
+		uchar* temp = new uchar[size];
+
+		memcpy(temp, cv_img.data, size);
+		HalconCpp::GenImage1(&H_img, "byte", width, height, (Hlong)(temp));
+
+		delete[] temp;
+	}
+	else if (cv_img.channels() == 3)
+	{
+		int height = cv_img.rows, width = cv_img.cols;
+		int size = height * width;
+		uchar* B = new uchar[size];
+		uchar* G = new uchar[size];
+		uchar* R = new uchar[size];
+
+		for (int i = 0; i < height; i++)
+		{
+			uchar* p = cv_img.ptr<uchar>(i);
+			for (int j = 0; j < width; j++)
+			{
+				B[i * width + j] = p[3 * j];
+				G[i * width + j] = p[3 * j + 1];
+				R[i * width + j] = p[3 * j + 2];
+			}
+		}
+		HalconCpp::GenImage3(&H_img, "byte", width, height, (Hlong)(R), (Hlong)(G), (Hlong)(B));
+
+		delete[] R;
+		delete[] G;
+		delete[] B;
+	}
+	return H_img;
+}
+
+// 在图像上绘制 Halcon rectangle2 定义的旋转矩形：中心(row,col)，半长(length1,length2)，角度angle(弧度)
+static void DrawRotatedRectangle(QImage& image,
+	double row, double col,
+	double length1, double length2,
+	double angleRad,
+	const QColor& color = Qt::green,
+	int thickness = 3)
+{
+	if (length1 <= 0.0 || length2 <= 0.0)
+		return;
+
+	// Halcon 坐标: col 为 x，row 为 y；angle 为相对行轴(向右为列轴，向下为行轴)的旋转角(弧度)
+	const double c = col;
+	const double r = row;
+	const double cosA = std::cos(angleRad);
+	const double sinA = std::sin(angleRad);
+
+	// 主轴向量 u 对应 length1，副轴向量 v 对应 length2
+	const double uc = length1 * cosA;   // 列方向增量
+	const double ur = length1 * sinA;   // 行方向增量
+	const double vc = -length2 * sinA;  // 列方向增量（旋转 +90°）
+	const double vr = length2 * cosA;  // 行方向增量（旋转 +90°）
+
+	auto makePoint = [&](double dc, double dr) -> QPointF {
+		return QPointF(c + dc, r + dr); // QPointF(x=col, y=row)
+		};
+
+	QPolygonF poly;
+	poly << makePoint(uc + vc, ur + vr)
+		<< makePoint(-uc + vc, -ur + vr)
+		<< makePoint(-uc - vc, -ur - vr)
+		<< makePoint(uc - vc, ur - vr);
+
+	QPainter painter(&image);
+	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setPen(QPen(color, thickness));
+	painter.drawPolygon(poly);
+}
+
+void halconPRocess(cv::Mat image, double& R1, double& C1, double& length, double& width, double& angle, bool& isBad)
+{
+	isBad = false;
+
+	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& QiXinShiJinConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
+
+	auto modelimage = QiXinShiJinDanXiangJi::getModelImage();
+
+
+
+	auto image1 = MatToHImage(image);
+
+	HalconCpp::Rgb1ToGray(image1, &image1);
+	HalconCpp::MeanImage(image1, &image1, 3, 3);
+
+	HalconCpp::HObject ho_ImageSub, ho_Regions, ho_ConnectedRegions, ho_SelectedRegions, ho_RegionTrans;
+	SubImage(*modelimage, image1, &ho_ImageSub, 30, 255);
+
+	double daichang = QiXinShiJinConfig.setBagLength;
+	double daikuan = QiXinShiJinConfig.setBagWidth;
+	double pixtoworld = setConfig.xiangsudangliang;
+
+
+	double pixchang = daichang * pixtoworld;
+	double pixkuan = daikuan * pixtoworld;
+
+	Threshold(ho_ImageSub, &ho_Regions, 0, 60);
+	HalconCpp::HObject rectangle;
+	double shangxianwei = setConfig.shangxianwei;
+	double xiaxianwei = setConfig.xiaxianwei;
+
+	if (setConfig.shangxianwei > setConfig.xiaxianwei)
+	{
+		shangxianwei = setConfig.xiaxianwei;
+		xiaxianwei = setConfig.shangxianwei;
+	}
+
+	if (shangxianwei < 0)
+	{
+		shangxianwei = 0;
+	}
+	if (xiaxianwei < 0)
+	{
+		xiaxianwei = 0;
+	}
+	if (shangxianwei > image.rows)
+	{
+		shangxianwei = image.rows;
+	}
+	if (xiaxianwei > image.rows)
+	{
+		xiaxianwei = image.rows;
+	}
+
+	GenRectangle1(&rectangle, setConfig.shangxianwei, 0, setConfig.xiaxianwei, 1280);
+
+	Intersection(rectangle, ho_Regions, &ho_Regions);
+	HalconCpp::DilationRectangle1(ho_Regions, &ho_Regions, 30, 1);
+
+	Connection(ho_Regions, &ho_ConnectedRegions);
+	HalconCpp::HObject ho_MaxRegion;
+	SelectShapeStd(ho_ConnectedRegions, &ho_MaxRegion, "max_area", 0);
+
+	HalconCpp::HTuple hv_Area, hv_Row2, hv_Column2, hv_Row1, hv_Column1, hv_Phi1, hv_Length1, hv_Length2;
+
+	ShapeTrans(ho_MaxRegion, &ho_RegionTrans, "rectangle2");
+
+	SmallestRectangle2(ho_RegionTrans, &hv_Row1, &hv_Column1, &hv_Phi1, &hv_Length1,
+		&hv_Length2);
+
+	AreaCenter(ho_RegionTrans, &hv_Area, &hv_Row2, &hv_Column2);
+
+	R1 = hv_Row1;
+	C1 = hv_Column1;
+	length = hv_Length1;
+	width = hv_Length2;
+	angle = -hv_Phi1;
+
+	//连包缺陷
+	if (0 != (HalconCpp::HTuple(int((hv_Area.TupleLength()) > 0)).TupleAnd(int(hv_Area > 200))))
+	{
+		double kuan = 0;
+		double chang = 0;
+		if (hv_Length1 > hv_Length2)
+		{
+			chang = hv_Length1 * 2;
+			kuan = hv_Length2 * 2;
+		}
+		else
+		{
+			chang = hv_Length2 * 2;
+			kuan = hv_Length1 * 2;
+		}
+
+		if (chang > pixchang || kuan > pixkuan)
+		{
+			isBad = true;
+		}
+	}
+	else
+	{
+		isBad = true;
+	}//连包缺陷
+}
+
 
 void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 {
 	_isbad = false;
 	auto& imgPro = *_imgProcess;
+	auto& qiXinShiJinConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
+	double R1 = 0;
+	double C1 = 0;
+	double length = 0;
+	double width = 0;
+	double angle = 0;
+
+	QFuture<bool> positiveIsBadFuture;
+
+	positiveIsBadFuture = QtConcurrent::run([this, &positiveIsBadFuture, &frame, &R1, &C1, &length, &width, &angle]() {
+
+		bool isBad = false;
+
+		//// 从磁盘读取一张图片作为 image（示例路径请按需修改）
+		//const std::string path = R"(C:\Users\zfkj4090\Desktop\Image_20241024165512138.jpg)";
+		//cv::Mat diskImg = cv::imread(path, cv::IMREAD_COLOR);
+		//if (diskImg.empty()) {
+		//	 读取失败，直接返回
+		//	return false;
+		//}
+		//auto image = std::move(diskImg);
+
+
+		halconPRocess(frame.image, R1, C1, length, width, angle, isBad);
+
+		return isBad;
+		});
+
 	imgPro(frame.image);
+	bool positiveIsBad{ false };
+
+	positiveIsBadFuture.waitForFinished();
+	positiveIsBad = positiveIsBadFuture.result();
+
+	// 连包检测
+	if (positiveIsBad)
+	{
+		_isbad = true;
+	}
+
+	// 长度宽度检测
+	if (length > qiXinShiJinConfig.setBagLength || width > qiXinShiJinConfig.setBagWidth)
+	{
+		_isbad = true;
+	}
+
 	// 更新屏蔽线
 	updateShieldWires();
 	auto maskImg = imgPro.getMaskImg(frame.image);
@@ -87,6 +331,7 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 	run_OpenRemoveFunc_emitErrorInfo(defectResult.isBad);
 
 	drawBoundariesLines(maskImg);
+	DrawRotatedRectangle(maskImg, R1, C1, length, width, angle, QColor(0, 255, 0), 3);
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
 
@@ -113,7 +358,7 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc_emitErrorInfo(bool isbad) cons
 
 	if (isbad)
 	{
-		//globalThread.priorityQueue->push(realLeftLocationDifference);
+		globalThread.priorityQueue->push(true);
 	}
 }
 
@@ -408,6 +653,19 @@ void ImageProcessingModuleDuckTongue::onFrameCaptured(rw::rqw::MatInfo matInfo, 
 
 	if (matInfo.mat.empty()) {
 		return; // 跳过空帧
+	}
+
+	auto isModelNeedGet = QiXinShiJinDanXiangJi::getIsModelImageLoaded();
+	if (!isModelNeedGet)
+	{
+		// 手动读取本地图片
+		std::string imagePath = R"(C:\Users\zfkj4090\Desktop\Image_202410241655121382.jpg)"; // 替换为你的图片路径
+		cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
+		HalconCpp::HObject hImage = MatToHImage(frame1);
+		HalconCpp::Rgb1ToGray(hImage, &hImage);
+		HalconCpp::MeanImage(hImage, &hImage, 3, 3);
+		QiXinShiJinDanXiangJi::setModelImage(hImage);
+		QiXinShiJinDanXiangJi::setIsModelImageLoaded(true);
 	}
 
 	auto& globalThread = GlobalThread::getInstance();
