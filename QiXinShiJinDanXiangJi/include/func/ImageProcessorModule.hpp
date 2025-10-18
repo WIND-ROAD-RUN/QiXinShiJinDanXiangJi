@@ -72,9 +72,12 @@ public slots:
 	void updateDrawRec();
 	void updateDrawText();
 	void updateParamMapsFromGlobalStruct();
-private:
+public:
 	// 判断是否有缺陷
-	bool _isbad{ false };
+	static QMutex isBadVectorMutex;
+	static std::vector<bool> isBadVector;
+	void initial_isBadVector();
+private:
 	std::map<std::string, double> BadMap{};
 	std::map<std::string, double> FengKouMap{};
 	std::map<std::string, double> JiaoDaiMap{};

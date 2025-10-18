@@ -16,6 +16,9 @@
 #include <algorithm>
 #include "QiXinShiJinDanXiangJi.h"
 
+QMutex ImageProcessorDuckTongue::isBadVectorMutex;
+std::vector<bool> ImageProcessorDuckTongue::isBadVector{ false };
+
 namespace {
 	// 在给定最小间隔内只放行一次调用：成功返回 true，其他并发/过快的调用返回 false
 	inline bool AllowOncePer(std::atomic<long long>& lastNs, std::chrono::nanoseconds minInterval)
@@ -292,7 +295,6 @@ void halconPRocess(cv::Mat image, double& R1, double& C1, double& length, double
 
 void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 {
-	_isbad = false;
 	auto& imgPro = *_imgProcess;
 	auto& qiXinShiJinConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
 	double R1 = 0;
@@ -303,19 +305,11 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 
 	QFuture<bool> positiveIsBadFuture;
 
-	positiveIsBadFuture = QtConcurrent::run([this, &positiveIsBadFuture, &frame, &R1, &C1, &length, &width, &angle]() {
+	positiveIsBadFuture = QtConcurrent::run(
+		[this, &positiveIsBadFuture, &frame, &R1, &C1, &length, &width, &angle]() 
+		{
 
 		bool isBad = false;
-
-		//// 从磁盘读取一张图片作为 image（示例路径请按需修改）
-		//const std::string path = R"(C:\Users\zfkj4090\Desktop\Image_20241024165512138.jpg)";
-		//cv::Mat diskImg = cv::imread(path, cv::IMREAD_COLOR);
-		//if (diskImg.empty()) {
-		//	 读取失败，直接返回
-		//	return false;
-		//}
-		//auto image = std::move(diskImg);
-
 
 		halconPRocess(frame.image, R1, C1, length, width, angle, isBad);
 
@@ -328,37 +322,36 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 	positiveIsBadFuture.waitForFinished();
 	positiveIsBad = positiveIsBadFuture.result();
 
-	// 连包检测
-	if (positiveIsBad)
-	{
-		_isbad = true;
-	}
-
-	// 长度宽度检测
-	if (length > qiXinShiJinConfig.setBagLength || width > qiXinShiJinConfig.setBagWidth)
-	{
-		_isbad = true;
-	}
-
 	// 更新屏蔽线
 	updateShieldWires();
 	auto maskImg = imgPro.getMaskImg(frame.image);
 	auto defectResult = imgPro.getDefectResultInfo();
 
-	auto imageRealLocation = frame.location;
 	auto& context = _imgProcess->context();
 
-	run_OpenRemoveFunc_emitErrorInfo(defectResult.isBad);
+	if (defectResult.isBad || 
+		positiveIsBad || 
+		(length > qiXinShiJinConfig.setBagLength) || 
+		(width > qiXinShiJinConfig.setBagWidth))
+	{
+		{
+			QMutexLocker locker(&isBadVectorMutex);
+			isBadVector[0] = true;
+		}
+	}
+
+	bool isBad = false;
+	{
+		QMutexLocker locker(&isBadVectorMutex);
+		isBad = isBadVector[0];
+	}
+
+	run_OpenRemoveFunc_emitErrorInfo(isBad);
 
 	drawBoundariesLines(maskImg);
 	DrawRotatedRectangle(maskImg, R1, C1, length, width, angle, QColor(0, 255, 0), 3);
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
-
-	if (defectResult.isBad)
-	{
-		_isbad = true;
-	}
 }
 
 void ImageProcessorDuckTongue::run_OpenRemoveFunc_emitErrorInfo(bool isbad) const
@@ -401,6 +394,8 @@ void ImageProcessorDuckTongue::buildDetModelEngine(const QString& enginePath)
 	iniDefectResultGetContext();
 	iniDefectDrawConfig();
 	iniRunTextConfig();
+
+	initial_isBadVector();
 }
 
 void ImageProcessorDuckTongue::iniIndexGetContext()
@@ -610,6 +605,14 @@ void ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct()
 	context.eliminationCfg = eliminationInfoGetConfigs;
 
 	iniDefectResultInfoFunc();
+}
+
+void ImageProcessorDuckTongue::initial_isBadVector()
+{
+	{
+		QMutexLocker locker(&isBadVectorMutex);
+		isBadVector.assign(50, false);
+	}
 }
 
 void ImageProcessingModuleDuckTongue::BuildModule()

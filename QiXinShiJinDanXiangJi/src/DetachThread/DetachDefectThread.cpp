@@ -44,6 +44,7 @@ void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::Thread
 			auto& camera = GlobalThread::getInstance().camera1;
 			queue->tryPopTop(isBad);
 			QThread::msleep(setConfig.tifeiyanshi);
+			// 剔废动作
 		}
 	}
 	catch (const std::runtime_error&)
