@@ -10,7 +10,7 @@ namespace cdm {
 		paizhaoyanshi : double : default = 0;
 		tifeiyanshi : double : default = 0;
 		score : double : default = 0;
-		cipinguangdianjiange : double : default = 0;
+		cipinguangdianjiange : int : default = 0;
 		fenliaojishu : double : default = 0;
 		xiangjiguangdianpingbishijian : double : default = 0;
 		pidaiduibiyanse : double : default = 0;

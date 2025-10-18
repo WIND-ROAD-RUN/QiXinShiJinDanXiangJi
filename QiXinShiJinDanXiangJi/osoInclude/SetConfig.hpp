@@ -25,7 +25,7 @@ namespace cdm {
         double paizhaoyanshi{ 0 };
         double tifeiyanshi{ 0 };
         double score{ 0 };
-        double cipinguangdianjiange{ 0 };
+        int cipinguangdianjiange{ 0 };
         double fenliaojishu{ 0 };
         double xiangjiguangdianpingbishijian{ 0 };
         double pidaiduibiyanse{ 0 };
@@ -77,7 +77,7 @@ namespace cdm {
         if (!cipinguangdianjiangeItem) {
             throw std::runtime_error("$variable$cipinguangdianjiange is not found");
         }
-        cipinguangdianjiange = cipinguangdianjiangeItem->getValueAsDouble();
+        cipinguangdianjiange = cipinguangdianjiangeItem->getValueAsInt();
         auto fenliaojishuItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$fenliaojishu$"));
         if (!fenliaojishuItem) {
             throw std::runtime_error("$variable$fenliaojishu is not found");
@@ -191,7 +191,7 @@ namespace cdm {
         assembly.addItem(scoreItem);
         auto cipinguangdianjiangeItem = std::make_shared<rw::oso::ObjectStoreItem>();
         cipinguangdianjiangeItem->setName("$variable$cipinguangdianjiange$");
-        cipinguangdianjiangeItem->setValueFromDouble(cipinguangdianjiange);
+        cipinguangdianjiangeItem->setValueFromInt(cipinguangdianjiange);
         assembly.addItem(cipinguangdianjiangeItem);
         auto fenliaojishuItem = std::make_shared<rw::oso::ObjectStoreItem>();
         fenliaojishuItem->setName("$variable$fenliaojishu$");
