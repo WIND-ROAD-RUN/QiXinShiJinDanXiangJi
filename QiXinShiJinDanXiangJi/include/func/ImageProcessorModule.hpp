@@ -95,6 +95,7 @@ class ImageProcessingModuleDuckTongue : public QObject {
 	Q_OBJECT
 public:
 	QString modelEnginePath;
+
 public:
 	// 初始化图像处理模块
 	void BuildModule();

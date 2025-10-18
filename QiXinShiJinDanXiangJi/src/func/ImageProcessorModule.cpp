@@ -1,8 +1,11 @@
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include "ImageProcessorModule.hpp"
 
 #include <qfuture.h>
 #include <qtconcurrentrun.h>
-
+#include <atomic>
 #include "GlobalStruct.hpp"
 #include "Utilty.hpp"
 #include "halconcpp/HalconCpp.h"
@@ -10,8 +13,25 @@
 #include <QPainter>
 #include <QPen>
 #include <cmath>
-
+#include <algorithm>
 #include "QiXinShiJinDanXiangJi.h"
+
+namespace {
+	// 在给定最小间隔内只放行一次调用：成功返回 true，其他并发/过快的调用返回 false
+	inline bool AllowOncePer(std::atomic<long long>& lastNs, std::chrono::nanoseconds minInterval)
+	{
+		using clock = std::chrono::steady_clock;
+		const auto nowNs = std::chrono::duration_cast<std::chrono::nanoseconds>(
+			clock::now().time_since_epoch()).count();
+
+		auto prev = lastNs.load(std::memory_order_relaxed);
+		if (nowNs - prev < minInterval.count())
+			return false; // 距上次放行未到间隔，拒绝
+
+		// 只有一个线程能成功更新 lastNs，其他并发线程会失败并返回 false
+		return lastNs.compare_exchange_strong(prev, nowNs, std::memory_order_relaxed);
+	}
+} // namespace
 
 
 ImageProcessorDuckTongue::ImageProcessorDuckTongue(QQueue<MatInfo>& queue, QMutex& mutex, QWaitCondition& condition, int workIndex, QObject* parent)
@@ -640,6 +660,17 @@ ImageProcessingModuleDuckTongue::~ImageProcessingModuleDuckTongue()
 
 void ImageProcessingModuleDuckTongue::onFrameCaptured(rw::rqw::MatInfo matInfo, size_t index)
 {
+	// 防抖动处理
+	auto& setConfig = GlobalData::getInstance().setConfig;
+	const long long debounceMs = static_cast<long long>(std::max(0.0, setConfig.xiangjiguangdianpingbishijian));
+	const auto minInterval = std::chrono::milliseconds(debounceMs);
+
+	static std::atomic<long long> lastCamNs{ 0 };
+
+	if (!AllowOncePer(lastCamNs, minInterval)) {
+		return;
+	}
+
 	// 手动读取本地图片
 	std::string imagePath = R"(C:\Users\zfkj4090\Desktop\Image_20241024165512138.jpg)"; // 替换为你的图片路径
 	cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
@@ -668,20 +699,11 @@ void ImageProcessingModuleDuckTongue::onFrameCaptured(rw::rqw::MatInfo matInfo, 
 		QiXinShiJinDanXiangJi::setIsModelImageLoaded(true);
 	}
 
-	auto& globalThread = GlobalThread::getInstance();
-
 	QMutexLocker locker(&_mutex);
 	MatInfo mat;
 	mat.image = matInfo.mat;
 	mat.index = index;
-	if (index == 1)
-	{
-		//mat.location = globalThread.zmotion.getModbus(2, 1);	// 获取拍照的位置
-	}
-	else
-	{
-		//mat.location = globalThread.zmotion.getModbus(6, 1);	// 获取拍照的位置
-	}
+
 	_queue.enqueue(mat);
 	_condition.wakeOne();
 }
