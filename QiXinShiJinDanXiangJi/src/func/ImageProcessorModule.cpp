@@ -352,6 +352,7 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 	DrawRotatedRectangle(maskImg, R1, C1, length, width, angle, QColor(0, 255, 0), 3);
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
+	emit updateMainWindowShowBtn();
 }
 
 void ImageProcessorDuckTongue::run_OpenRemoveFunc_emitErrorInfo(bool isbad) const
@@ -625,6 +626,8 @@ void ImageProcessingModuleDuckTongue::BuildModule()
 		processor->imageProcessingModuleIndex = index;
 		connect(processor, &ImageProcessorDuckTongue::imageReady, this, &ImageProcessingModuleDuckTongue::imageReady, Qt::QueuedConnection);
 		connect(processor, &ImageProcessorDuckTongue::imageNGReady, this, &ImageProcessingModuleDuckTongue::imageNGReady, Qt::QueuedConnection);
+		connect(processor, &ImageProcessorDuckTongue::updateMainWindowShowBtn, this, &ImageProcessingModuleDuckTongue::updateMainWindowShowBtn, Qt::QueuedConnection);
+
 		connect(this, &ImageProcessingModuleDuckTongue::shibiekuangChanged, processor, &ImageProcessorDuckTongue::updateDrawRec, Qt::QueuedConnection);
 		connect(this, &ImageProcessingModuleDuckTongue::wenziChanged, processor, &ImageProcessorDuckTongue::updateDrawText, Qt::QueuedConnection);
 		connect(this, &ImageProcessingModuleDuckTongue::paramMapsChanged, processor, &ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct, Qt::QueuedConnection);

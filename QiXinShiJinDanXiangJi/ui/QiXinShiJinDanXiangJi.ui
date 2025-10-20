@@ -23,29 +23,36 @@
          <string/>
         </property>
         <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="9,1">
+           <item>
+            <widget class="QLabel" name="label_imgDisplay_1">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>999</width>
+               <height>999</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_showBtn" native="true"/>
+           </item>
+          </layout>
+         </item>
          <item row="1" column="1">
           <widget class="Line" name="line_rightDisplay">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_imgDisplay_1">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>999</width>
-             <height>999</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>TextLabel</string>
            </property>
           </widget>
          </item>

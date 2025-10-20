@@ -46,7 +46,7 @@ private:
 signals:
 	void imageReady(QPixmap image);
 	void imageNGReady(QPixmap image, size_t index, bool isbad);
-
+	void updateMainWindowShowBtn();
 private:
 	std::unique_ptr<rw::imgPro::ImageProcess> _imgProcess;
 public:
@@ -117,7 +117,7 @@ signals:
 	void shibiekuangChanged();
 	void wenziChanged();
 	void paramMapsChanged();
-
+	void updateMainWindowShowBtn();
 public:
 	std::vector<ImageProcessorDuckTongue*> getProcessors() const {
 		return _processors;

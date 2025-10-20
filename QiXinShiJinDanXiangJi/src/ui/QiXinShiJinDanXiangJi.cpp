@@ -84,6 +84,7 @@ void QiXinShiJinDanXiangJi::build_QiXinShiJinDanXiangJiData()
 	ui->ckb_wenzi->setChecked(qiXinShiJinDanXiangJiConfig.iswenzi);
 	changeLanguage(setConfig.changeLanguageIndex);
 	ini_clickableTitle();
+	createButtonsOnWidget(ui->widget_showBtn);
 }
 
 void QiXinShiJinDanXiangJi::build_DlgProductSet()
@@ -277,6 +278,7 @@ void QiXinShiJinDanXiangJi::build_ImageProcessingModule()
 
 	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::imageReady, this, &QiXinShiJinDanXiangJi::onCamera1Display);
 	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::imageNGReady, this, &QiXinShiJinDanXiangJi::onCameraNGDisplay);
+	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::updateMainWindowShowBtn, this, &QiXinShiJinDanXiangJi::updateDefectButtonsFromVector);
 	QObject::connect(this, &QiXinShiJinDanXiangJi::shibiekuangChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::shibiekuangChanged);
 	QObject::connect(this, &QiXinShiJinDanXiangJi::wenziChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::wenziChanged);
 	QObject::connect(_dlgProductSet, &DlgProductSet::paramsChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
@@ -719,4 +721,72 @@ void QiXinShiJinDanXiangJi::setIsModelImageLoaded(bool isLoaded)
 bool QiXinShiJinDanXiangJi::getIsModelImageLoaded()
 {
 	return isModelImageLoaded.load(std::memory_order_relaxed);
+}
+
+void QiXinShiJinDanXiangJi::createButtonsOnWidget(QWidget* container)
+{
+	if (!container) return;
+
+	if (auto* oldLayout = container->layout())
+	{
+		QLayoutItem* item = nullptr;
+		while ((item = oldLayout->takeAt(0)) != nullptr)
+		{
+			if (auto* w = item->widget()) w->deleteLater();
+			if (auto* childLayout = item->layout()) delete childLayout;
+			delete item;
+		}
+		delete oldLayout;
+	}
+
+	auto* grid = new QGridLayout(container);
+	grid->setContentsMargins(0, 0, 0, 0);
+	grid->setHorizontalSpacing(6);
+	grid->setVerticalSpacing(6);
+
+	constexpr int total = 20;
+	constexpr int cols = 10;
+	for (int i = 0; i < total; ++i)
+	{
+		auto* btn = new QPushButton(QString::number(i + 1), container);
+		btn->setObjectName(QStringLiteral("btn_%1").arg(i + 1));
+		auto sp = btn->sizePolicy();
+		sp.setVerticalPolicy(QSizePolicy::Minimum);
+		btn->setSizePolicy(sp);
+		btn->setStyleSheet("QPushButton { background-color: rgb(0,170,0); }");
+		grid->addWidget(btn, i / cols, i % cols);
+	}
+
+	container->setLayout(grid);
+}
+
+void QiXinShiJinDanXiangJi::updateDefectButtonsFromVector()
+{
+	// 若在工作线程被调用，切回到主线程再执行
+	if (QThread::currentThread() != qApp->thread())
+	{
+		QMetaObject::invokeMethod(this, [this]() { updateDefectButtonsFromVector(); }, Qt::QueuedConnection);
+		return;
+	}
+
+	// 线程安全地拷贝前20个标记
+	std::array<bool, 20> flags{};
+	{
+		QMutexLocker locker(&ImageProcessorDuckTongue::isBadVectorMutex);
+		const auto& vec = ImageProcessorDuckTongue::isBadVector;
+		for (size_t i = 0; i < flags.size(); ++i)
+			flags[i] = (i < vec.size()) ? vec[i] : false;
+	}
+
+	// 主线程更新 UI
+	for (int i = 0; i < 20; ++i)
+	{
+		if (auto* btn = ui->widget_showBtn->findChild<QPushButton*>(QStringLiteral("btn_%1").arg(i + 1)))
+		{
+			btn->setStyleSheet(flags[i]
+				? "QPushButton { background-color: rgb(220,0,0); }"   // true -> 红色
+				: "QPushButton { background-color: rgb(0,170,0); }"   // false -> 绿色
+			);
+		}
+	}
 }

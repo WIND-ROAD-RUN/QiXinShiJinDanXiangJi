@@ -106,6 +106,10 @@ private:
 	static std::shared_ptr<const HalconCpp::HObject> modelImage;
 	static std::atomic_bool isModelImageLoaded;
 private:
+	void createButtonsOnWidget(QWidget* container);
+public slots:
+	void updateDefectButtonsFromVector();
+private:
 	rw::rqw::ClickableLabel* clickableTitle = nullptr;
 public:
 	DlgProductSet* _dlgProductSet = nullptr;
