@@ -592,7 +592,7 @@ void ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct()
 	FengKouEliminationInfoGetConfig.scoreRange = { 0,FengKouMap["maxScore"] };
 	FengKouEliminationInfoGetConfig.areaRange = { 0,FengKouMap["maxArea"] };
 	FengKouEliminationInfoGetConfig.scoreIsUsingComplementarySet = false;
-	eliminationInfoGetConfigs[ClassId::Bad] = FengKouEliminationInfoGetConfig;
+	eliminationInfoGetConfigs[ClassId::FengKou] = FengKouEliminationInfoGetConfig;
 
 	JiaoDaiEliminationInfoGetConfig.areaFactor = JiaoDaiMap["pixToWorld"];//这里设置为像素当量
 	JiaoDaiEliminationInfoGetConfig.scoreFactor = 100;//这里设置为百分比当量
@@ -601,7 +601,7 @@ void ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct()
 	JiaoDaiEliminationInfoGetConfig.scoreRange = { 0,JiaoDaiMap["maxScore"] };
 	JiaoDaiEliminationInfoGetConfig.areaRange = { 0,JiaoDaiMap["maxArea"] };
 	JiaoDaiEliminationInfoGetConfig.scoreIsUsingComplementarySet = false;
-	eliminationInfoGetConfigs[ClassId::Bad] = JiaoDaiEliminationInfoGetConfig;
+	eliminationInfoGetConfigs[ClassId::JiaoDai] = JiaoDaiEliminationInfoGetConfig;
 
 	context.eliminationCfg = eliminationInfoGetConfigs;
 
