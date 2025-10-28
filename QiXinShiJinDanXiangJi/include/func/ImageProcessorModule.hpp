@@ -23,12 +23,12 @@ struct MatInfo {
 };
 
 
-class ImageProcessorDuckTongue : public QThread
+class ImageProcessor : public QThread
 {
 	Q_OBJECT
 
 public:
-	ImageProcessorDuckTongue(QQueue<MatInfo>& queue,
+	ImageProcessor(QQueue<MatInfo>& queue,
 		QMutex& mutex,
 		QWaitCondition& condition,
 		int workIndex,
@@ -42,7 +42,7 @@ private:
 private:
 	void run_OpenRemoveFunc(MatInfo& frame);	// 开启剔废功能时的处理模式
 
-	void run_OpenRemoveFunc_emitErrorInfo(bool isbad) const;
+	void run_OpenRemoveFunc_emitErrorInfo(bool isbad);
 signals:
 	void imageReady(QPixmap image);
 	void imageNGReady(QPixmap image, size_t index, bool isbad);
@@ -77,11 +77,11 @@ public:
 	static QMutex isBadVectorMutex;
 	static std::vector<bool> isBadVector;
 	void initial_isBadVector();
+	int productGoodCount{ 0 };
 private:
 	std::map<std::string, double> BadMap{};
 	std::map<std::string, double> FengKouMap{};
 	std::map<std::string, double> JiaoDaiMap{};
-
 private:
 	QQueue<MatInfo>& _queue;
 	QMutex& _mutex;
@@ -119,7 +119,7 @@ signals:
 	void paramMapsChanged();
 	void updateMainWindowShowBtn();
 public:
-	std::vector<ImageProcessorDuckTongue*> getProcessors() const {
+	std::vector<ImageProcessor*> getProcessors() const {
 		return _processors;
 	}
 
@@ -127,7 +127,7 @@ private:
 	QQueue<MatInfo> _queue;
 	QMutex _mutex;
 	QWaitCondition _condition;
-	std::vector<ImageProcessorDuckTongue*> _processors;
+	std::vector<ImageProcessor*> _processors;
 	int _numConsumers;
 public:
 	size_t index;

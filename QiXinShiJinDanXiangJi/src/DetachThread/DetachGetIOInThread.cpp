@@ -38,11 +38,11 @@ void DetachGetIOInThread::process()
 
     if(1 == status)
     {
-        auto& isBadVector = ImageProcessorDuckTongue::isBadVector;
+        auto& isBadVector = ImageProcessor::isBadVector;
         auto& setConfig = GlobalData::getInstance().setConfig;
         auto& jiange = setConfig.cipinguangdianjiange;
         {
-            QMutexLocker locker(&ImageProcessorDuckTongue::isBadVectorMutex);
+            QMutexLocker locker(&ImageProcessor::isBadVectorMutex);
             isBadVector[jiange - 1] = true;
         }
     }

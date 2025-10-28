@@ -45,25 +45,20 @@ void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::Thread
 			queue->tryPopTop(isBad);
 			QThread::msleep(setConfig.tifeiyanshi);
 			// 剔废动作
+			rw::rqw::OutTriggerConfig outTriggerConfig;
+			outTriggerConfig.lineSelector = 1;
+			outTriggerConfig.lineMode = 8;
+			outTriggerConfig.lineSource = 5;
+			outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;
+			outTriggerConfig.strobeEnable = true;
+			camera->setOutTriggerConfig(outTriggerConfig);
+			camera->outTrigger();
 		}
 	}
 	catch (const std::runtime_error&)
 	{
-		#ifdef BUILD_WITHOUT_HARDWARE
-		// 记录结束时间并打印耗时（毫秒）
-		auto end = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-		std::cout << "[processQueue] WasteTime: " << duration << " mm" << std::endl;
-		#endif
-
-		return;
+		
 	}
-	#ifdef BUILD_WITHOUT_HARDWARE
-	// 记录结束时间并打印耗时（毫秒）
-	auto end = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-	std::cout << "[processQueue] WasteTime: " << duration << " mm" << std::endl;
-	#endif
 }
 
 void DetachDefectThreadQiXinShiJin::run()

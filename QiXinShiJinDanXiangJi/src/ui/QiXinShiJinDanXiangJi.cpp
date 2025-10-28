@@ -82,9 +82,10 @@ void QiXinShiJinDanXiangJi::build_QiXinShiJinDanXiangJiData()
 	rbtn_removeFunc_checked(qiXinShiJinDanXiangJiConfig.isDefect);
 	ui->ckb_shibiekuang->setChecked(qiXinShiJinDanXiangJiConfig.isshibiekuang);
 	ui->ckb_wenzi->setChecked(qiXinShiJinDanXiangJiConfig.iswenzi);
-	changeLanguage(setConfig.changeLanguageIndex);
+
 	ini_clickableTitle();
 	createButtonsOnWidget(ui->widget_showBtn);
+	changeLanguage(setConfig.changeLanguageIndex);
 }
 
 void QiXinShiJinDanXiangJi::build_DlgProductSet()
@@ -364,6 +365,7 @@ void QiXinShiJinDanXiangJi::changeLanguage(int index)
 	// 中文
 	if (0 == index)
 	{
+		clickableTitle->setText("湿巾检测");
 		ui->label_cameraStateTitle->setText("相机状态");
 		ui->label_cardStateTitle->setText("板卡状态");
 		ui->label_info->setText("统计信息");
@@ -382,6 +384,7 @@ void QiXinShiJinDanXiangJi::changeLanguage(int index)
 	// 英文
 	else if (1 == index)
 	{
+		clickableTitle->setText("WetPaper\nDetection");
 		ui->label_cameraStateTitle->setText("CameraState");
 		ui->label_cardStateTitle->setText("CardState");
 		ui->label_info->setText("Statistics");
@@ -772,8 +775,8 @@ void QiXinShiJinDanXiangJi::updateDefectButtonsFromVector()
 	// 线程安全地拷贝前20个标记
 	std::array<bool, 20> flags{};
 	{
-		QMutexLocker locker(&ImageProcessorDuckTongue::isBadVectorMutex);
-		const auto& vec = ImageProcessorDuckTongue::isBadVector;
+		QMutexLocker locker(&ImageProcessor::isBadVectorMutex);
+		const auto& vec = ImageProcessor::isBadVector;
 		for (size_t i = 0; i < flags.size(); ++i)
 			flags[i] = (i < vec.size()) ? vec[i] : false;
 	}

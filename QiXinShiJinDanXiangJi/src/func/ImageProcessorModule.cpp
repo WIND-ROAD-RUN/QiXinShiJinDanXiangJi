@@ -16,8 +16,8 @@
 #include <algorithm>
 #include "QiXinShiJinDanXiangJi.h"
 
-QMutex ImageProcessorDuckTongue::isBadVectorMutex;
-std::vector<bool> ImageProcessorDuckTongue::isBadVector{ false };
+QMutex ImageProcessor::isBadVectorMutex;
+std::vector<bool> ImageProcessor::isBadVector{ false };
 
 namespace {
 	// 在给定最小间隔内只放行一次调用：成功返回 true，其他并发/过快的调用返回 false
@@ -37,13 +37,13 @@ namespace {
 } // namespace
 
 
-ImageProcessorDuckTongue::ImageProcessorDuckTongue(QQueue<MatInfo>& queue, QMutex& mutex, QWaitCondition& condition, int workIndex, QObject* parent)
+ImageProcessor::ImageProcessor(QQueue<MatInfo>& queue, QMutex& mutex, QWaitCondition& condition, int workIndex, QObject* parent)
 	: QThread(parent), _queue(queue), _mutex(mutex), _condition(condition), _workIndex(workIndex)
 {
 
 }
 
-void ImageProcessorDuckTongue::run()
+void ImageProcessor::run()
 {
 	while (!QThread::currentThread()->isInterruptionRequested()) {
 		MatInfo frame;
@@ -92,7 +92,7 @@ void ImageProcessorDuckTongue::run()
 	}
 }
 
-void ImageProcessorDuckTongue::run_debug(MatInfo& frame)
+void ImageProcessor::run_debug(MatInfo& frame)
 {
 	auto& imgPro = *_imgProcess;
 	imgPro(frame.image);
@@ -293,7 +293,7 @@ void halconPRocess(cv::Mat image, double& R1, double& C1, double& length, double
 }
 
 
-void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
+void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 {
 	auto& imgPro = *_imgProcess;
 	auto& qiXinShiJinConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
@@ -306,14 +306,14 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 	QFuture<bool> positiveIsBadFuture;
 
 	positiveIsBadFuture = QtConcurrent::run(
-		[this, &positiveIsBadFuture, &frame, &R1, &C1, &length, &width, &angle]() 
+		[this, &positiveIsBadFuture, &frame, &R1, &C1, &length, &width, &angle]()
 		{
 
-		bool isBad = false;
+			bool isBad = false;
 
-		halconPRocess(frame.image, R1, C1, length, width, angle, isBad);
+			halconPRocess(frame.image, R1, C1, length, width, angle, isBad);
 
-		return isBad;
+			return isBad;
 		});
 
 	imgPro(frame.image);
@@ -329,9 +329,9 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 
 	auto& context = _imgProcess->context();
 
-	if (defectResult.isBad || 
-		positiveIsBad || 
-		(length > qiXinShiJinConfig.setBagLength) || 
+	if (defectResult.isBad ||
+		positiveIsBad ||
+		(length > qiXinShiJinConfig.setBagLength) ||
 		(width > qiXinShiJinConfig.setBagWidth))
 	{
 		{
@@ -355,14 +355,33 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc(MatInfo& frame)
 	emit updateMainWindowShowBtn();
 }
 
-void ImageProcessorDuckTongue::run_OpenRemoveFunc_emitErrorInfo(bool isbad) const
+void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 {
 	auto& globalStruct = GlobalData::getInstance();
 	auto& globalThread = GlobalThread::getInstance();
+	auto& setConfig = globalStruct.setConfig;
 
 	if (isbad)
 	{
 		++globalStruct.statisticalInfo.wasteCount;
+	}
+	else
+	{
+		++productGoodCount;
+		if (setConfig.fenliaojishu == productGoodCount)
+		{
+			auto& camera = globalThread.getInstance().camera1;
+			rw::rqw::OutTriggerConfig outTriggerConfig;
+			outTriggerConfig.lineSelector = 2;
+			outTriggerConfig.lineMode = 8;
+			outTriggerConfig.lineSource = 5;
+			outTriggerConfig.durationValue = 500 * 1000; // 500ms
+			outTriggerConfig.strobeEnable = true;
+			camera->setOutTriggerConfig(outTriggerConfig);
+			camera->outTrigger();
+
+			productGoodCount = 0;
+		}
 	}
 
 	if (imageProcessingModuleIndex == 1 || imageProcessingModuleIndex == 2)
@@ -376,7 +395,7 @@ void ImageProcessorDuckTongue::run_OpenRemoveFunc_emitErrorInfo(bool isbad) cons
 	}
 }
 
-void ImageProcessorDuckTongue::buildDetModelEngine(const QString& enginePath)
+void ImageProcessor::buildDetModelEngine(const QString& enginePath)
 {
 	rw::ModelEngineConfig modelEngineConfig;
 	modelEngineConfig.conf_threshold = 0.1f;
@@ -399,7 +418,7 @@ void ImageProcessorDuckTongue::buildDetModelEngine(const QString& enginePath)
 	initial_isBadVector();
 }
 
-void ImageProcessorDuckTongue::iniIndexGetContext()
+void ImageProcessor::iniIndexGetContext()
 {
 	auto& context = _imgProcess->context();
 
@@ -418,12 +437,12 @@ void ImageProcessorDuckTongue::iniIndexGetContext()
 		};
 }
 
-void ImageProcessorDuckTongue::iniEliminationInfoFunc()
+void ImageProcessor::iniEliminationInfoFunc()
 {
 	updateParamMapsFromGlobalStruct();
 }
 
-void ImageProcessorDuckTongue::iniEliminationInfoGetContext()
+void ImageProcessor::iniEliminationInfoGetContext()
 {
 	auto& context = _imgProcess->context();
 
@@ -434,7 +453,7 @@ void ImageProcessorDuckTongue::iniEliminationInfoGetContext()
 		};
 }
 
-void ImageProcessorDuckTongue::iniDefectResultInfoFunc()
+void ImageProcessor::iniDefectResultInfoFunc()
 {
 	auto& context = _imgProcess->context();
 
@@ -449,7 +468,7 @@ void ImageProcessorDuckTongue::iniDefectResultInfoFunc()
 	context.defectCfg = defectConfigs;
 }
 
-void ImageProcessorDuckTongue::iniDefectResultGetContext()
+void ImageProcessor::iniDefectResultGetContext()
 {
 	auto& context = _imgProcess->context();
 	context.defectResultGetContext.getDefectResultExtraOperate = [this](const rw::imgPro::EliminationItem& item, const rw::DetectionRectangleInfo& detectionRectangleInfo) {
@@ -457,7 +476,7 @@ void ImageProcessorDuckTongue::iniDefectResultGetContext()
 		};
 }
 
-void ImageProcessorDuckTongue::iniDefectDrawConfig()
+void ImageProcessor::iniDefectDrawConfig()
 {
 	auto& context = _imgProcess->context();
 
@@ -472,12 +491,12 @@ void ImageProcessorDuckTongue::iniDefectDrawConfig()
 	context.defectDrawCfg = drawConfig;
 }
 
-void ImageProcessorDuckTongue::iniRunTextConfig()
+void ImageProcessor::iniRunTextConfig()
 {
 	updateDrawText();
 }
 
-void ImageProcessorDuckTongue::drawBoundariesLines(QImage& image)
+void ImageProcessor::drawBoundariesLines(QImage& image)
 {
 	auto& index = imageProcessingModuleIndex;
 	auto& setConfig = GlobalData::getInstance().setConfig;
@@ -493,7 +512,7 @@ void ImageProcessorDuckTongue::drawBoundariesLines(QImage& image)
 	}
 }
 
-void ImageProcessorDuckTongue::updateShieldWires()
+void ImageProcessor::updateShieldWires()
 {
 	auto& globalStructSetConfig = GlobalData::getInstance().setConfig;
 	auto& index = imageProcessingModuleIndex;
@@ -505,7 +524,7 @@ void ImageProcessorDuckTongue::updateShieldWires()
 
 }
 
-void ImageProcessorDuckTongue::updateDrawRec()
+void ImageProcessor::updateDrawRec()
 {
 	auto& globalStruct = GlobalData::getInstance();
 	auto& context = _imgProcess->context();
@@ -525,7 +544,7 @@ void ImageProcessorDuckTongue::updateDrawRec()
 	}
 }
 
-void ImageProcessorDuckTongue::updateDrawText()
+void ImageProcessor::updateDrawText()
 {
 	auto& globalStruct = GlobalData::getInstance();
 	auto& context = _imgProcess->context();
@@ -539,7 +558,7 @@ void ImageProcessorDuckTongue::updateDrawText()
 	}
 }
 
-void ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct()
+void ImageProcessor::updateParamMapsFromGlobalStruct()
 {
 	auto& context = _imgProcess->context();
 	auto& globalStruct = GlobalData::getInstance();
@@ -608,7 +627,7 @@ void ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct()
 	iniDefectResultInfoFunc();
 }
 
-void ImageProcessorDuckTongue::initial_isBadVector()
+void ImageProcessor::initial_isBadVector()
 {
 	{
 		QMutexLocker locker(&isBadVectorMutex);
@@ -620,17 +639,17 @@ void ImageProcessingModuleDuckTongue::BuildModule()
 {
 	for (int i = 0; i < _numConsumers; ++i) {
 		static size_t workIndexCount = 0;
-		ImageProcessorDuckTongue* processor = new ImageProcessorDuckTongue(_queue, _mutex, _condition, workIndexCount, this);
+		ImageProcessor* processor = new ImageProcessor(_queue, _mutex, _condition, workIndexCount, this);
 		workIndexCount++;
 		processor->buildDetModelEngine(modelEnginePath);
 		processor->imageProcessingModuleIndex = index;
-		connect(processor, &ImageProcessorDuckTongue::imageReady, this, &ImageProcessingModuleDuckTongue::imageReady, Qt::QueuedConnection);
-		connect(processor, &ImageProcessorDuckTongue::imageNGReady, this, &ImageProcessingModuleDuckTongue::imageNGReady, Qt::QueuedConnection);
-		connect(processor, &ImageProcessorDuckTongue::updateMainWindowShowBtn, this, &ImageProcessingModuleDuckTongue::updateMainWindowShowBtn, Qt::QueuedConnection);
+		connect(processor, &ImageProcessor::imageReady, this, &ImageProcessingModuleDuckTongue::imageReady, Qt::QueuedConnection);
+		connect(processor, &ImageProcessor::imageNGReady, this, &ImageProcessingModuleDuckTongue::imageNGReady, Qt::QueuedConnection);
+		connect(processor, &ImageProcessor::updateMainWindowShowBtn, this, &ImageProcessingModuleDuckTongue::updateMainWindowShowBtn, Qt::QueuedConnection);
 
-		connect(this, &ImageProcessingModuleDuckTongue::shibiekuangChanged, processor, &ImageProcessorDuckTongue::updateDrawRec, Qt::QueuedConnection);
-		connect(this, &ImageProcessingModuleDuckTongue::wenziChanged, processor, &ImageProcessorDuckTongue::updateDrawText, Qt::QueuedConnection);
-		connect(this, &ImageProcessingModuleDuckTongue::paramMapsChanged, processor, &ImageProcessorDuckTongue::updateParamMapsFromGlobalStruct, Qt::QueuedConnection);
+		connect(this, &ImageProcessingModuleDuckTongue::shibiekuangChanged, processor, &ImageProcessor::updateDrawRec, Qt::QueuedConnection);
+		connect(this, &ImageProcessingModuleDuckTongue::wenziChanged, processor, &ImageProcessor::updateDrawText, Qt::QueuedConnection);
+		connect(this, &ImageProcessingModuleDuckTongue::paramMapsChanged, processor, &ImageProcessor::updateParamMapsFromGlobalStruct, Qt::QueuedConnection);
 		_processors.push_back(processor);
 		processor->start();
 	}
