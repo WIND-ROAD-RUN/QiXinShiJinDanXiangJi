@@ -46,7 +46,7 @@ void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::Thread
 			QThread::msleep(setConfig.tifeiyanshi);
 			// 剔废动作
 			rw::rqw::OutTriggerConfig outTriggerConfig;
-			outTriggerConfig.lineSelector = 1;
+			outTriggerConfig.lineSelector = 2;
 			outTriggerConfig.lineMode = 8;
 			outTriggerConfig.lineSource = 5;
 			outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;

@@ -107,6 +107,8 @@ private:
 	static std::atomic_bool isModelImageLoaded;
 private:
 	void createButtonsOnWidget(QWidget* container);
+
+	void cameraGetImageOnce();
 public slots:
 	void updateDefectButtonsFromVector();
 private:

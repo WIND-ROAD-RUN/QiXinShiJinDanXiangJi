@@ -195,7 +195,10 @@ void halconPRocess(cv::Mat image, double& R1, double& C1, double& length, double
 
 	auto modelimage = QiXinShiJinDanXiangJi::getModelImage();
 
-
+	if (!modelimage)
+	{
+		return;
+	}
 
 	auto image1 = MatToHImage(image);
 
@@ -265,6 +268,9 @@ void halconPRocess(cv::Mat image, double& R1, double& C1, double& length, double
 	width = hv_Length2;
 	angle = -hv_Phi1;
 
+	length = hv_Length1 * 2;
+	width = hv_Length2 * 2;
+
 	//连包缺陷
 	if (0 != (HalconCpp::HTuple(int((hv_Area.TupleLength()) > 0)).TupleAnd(int(hv_Area > 200))))
 	{
@@ -322,6 +328,10 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 	positiveIsBadFuture.waitForFinished();
 	positiveIsBad = positiveIsBadFuture.result();
 
+	auto& setConfig = GlobalData::getInstance().setConfig;
+	GlobalData::getInstance().statisticalInfo.bagLength = length / setConfig.xiangsudangliang;
+	GlobalData::getInstance().statisticalInfo.bagWidth = width / setConfig.xiangsudangliang;
+
 	// 更新屏蔽线
 	updateShieldWires();
 	auto maskImg = imgPro.getMaskImg(frame.image);
@@ -330,9 +340,7 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 	auto& context = _imgProcess->context();
 
 	if (defectResult.isBad ||
-		positiveIsBad ||
-		(length > qiXinShiJinConfig.setBagLength) ||
-		(width > qiXinShiJinConfig.setBagWidth))
+		positiveIsBad)
 	{
 		{
 			QMutexLocker locker(&isBadVectorMutex);
@@ -344,12 +352,15 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 	{
 		QMutexLocker locker(&isBadVectorMutex);
 		isBad = isBadVector[0];
+
+		isBadVector.erase(isBadVector.begin());
+		isBadVector.push_back(false);
 	}
 
 	run_OpenRemoveFunc_emitErrorInfo(isBad);
 
 	drawBoundariesLines(maskImg);
-	DrawRotatedRectangle(maskImg, R1, C1, length, width, angle, QColor(0, 255, 0), 3);
+	DrawRotatedRectangle(maskImg, R1, C1, length / 2, width / 2, angle, QColor(0, 255, 0), 3);
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
 	emit updateMainWindowShowBtn();
@@ -372,7 +383,7 @@ void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 		{
 			auto& camera = globalThread.getInstance().camera1;
 			rw::rqw::OutTriggerConfig outTriggerConfig;
-			outTriggerConfig.lineSelector = 2;
+			outTriggerConfig.lineSelector = 1;
 			outTriggerConfig.lineMode = 8;
 			outTriggerConfig.lineSource = 5;
 			outTriggerConfig.durationValue = 500 * 1000; // 500ms
@@ -697,9 +708,9 @@ void ImageProcessingModuleDuckTongue::onFrameCaptured(rw::rqw::MatInfo matInfo, 
 	}
 
 	// 手动读取本地图片
-	std::string imagePath = R"(C:\Users\zfkj4090\Desktop\Image_20241024165512138.jpg)"; // 替换为你的图片路径
-	cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
-	matInfo.mat = frame1.clone();
+	//std::string imagePath = R"(C:\Users\zfkj4090\Desktop\Image_20241024165512138.jpg)"; // 替换为你的图片路径
+	//cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
+	//matInfo.mat = frame1.clone();
 	if (matInfo.mat.channels() == 4) {
 		cv::cvtColor(matInfo.mat, matInfo.mat, cv::COLOR_BGRA2BGR);
 	}
@@ -714,10 +725,7 @@ void ImageProcessingModuleDuckTongue::onFrameCaptured(rw::rqw::MatInfo matInfo, 
 	auto isModelNeedGet = QiXinShiJinDanXiangJi::getIsModelImageLoaded();
 	if (!isModelNeedGet)
 	{
-		// 手动读取本地图片
-		std::string imagePath = R"(C:\Users\zfkj4090\Desktop\Image_202410241655121382.jpg)"; // 替换为你的图片路径
-		cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
-		HalconCpp::HObject hImage = MatToHImage(frame1);
+		HalconCpp::HObject hImage = MatToHImage(matInfo.mat);
 		HalconCpp::Rgb1ToGray(hImage, &hImage);
 		HalconCpp::MeanImage(hImage, &hImage, 3, 3);
 		QiXinShiJinDanXiangJi::setModelImage(hImage);

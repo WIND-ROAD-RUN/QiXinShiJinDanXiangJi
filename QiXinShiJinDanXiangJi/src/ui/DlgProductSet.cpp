@@ -312,11 +312,7 @@ void DlgProductSet::btn_pidaiduibiyanse_clicked()
 	if (isAccept == QDialog::Accepted)
 	{
 		auto value = numKeyBord.getValue();
-		if (value.toDouble() < 0)
-		{
-			QMessageBox::warning(this, "提示", "请输入大于0的数值");
-			return;
-		}
+
 		auto& setConfig = GlobalData::getInstance().setConfig;
 		ui->btn_pidaiduibiyanse->setText(value);
 		setConfig.pidaiduibiyanse = value.toDouble();
@@ -375,6 +371,8 @@ void DlgProductSet::btn_baoguang_clicked()
 			return;
 		}
 		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& camera = GlobalThread::getInstance().camera1;
+		camera->setExposureTime(value.toInt());
 		ui->btn_baoguang->setText(value);
 		setConfig.baoguang = value.toDouble();
 	}
@@ -394,6 +392,8 @@ void DlgProductSet::btn_zengyi_clicked()
 			return;
 		}
 		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& camera = GlobalThread::getInstance().camera1;
+		camera->setGain(value.toInt());
 		ui->btn_zengyi->setText(value);
 		setConfig.zengyi = value.toDouble();
 	}

@@ -79,9 +79,11 @@ void QiXinShiJinDanXiangJi::build_QiXinShiJinDanXiangJiData()
 	ui->pbtn_bagLength->setText(QString::number(qiXinShiJinDanXiangJiConfig.setBagLength));
 	ui->pbtn_bagWidth->setText(QString::number(qiXinShiJinDanXiangJiConfig.setBagWidth));
 	ui->rbtn_removeFunc->setChecked(qiXinShiJinDanXiangJiConfig.isDefect);
-	rbtn_removeFunc_checked(qiXinShiJinDanXiangJiConfig.isDefect);
+	
 	ui->ckb_shibiekuang->setChecked(qiXinShiJinDanXiangJiConfig.isshibiekuang);
 	ui->ckb_wenzi->setChecked(qiXinShiJinDanXiangJiConfig.iswenzi);
+
+	rbtn_removeFunc_checked(true);
 
 	ini_clickableTitle();
 	createButtonsOnWidget(ui->widget_showBtn);
@@ -210,6 +212,7 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 	start_camera();
 #endif
 
+	pbtn_start_clicked();
 }
 
 void QiXinShiJinDanXiangJi::destroyComponents()
@@ -522,15 +525,17 @@ void QiXinShiJinDanXiangJi::pbtn_start_clicked()
 {
 	setIsModelImageLoaded(false);
 
-	const std::string path = R"(C:\Users\zfkj4090\Desktop\Image_202410241655121382.jpg)";
-	cv::Mat diskImg = cv::imread(path, cv::IMREAD_COLOR);
-	if (diskImg.empty()) {
-		//读取失败，直接返回
-		return;
-	}
+	//const std::string path = R"(C:\Users\zfkj4090\Desktop\Image_202410241655121382.jpg)";
+	//cv::Mat diskImg = cv::imread(path, cv::IMREAD_COLOR);
+	//if (diskImg.empty()) {
+	//	//读取失败，直接返回
+	//	return;
+	//}
 
 	auto& camera = GlobalThread::getInstance().camera1;
 	camera->softwareTrigger();
+	/*camera->setTriggerState(true);
+	auto result = camera->setTriggerLine(0);*/
 }
 
 void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
@@ -569,6 +574,7 @@ void QiXinShiJinDanXiangJi::rbtn_removeFunc_checked(bool checked)
 		if (globalThread.camera1)
 		{
 			globalThread.camera1->setTriggerState(true);
+			globalThread.camera1->setTriggerSource(rw::rqw::TriggerSource::Line0);
 			globalThread.camera1->setFrameRate(50);
 		}
 		ui->rbtn_debug->setChecked(false);
@@ -761,6 +767,15 @@ void QiXinShiJinDanXiangJi::createButtonsOnWidget(QWidget* container)
 	}
 
 	container->setLayout(grid);
+}
+
+void QiXinShiJinDanXiangJi::cameraGetImageOnce()
+{
+	auto& camera = GlobalThread::getInstance().camera1;
+	if (camera)
+	{
+		camera->softwareTrigger();
+	}
 }
 
 void QiXinShiJinDanXiangJi::updateDefectButtonsFromVector()
