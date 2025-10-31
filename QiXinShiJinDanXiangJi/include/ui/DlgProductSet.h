@@ -40,6 +40,9 @@ private slots:
 	void btn_xiangjiguangdianpingbishijian_clicked();
 	void btn_pidaiduibiyanse_clicked();
 
+	void btn_testTrigger1_clicked();
+	void btn_testTrigger2_clicked();
+
 	void btn_shangxianwei_clicked();
 	void btn_xiaxianwei_clicked();
 	void btn_baoguang_clicked();
