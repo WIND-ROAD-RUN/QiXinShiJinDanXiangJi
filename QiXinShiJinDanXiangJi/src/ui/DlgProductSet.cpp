@@ -68,6 +68,8 @@ void DlgProductSet::build_connect()
 	connect(ui->btn_fenliaojishu, &QPushButton::clicked, this, &DlgProductSet::btn_fenliaojishu_clicked);
 	connect(ui->btn_xiangjiguangdianpingbishijian, &QPushButton::clicked, this, &DlgProductSet::btn_xiangjiguangdianpingbishijian_clicked);
 	connect(ui->btn_pidaiduibiyanse, &QPushButton::clicked, this, &DlgProductSet::btn_pidaiduibiyanse_clicked);
+	connect(ui->btn_testTrigger1, &QPushButton::clicked, this, &DlgProductSet::btn_testTrigger1_clicked);
+	connect(ui->btn_testTrigger2, &QPushButton::clicked, this, &DlgProductSet::btn_testTrigger2_clicked);
 	connect(ui->btn_shangxianwei, &QPushButton::clicked, this, &DlgProductSet::btn_shangxianwei_clicked);
 	connect(ui->btn_xiaxianwei, &QPushButton::clicked, this, &DlgProductSet::btn_xiaxianwei_clicked);
 	connect(ui->btn_baoguang, &QPushButton::clicked, this, &DlgProductSet::btn_baoguang_clicked);
@@ -92,6 +94,8 @@ void DlgProductSet::changeLanguage(int index)
 		ui->lb_fenliaojishu->setText("分料计数");
 		ui->lb_fenliaojishuUnit->setText("个");
 		ui->lb_pidaiduibiyanse->setText("皮带对比颜色");
+		ui->btn_testTrigger1->setText("测试触发1");
+		ui->btn_testTrigger2->setText("测试触发2");
 
 		ui->lb_shangxianwei->setText("上限位");
 		ui->lb_xiaxianwei->setText("下限位");
@@ -113,6 +117,8 @@ void DlgProductSet::changeLanguage(int index)
 		ui->lb_fenliaojishu->setText("Dosage counting");
 		ui->lb_fenliaojishuUnit->setText("amount");
 		ui->lb_pidaiduibiyanse->setText("Belt contrasting color");
+		ui->btn_testTrigger1->setText("Test Trigger1");
+		ui->btn_testTrigger2->setText("Test Trigger2");
 
 		ui->lb_shangxianwei->setText("Upper limit");
 		ui->lb_xiaxianwei->setText("Lower limit");
@@ -317,6 +323,36 @@ void DlgProductSet::btn_pidaiduibiyanse_clicked()
 		ui->btn_pidaiduibiyanse->setText(value);
 		setConfig.pidaiduibiyanse = value.toDouble();
 	}
+}
+
+void DlgProductSet::btn_testTrigger1_clicked()
+{
+	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& camera = GlobalThread::getInstance().camera1;
+	// 剔废动作
+	rw::rqw::OutTriggerConfig outTriggerConfig;
+	outTriggerConfig.lineSelector = 1;
+	outTriggerConfig.lineMode = 8;
+	outTriggerConfig.lineSource = 5;
+	outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;
+	outTriggerConfig.strobeEnable = true;
+	camera->setOutTriggerConfig(outTriggerConfig);
+	camera->outTrigger();
+}
+
+void DlgProductSet::btn_testTrigger2_clicked()
+{
+	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& camera = GlobalThread::getInstance().camera1;
+	// 剔废动作
+	rw::rqw::OutTriggerConfig outTriggerConfig;
+	outTriggerConfig.lineSelector = 2;
+	outTriggerConfig.lineMode = 8;
+	outTriggerConfig.lineSource = 5;
+	outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;
+	outTriggerConfig.strobeEnable = true;
+	camera->setOutTriggerConfig(outTriggerConfig);
+	camera->outTrigger();
 }
 
 void DlgProductSet::btn_shangxianwei_clicked()
