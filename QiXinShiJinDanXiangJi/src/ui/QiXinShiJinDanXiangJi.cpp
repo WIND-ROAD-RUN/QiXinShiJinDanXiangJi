@@ -533,7 +533,11 @@ void QiXinShiJinDanXiangJi::pbtn_start_clicked()
 	//}
 
 	auto& camera = GlobalThread::getInstance().camera1;
-	camera->softwareTrigger();
+	if (camera)
+	{
+		camera->softwareTrigger();
+	}
+	
 	/*camera->setTriggerState(true);
 	auto result = camera->setTriggerLine(0);*/
 }
