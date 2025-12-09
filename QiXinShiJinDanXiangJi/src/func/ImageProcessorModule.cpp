@@ -383,7 +383,7 @@ void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 		{
 			auto& camera = globalThread.getInstance().camera1;
 			rw::rqw::OutTriggerConfig outTriggerConfig;
-			outTriggerConfig.lineSelector = 1;
+			outTriggerConfig.lineSelector = 2;
 			outTriggerConfig.lineMode = 8;
 			outTriggerConfig.lineSource = 5;
 			outTriggerConfig.durationValue = 500 * 1000; // 500ms
