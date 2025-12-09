@@ -8,7 +8,6 @@
 #include "QiXinShiJinDanXiangJi.hpp"
 #include "SetConfig.hpp"
 #include "oso_StorageContext.hpp"
-#include "rqw_CameraObjectThread.hpp"
 #include "rqw_ImageSaveEngine.h"
 #include "ImageProcessorModule.hpp"
 #include "CameraAndCardStateThread.h"
@@ -35,15 +34,8 @@ private:
 	GlobalThread();
 	~GlobalThread() override;
 public:
-	std::unique_ptr<rw::rqw::CameraPassiveThread> camera1{ nullptr };
-	void buildCamera();
-	bool buildCamera1();
-
-	void destroyCamera();
-	void destroyCamera1();
-public:
 	// 图像处理模块
-	std::unique_ptr<ImageProcessingModuleDuckTongue> modelCamera1 = nullptr;
+	std::unique_ptr<ImageProcessingModule> modelCamera1 = nullptr;
 
 	void buildImageProcessorModules(const QString& path);
 	void destroyImageProcessingModule();

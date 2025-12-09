@@ -14,6 +14,8 @@
 #include <QPen>
 #include <cmath>
 #include <algorithm>
+
+#include "Modules.hpp"
 #include "QiXinShiJinDanXiangJi.h"
 
 QMutex ImageProcessor::isBadVectorMutex;
@@ -381,7 +383,7 @@ void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 		++productGoodCount;
 		if (setConfig.fenliaojishu == productGoodCount)
 		{
-			auto& camera = globalThread.getInstance().camera1;
+			auto& camera = Modules::getInstance().cameraModule.camera1;
 			rw::rqw::OutTriggerConfig outTriggerConfig;
 			outTriggerConfig.lineSelector = 1;
 			outTriggerConfig.lineMode = 8;
@@ -646,7 +648,7 @@ void ImageProcessor::initial_isBadVector()
 	}
 }
 
-void ImageProcessingModuleDuckTongue::BuildModule()
+void ImageProcessingModule::BuildModule()
 {
 	for (int i = 0; i < _numConsumers; ++i) {
 		static size_t workIndexCount = 0;
@@ -654,25 +656,25 @@ void ImageProcessingModuleDuckTongue::BuildModule()
 		workIndexCount++;
 		processor->buildDetModelEngine(modelEnginePath);
 		processor->imageProcessingModuleIndex = index;
-		connect(processor, &ImageProcessor::imageReady, this, &ImageProcessingModuleDuckTongue::imageReady, Qt::QueuedConnection);
-		connect(processor, &ImageProcessor::imageNGReady, this, &ImageProcessingModuleDuckTongue::imageNGReady, Qt::QueuedConnection);
-		connect(processor, &ImageProcessor::updateMainWindowShowBtn, this, &ImageProcessingModuleDuckTongue::updateMainWindowShowBtn, Qt::QueuedConnection);
+		connect(processor, &ImageProcessor::imageReady, this, &ImageProcessingModule::imageReady, Qt::QueuedConnection);
+		connect(processor, &ImageProcessor::imageNGReady, this, &ImageProcessingModule::imageNGReady, Qt::QueuedConnection);
+		connect(processor, &ImageProcessor::updateMainWindowShowBtn, this, &ImageProcessingModule::updateMainWindowShowBtn, Qt::QueuedConnection);
 
-		connect(this, &ImageProcessingModuleDuckTongue::shibiekuangChanged, processor, &ImageProcessor::updateDrawRec, Qt::QueuedConnection);
-		connect(this, &ImageProcessingModuleDuckTongue::wenziChanged, processor, &ImageProcessor::updateDrawText, Qt::QueuedConnection);
-		connect(this, &ImageProcessingModuleDuckTongue::paramMapsChanged, processor, &ImageProcessor::updateParamMapsFromGlobalStruct, Qt::QueuedConnection);
+		connect(this, &ImageProcessingModule::shibiekuangChanged, processor, &ImageProcessor::updateDrawRec, Qt::QueuedConnection);
+		connect(this, &ImageProcessingModule::wenziChanged, processor, &ImageProcessor::updateDrawText, Qt::QueuedConnection);
+		connect(this, &ImageProcessingModule::paramMapsChanged, processor, &ImageProcessor::updateParamMapsFromGlobalStruct, Qt::QueuedConnection);
 		_processors.push_back(processor);
 		processor->start();
 	}
 }
 
-ImageProcessingModuleDuckTongue::ImageProcessingModuleDuckTongue(int numConsumers, QObject* parent)
+ImageProcessingModule::ImageProcessingModule(int numConsumers, QObject* parent)
 	: QObject(parent), _numConsumers(numConsumers)
 {
 
 }
 
-ImageProcessingModuleDuckTongue::~ImageProcessingModuleDuckTongue()
+ImageProcessingModule::~ImageProcessingModule()
 {
 	// 通知所有线程退出
 	for (auto processor : _processors) {
@@ -694,7 +696,7 @@ ImageProcessingModuleDuckTongue::~ImageProcessingModuleDuckTongue()
 	}
 }
 
-void ImageProcessingModuleDuckTongue::onFrameCaptured(rw::rqw::MatInfo matInfo, size_t index)
+void ImageProcessingModule::onFrameCaptured(rw::rqw::MatInfo matInfo, size_t index)
 {
 	// 防抖动处理
 	auto& setConfig = GlobalData::getInstance().setConfig;

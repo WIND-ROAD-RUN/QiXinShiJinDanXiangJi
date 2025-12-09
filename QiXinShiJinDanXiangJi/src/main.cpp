@@ -7,12 +7,18 @@
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
-    QiXinShiJinDanXiangJi w;
 
 	if (!Modules::check())
 	{
 		return 1;
 	}
+
+	Modules::getInstance().build();
+
+	QiXinShiJinDanXiangJi w;
+
+	Modules::getInstance().connect();
+	Modules::getInstance().start();
 
 #ifdef NDEBUG
 	w.showFullScreen();

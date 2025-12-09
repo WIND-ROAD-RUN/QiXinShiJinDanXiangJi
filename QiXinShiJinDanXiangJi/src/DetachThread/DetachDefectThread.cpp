@@ -2,6 +2,8 @@
 #include "GlobalStruct.hpp"
 #include <chrono>
 
+#include "Modules.hpp"
+
 DetachDefectThreadQiXinShiJin::DetachDefectThreadQiXinShiJin(QObject* parent)
 {
 
@@ -41,7 +43,7 @@ void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::Thread
 		if (isBad)
 		{
 			auto& setConfig = GlobalData::getInstance().setConfig;
-			auto& camera = GlobalThread::getInstance().camera1;
+			auto& camera = Modules::getInstance().cameraModule.camera1;
 			queue->tryPopTop(isBad);
 			QThread::msleep(setConfig.tifeiyanshi);
 			// 剔废动作

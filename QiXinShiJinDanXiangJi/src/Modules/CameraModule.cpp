@@ -1,0 +1,164 @@
+#include "CameraModule.hpp"
+
+#include <QRegularExpression>
+
+#include "GlobalStruct.hpp"
+#include "Utilty.hpp"
+
+CameraModule::CameraModule()
+{
+}
+
+CameraModule::~CameraModule()
+{
+}
+
+std::vector<BuildError> CameraModule::build()
+{
+	std::vector<BuildError> errorList;
+	if (!build_camera1())
+	{
+		errorList.emplace_back(Camera1Error);
+	}
+	_buildResults = errorList;
+	return std::vector<BuildError>();
+}
+
+void CameraModule::destroy()
+{
+	destroy_camera1();
+}
+
+void CameraModule::start()
+{
+	if (camera1)
+	{
+		camera1->startMonitor();
+	}
+}
+
+void CameraModule::stop()
+{
+	if (camera1)
+	{
+		camera1->stopMonitor();
+	}
+}
+
+bool CameraModule::build_camera1()
+{
+	auto cameraList = rw::rqw::CheckCameraList();
+
+	auto cameraMetaData1 = cameraMetaDataCheck(Utility::cameraIp1, cameraList);
+
+	auto& globalDataSetConfig = GlobalData::getInstance().setConfig;
+
+	if (cameraMetaData1.ip != "0")
+	{
+		try
+		{
+			camera1 = std::make_unique<rw::rqw::CameraPassiveThread>(this);
+			camera1->initCamera(cameraMetaData1, rw::rqw::CameraObjectTrigger::Hardware);
+			camera1->setTriggerState(true);
+			camera1->cameraIndex = 1;
+			camera1->setFrameRate(50);
+			camera1->setHeartbeatTime(5000);
+			camera1->setExposureTime(static_cast<size_t>(globalDataSetConfig.baoguang));
+			camera1->setGain(static_cast<size_t>(globalDataSetConfig.zengyi));
+
+			QObject::connect(camera1.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
+				GlobalThread::getInstance().modelCamera1.get(), &ImageProcessingModule::onFrameCaptured, Qt::DirectConnection);
+
+			return true;
+		}
+		catch (const std::exception&)
+		{
+			return false;
+		}
+	}
+	return false;
+}
+
+void CameraModule::destroy_camera1()
+{
+	QObject::disconnect(camera1.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
+		GlobalThread::getInstance().modelCamera1.get(), &ImageProcessingModule::onFrameCaptured);
+	camera1.reset();
+}
+
+bool CameraModule::isTargetCamera(const QString& cameraIndex, const QString& targetName)
+{
+	QRegularExpression regex(R"((\d+)\.(\d+)\.(\d+)\.(\d+))");
+	QRegularExpressionMatch match = regex.match(targetName);
+
+	if (match.hasMatch()) {
+		auto matchString = match.captured(3);
+
+		return cameraIndex == matchString;
+	}
+
+	return false;
+}
+
+rw::rqw::CameraMetaData CameraModule::cameraMetaDataCheck(const QString& cameraIndex,
+	const QVector<rw::rqw::CameraMetaData>& cameraInfo)
+{
+	for (const auto& cameraMetaData : cameraInfo) {
+		if (isTargetCamera(cameraIndex, cameraMetaData.ip)) {
+			return cameraMetaData;
+		}
+	}
+	rw::rqw::CameraMetaData error;
+	error.ip = "0";
+	return error;
+}
+
+bool CameraModule::onBuildCamera(int index)
+{
+	switch (index)
+	{
+	case 1:
+		return build_camera1();
+	default:
+		return false;
+	}
+}
+
+void CameraModule::onDestroyCamera(int index)
+{
+	switch (index)
+	{
+	case 1:
+		destroy_camera1();
+		break;
+	default:
+		break;
+	}
+}
+
+void CameraModule::onStartCamera(int index)
+{
+	switch (index)
+	{
+	case 1:
+		if (camera1)
+		{
+			camera1->startMonitor();
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void CameraModule::onFrameCaptured(rw::rqw::MatInfo frame, size_t index)
+{
+	switch (index)
+	{
+	case 1:
+		emit frameCaptured1(frame, index);
+		break;
+	default:
+		break;
+	}
+}

@@ -1,6 +1,7 @@
 #include "CameraAndCardStateThread.h"
 
 #include "GlobalStruct.hpp"
+#include "Modules.hpp"
 
 size_t CameraAndCardStateThreadQiXinShiJin::runtimeCounts = 0;
 
@@ -51,13 +52,13 @@ void CameraAndCardStateThreadQiXinShiJin::check_cameraState1()
 {
 	static bool isUpdateState = false;
 
-	auto& globalThread = GlobalThread::getInstance();
+	auto& camera1 = Modules::getInstance().cameraModule.camera1;
 
 	if (runtimeCounts != 0) {
 		return;
 	}
-	if (globalThread.camera1) {
-		if (globalThread.camera1->getConnectState()) {
+	if (camera1) {
+		if (camera1->getConnectState()) {
 			if (!isUpdateState) {
 				emit updateCameraLabelState(1, true);
 				isUpdateState = true;

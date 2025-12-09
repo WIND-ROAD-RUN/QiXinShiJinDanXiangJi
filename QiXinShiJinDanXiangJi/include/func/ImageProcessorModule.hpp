@@ -94,7 +94,7 @@ public:
 };
 
 
-class ImageProcessingModuleDuckTongue : public QObject {
+class ImageProcessingModule : public QObject {
 	Q_OBJECT
 public:
 	QString modelEnginePath;
@@ -103,9 +103,9 @@ public:
 	// 初始化图像处理模块
 	void BuildModule();
 public:
-	ImageProcessingModuleDuckTongue(int numConsumers, QObject* parent = nullptr);
+	ImageProcessingModule(int numConsumers, QObject* parent = nullptr);
 
-	~ImageProcessingModuleDuckTongue();
+	~ImageProcessingModule();
 
 public slots:
 	// 相机回调函数

@@ -48,7 +48,7 @@ public:
 	static bool EnsureDirectoryExists(const QString& dirPath);
 
 public:
-	
+	CameraModule cameraModule;
 
 
 //#ifdef BUILD_WITHOUT_HARDWARE

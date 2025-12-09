@@ -7,6 +7,7 @@
 #include "ui_QiXinShiJinDanXiangJi.h"
 #include <QPushButton>
 #include "GlobalStruct.hpp"
+#include "Modules.hpp"
 #include "NumberKeyboard.h"
 #include "rqw_RunEnvCheck.hpp"
 #include "Utilty.hpp"
@@ -209,7 +210,6 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 	start_Threads();
 
 #ifndef BUILD_WITHOUT_HARDWARE
-	start_camera();
 #endif
 
 	pbtn_start_clicked();
@@ -233,32 +233,21 @@ void QiXinShiJinDanXiangJi::destroyComponents()
 
 	destroy_zmotion();
 
-	destroy_camera();
-
 	save_config();
 }
 
 void QiXinShiJinDanXiangJi::build_camera()
 {
-	auto& globalThread = GlobalThread::getInstance();
+	auto& cameraModules = Modules::getInstance().cameraModule;
+	auto errors = cameraModules.getBuildResults();
+	updateCameraLabelState(1, true);
+	updateCameraLabelState(2, true);
 
-	auto build1Result = globalThread.buildCamera1();
-	updateCameraLabelState(1, build1Result);
-}
-
-void QiXinShiJinDanXiangJi::start_camera()
-{
-	auto& globalThread = GlobalThread::getInstance();
-	if (globalThread.camera1 != nullptr)
+	for (const auto& error : errors)
 	{
-		globalThread.camera1->startMonitor();
+		auto index = static_cast<int>(error);
+		updateCameraLabelState(index, false);
 	}
-}
-
-void QiXinShiJinDanXiangJi::destroy_camera()
-{
-	auto& globalThread = GlobalThread::getInstance();
-	globalThread.destroyCamera();
 }
 
 void QiXinShiJinDanXiangJi::build_ImageProcessingModule()
@@ -280,12 +269,12 @@ void QiXinShiJinDanXiangJi::build_ImageProcessingModule()
 
 	globalThread.buildImageProcessorModules(enginePathFull);
 
-	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::imageReady, this, &QiXinShiJinDanXiangJi::onCamera1Display);
-	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::imageNGReady, this, &QiXinShiJinDanXiangJi::onCameraNGDisplay);
-	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::updateMainWindowShowBtn, this, &QiXinShiJinDanXiangJi::updateDefectButtonsFromVector);
-	QObject::connect(this, &QiXinShiJinDanXiangJi::shibiekuangChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::shibiekuangChanged);
-	QObject::connect(this, &QiXinShiJinDanXiangJi::wenziChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::wenziChanged);
-	QObject::connect(_dlgProductSet, &DlgProductSet::paramsChanged, globalThread.modelCamera1.get(), &ImageProcessingModuleDuckTongue::paramMapsChanged);
+	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModule::imageReady, this, &QiXinShiJinDanXiangJi::onCamera1Display);
+	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModule::imageNGReady, this, &QiXinShiJinDanXiangJi::onCameraNGDisplay);
+	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModule::updateMainWindowShowBtn, this, &QiXinShiJinDanXiangJi::updateDefectButtonsFromVector);
+	QObject::connect(this, &QiXinShiJinDanXiangJi::shibiekuangChanged, globalThread.modelCamera1.get(), &ImageProcessingModule::shibiekuangChanged);
+	QObject::connect(this, &QiXinShiJinDanXiangJi::wenziChanged, globalThread.modelCamera1.get(), &ImageProcessingModule::wenziChanged);
+	QObject::connect(_dlgProductSet, &DlgProductSet::paramsChanged, globalThread.modelCamera1.get(), &ImageProcessingModule::paramMapsChanged);
 }
 
 void QiXinShiJinDanXiangJi::destroy_ImageProcessingModule()
@@ -532,7 +521,7 @@ void QiXinShiJinDanXiangJi::pbtn_start_clicked()
 	//	return;
 	//}
 
-	auto& camera = GlobalThread::getInstance().camera1;
+	auto& camera = Modules::getInstance().cameraModule.camera1;
 	if (camera)
 	{
 		camera->softwareTrigger();
@@ -546,15 +535,15 @@ void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
 {
 	auto isRuning = ui->rbtn_removeFunc->isChecked();
 
-	auto& globalThread = GlobalThread::getInstance();
 	auto& globalData = GlobalData::getInstance();
+	auto& camera1 = Modules::getInstance().cameraModule.camera1;
 	if (!isRuning) {
 		if (checked) {
 			globalData.runningState = RunningState::Debug;
-			if (globalThread.camera1)
+			if (camera1)
 			{
-				globalThread.camera1->setTriggerState(false);
-				globalThread.camera1->setFrameRate(5);
+				camera1->setTriggerState(false);
+				camera1->setFrameRate(5);
 			}
 		}
 		else {
@@ -571,15 +560,15 @@ void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
 void QiXinShiJinDanXiangJi::rbtn_removeFunc_checked(bool checked)
 {
 	auto& globalData = GlobalData::getInstance();
-	auto& globalThread = GlobalThread::getInstance();
+	auto& camera1 = Modules::getInstance().cameraModule.camera1;
 	if (checked)
 	{
 		globalData.runningState = RunningState::OpenRemoveFunc;
-		if (globalThread.camera1)
+		if (camera1)
 		{
-			globalThread.camera1->setTriggerState(true);
-			globalThread.camera1->setTriggerSource(rw::rqw::TriggerSource::Line0);
-			globalThread.camera1->setFrameRate(50);
+			camera1->setTriggerState(true);
+			camera1->setTriggerSource(rw::rqw::TriggerSource::Line0);
+			camera1->setFrameRate(50);
 		}
 		ui->rbtn_debug->setChecked(false);
 		ui->ckb_shibiekuang->setVisible(false);
@@ -775,7 +764,7 @@ void QiXinShiJinDanXiangJi::createButtonsOnWidget(QWidget* container)
 
 void QiXinShiJinDanXiangJi::cameraGetImageOnce()
 {
-	auto& camera = GlobalThread::getInstance().camera1;
+	auto& camera = Modules::getInstance().cameraModule.camera1;
 	if (camera)
 	{
 		camera->softwareTrigger();

@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QMessageBox>
 
+#include "GlobalStruct.hpp"
 #include "QiXinShiJinDanXiangJi.hpp"
 #include "rqw_RunEnvCheck.hpp"
 #include "SetConfig.hpp"
@@ -21,26 +22,33 @@ Modules::~Modules()
 
 bool Modules::build()
 {
+	// 构建相机
+	auto cameraBuild = cameraModule.build();
+
 	return true;
 }
 
 void Modules::destroy()
 {
-
+	cameraModule.destroy();
 }
 
 void Modules::start()
 {
-
+	cameraModule.start();
 }
 
 void Modules::stop()
 {
-
+	cameraModule.stop();
 }
 
 void Modules::connect()
 {
+#pragma region connect camera and imgProModule
+	QObject::connect(&cameraModule, &CameraModule::frameCaptured1,
+		GlobalThread::getInstance().modelCamera1.get(), &ImageProcessingModule::onFrameCaptured, Qt::DirectConnection);
+#pragma endregion
 
 }
 

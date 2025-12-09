@@ -43,8 +43,6 @@ public:
 	void destroyComponents();
 public:
 	void build_camera();
-	void start_camera();
-	void destroy_camera();
 public:
 	void build_ImageProcessingModule();
 	void destroy_ImageProcessingModule();

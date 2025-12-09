@@ -6,6 +6,7 @@
 #include <QtConcurrent/qtconcurrentrun.h>
 
 #include "GlobalStruct.hpp"
+#include "Modules.hpp"
 #include "NumberKeyboard.h"
 
 DlgProductSet::DlgProductSet(QWidget* parent)
@@ -328,7 +329,7 @@ void DlgProductSet::btn_pidaiduibiyanse_clicked()
 void DlgProductSet::btn_testTrigger1_clicked()
 {
 	auto& setConfig = GlobalData::getInstance().setConfig;
-	auto& camera = GlobalThread::getInstance().camera1;
+	auto& camera = Modules::getInstance().cameraModule.camera1;
 	// 剔废动作
 	rw::rqw::OutTriggerConfig outTriggerConfig;
 	outTriggerConfig.lineSelector = 1;
@@ -343,7 +344,7 @@ void DlgProductSet::btn_testTrigger1_clicked()
 void DlgProductSet::btn_testTrigger2_clicked()
 {
 	auto& setConfig = GlobalData::getInstance().setConfig;
-	auto& camera = GlobalThread::getInstance().camera1;
+	auto& camera = Modules::getInstance().cameraModule.camera1;
 	// 剔废动作
 	rw::rqw::OutTriggerConfig outTriggerConfig;
 	outTriggerConfig.lineSelector = 2;
@@ -407,7 +408,7 @@ void DlgProductSet::btn_baoguang_clicked()
 			return;
 		}
 		auto& setConfig = GlobalData::getInstance().setConfig;
-		auto& camera = GlobalThread::getInstance().camera1;
+		auto& camera = Modules::getInstance().cameraModule.camera1;
 		camera->setExposureTime(value.toInt());
 		ui->btn_baoguang->setText(value);
 		setConfig.baoguang = value.toDouble();
@@ -428,7 +429,7 @@ void DlgProductSet::btn_zengyi_clicked()
 			return;
 		}
 		auto& setConfig = GlobalData::getInstance().setConfig;
-		auto& camera = GlobalThread::getInstance().camera1;
+		auto& camera = Modules::getInstance().cameraModule.camera1;
 		camera->setGain(value.toInt());
 		ui->btn_zengyi->setText(value);
 		setConfig.zengyi = value.toDouble();
