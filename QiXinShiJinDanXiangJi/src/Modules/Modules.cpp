@@ -25,21 +25,27 @@ bool Modules::build()
 	// 构建相机
 	auto cameraBuild = cameraModule.build();
 
+	// 构建重连模块
+	reconnectModule.build();
+
 	return true;
 }
 
 void Modules::destroy()
 {
 	cameraModule.destroy();
+	reconnectModule.destroy();
 }
 
 void Modules::start()
 {
 	cameraModule.start();
+	reconnectModule.start();
 }
 
 void Modules::stop()
 {
+	reconnectModule.stop();
 	cameraModule.stop();
 }
 
@@ -48,6 +54,20 @@ void Modules::connect()
 #pragma region connect camera and imgProModule
 	QObject::connect(&cameraModule, &CameraModule::frameCaptured1,
 		GlobalThread::getInstance().modelCamera1.get(), &ImageProcessingModule::onFrameCaptured, Qt::DirectConnection);
+#pragma endregion
+
+#pragma region connect UIModule and ReconnectModule
+	// 更新UI界面
+	/*QObject::connect(reconnectModule.monitorCameraAndCardStateThread.get(), &CameraAndCardStateThreadHandleScanner::updateCameraLabelState,
+		uiModule._handleScanner, &HandleScanner::updateCameraLabelState, Qt::QueuedConnection);*/
+	// 相机重连
+	QObject::connect(reconnectModule.monitorCameraAndCardStateThread.get(), &CameraAndCardStateThreadQiXinShiJin::buildCamera,
+		&cameraModule, &CameraModule::onBuildCamera, Qt::QueuedConnection);
+	QObject::connect(reconnectModule.monitorCameraAndCardStateThread.get(), &CameraAndCardStateThreadQiXinShiJin::startMonitor,
+		&cameraModule, &CameraModule::onStartCamera, Qt::QueuedConnection);
+	// 相机销毁
+	QObject::connect(reconnectModule.monitorCameraAndCardStateThread.get(), &CameraAndCardStateThreadQiXinShiJin::destroyCamera,
+		&cameraModule, &CameraModule::onDestroyCamera, Qt::QueuedConnection);
 #pragma endregion
 
 }

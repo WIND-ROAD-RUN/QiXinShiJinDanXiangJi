@@ -34,9 +34,11 @@ signals:
 	void addWarningInfo(QString message, bool updateTimestampIfSame, int redDuration);
 
 signals:
-	void buildCamera1();
-	void destroyCamera1();
-	void startMonitor1();
+	void buildCamera(int index);
+
+	void destroyCamera(int index);
+
+	void startMonitor(int index);
 
 	void buildZMotion();
 	void destroyZMotion();

@@ -49,7 +49,7 @@ public:
 
 public:
 	CameraModule cameraModule;
-
+	ReconnectModule reconnectModule;
 
 //#ifdef BUILD_WITHOUT_HARDWARE
 //public:

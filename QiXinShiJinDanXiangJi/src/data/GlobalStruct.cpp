@@ -79,35 +79,6 @@ void GlobalThread::destroy_DetachUtiltyThread()
 	}
 }
 
-void GlobalThread::build_CameraAndCardStateThread()
-{
-	cameraAndCardStateThreadQiXinShiJin = new CameraAndCardStateThreadQiXinShiJin(this);
-	// 更新UI界面
-	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::updateCameraLabelState,
-		this, &GlobalThread::emit_updateUiLabels, Qt::QueuedConnection);
-	// 相机重连
-	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::buildCamera1,
-		this, &GlobalThread::rebuild_Camera1, Qt::QueuedConnection);
-	// 相机销毁
-	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::destroyCamera1,
-		this, &GlobalThread::destroy_Camera1, Qt::QueuedConnection);
-	// 运动控制器重连
-	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::buildZMotion,
-		this, &GlobalThread::rebuild_ZMotion, Qt::QueuedConnection);
-	// 运动控制器销毁
-	QObject::connect(cameraAndCardStateThreadQiXinShiJin, &CameraAndCardStateThreadQiXinShiJin::destroyZMotion,
-		this, &GlobalThread::destroy_ZMotion, Qt::QueuedConnection);
-}
-
-void GlobalThread::destroy_CameraAndCardStateThread()
-{
-	if (cameraAndCardStateThreadQiXinShiJin)
-	{
-		delete cameraAndCardStateThreadQiXinShiJin;
-		cameraAndCardStateThreadQiXinShiJin = nullptr;
-	}
-}
-
 bool GlobalThread::build_ZMotion()
 {
 	zmotion = std::make_shared<rw::rqw::ZMotion>(Utility::zmotionIp);
@@ -123,16 +94,6 @@ void GlobalThread::Destroy_ZMotion()
 		bool isDisconnect = zmotion->disConnect();
 		zmotion.reset();
 	}
-}
-
-void GlobalThread::rebuild_Camera1()
-{
-	
-}
-
-void GlobalThread::destroy_Camera1()
-{
-	
 }
 
 void GlobalThread::rebuild_ZMotion()

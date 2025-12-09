@@ -10,7 +10,6 @@
 #include "oso_StorageContext.hpp"
 #include "rqw_ImageSaveEngine.h"
 #include "ImageProcessorModule.hpp"
-#include "CameraAndCardStateThread.h"
 #include "rqw_ZMotion.hpp"
 
 
@@ -55,10 +54,6 @@ public:
 	void build_DetachUtiltyThread();
 	void destroy_DetachUtiltyThread();
 public:
-	CameraAndCardStateThreadQiXinShiJin* cameraAndCardStateThreadQiXinShiJin;
-public:
-	void build_CameraAndCardStateThread();
-	void destroy_CameraAndCardStateThread();
 public:
 	std::shared_ptr<rw::rqw::ZMotion> zmotion{ nullptr };
 
@@ -68,9 +63,6 @@ signals:
 	// 更新UI
 	void emit_updateUiLabels(int index, bool isConnected);
 public slots:
-	// 相机重连
-	void rebuild_Camera1();
-	void destroy_Camera1();
 	// 运动控制器重连
 	void rebuild_ZMotion();
 	void destroy_ZMotion();

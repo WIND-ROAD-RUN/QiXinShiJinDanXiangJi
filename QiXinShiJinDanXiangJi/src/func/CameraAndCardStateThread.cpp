@@ -50,9 +50,9 @@ void CameraAndCardStateThreadQiXinShiJin::check_cameraState()
 
 void CameraAndCardStateThreadQiXinShiJin::check_cameraState1()
 {
+	auto& camera1 = Modules::getInstance().cameraModule.camera1;
 	static bool isUpdateState = false;
 
-	auto& camera1 = Modules::getInstance().cameraModule.camera1;
 
 	if (runtimeCounts != 0) {
 		return;
@@ -65,12 +65,13 @@ void CameraAndCardStateThreadQiXinShiJin::check_cameraState1()
 			}
 		}
 		else {
-			emit destroyCamera1();
+			emit destroyCamera(1);
 			emit updateCameraLabelState(1, false);
 		}
 	}
 	else {
-		emit buildCamera1();
+		emit buildCamera(1);
+		emit startMonitor(1);
 		emit updateCameraLabelState(1, false);
 		isUpdateState = false;
 	}
