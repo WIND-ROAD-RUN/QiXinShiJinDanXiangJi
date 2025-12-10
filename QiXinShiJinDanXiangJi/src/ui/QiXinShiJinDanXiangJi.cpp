@@ -6,6 +6,8 @@
 
 #include "ui_QiXinShiJinDanXiangJi.h"
 #include <QPushButton>
+
+#include "DlgProductSet.h"
 #include "GlobalStruct.hpp"
 #include "Modules.hpp"
 #include "NumberKeyboard.h"
@@ -34,7 +36,6 @@ QiXinShiJinDanXiangJi::~QiXinShiJinDanXiangJi()
 void QiXinShiJinDanXiangJi::build_ui()
 {
 	build_QiXinShiJinDanXiangJiData();
-	build_DlgProductSet();
 	build_DlgCloseForm();
 }
 
@@ -89,13 +90,6 @@ void QiXinShiJinDanXiangJi::build_QiXinShiJinDanXiangJiData()
 	ini_clickableTitle();
 	createButtonsOnWidget(ui->widget_showBtn);
 	changeLanguage(setConfig.changeLanguageIndex);
-}
-
-void QiXinShiJinDanXiangJi::build_DlgProductSet()
-{
-	_dlgProductSet = new DlgProductSet(this);
-
-	connect(_dlgProductSet, &DlgProductSet::emit_changeLanguage, this, &QiXinShiJinDanXiangJi::changeLanguage);
 }
 
 void QiXinShiJinDanXiangJi::ini_clickableTitle()
@@ -270,7 +264,6 @@ void QiXinShiJinDanXiangJi::build_ImageProcessingModule()
 	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModule::updateMainWindowShowBtn, this, &QiXinShiJinDanXiangJi::updateDefectButtonsFromVector);
 	QObject::connect(this, &QiXinShiJinDanXiangJi::shibiekuangChanged, globalThread.modelCamera1.get(), &ImageProcessingModule::shibiekuangChanged);
 	QObject::connect(this, &QiXinShiJinDanXiangJi::wenziChanged, globalThread.modelCamera1.get(), &ImageProcessingModule::wenziChanged);
-	QObject::connect(_dlgProductSet, &DlgProductSet::paramsChanged, globalThread.modelCamera1.get(), &ImageProcessingModule::paramMapsChanged);
 }
 
 void QiXinShiJinDanXiangJi::destroy_ImageProcessingModule()
@@ -473,11 +466,6 @@ void QiXinShiJinDanXiangJi::lb_title_clicked()
 	{
 		// 最小化主窗体
 		this->showMinimized();
-
-		// 最小化所有子窗体（如果已创建且可见）
-		if (_dlgProductSet && _dlgProductSet->isVisible())
-			_dlgProductSet->showMinimized();
-
 		minimizeCount = 3; // 重置最小化计数器
 	}
 
@@ -497,6 +485,7 @@ void QiXinShiJinDanXiangJi::pbtn_exit_clicked()
 
 void QiXinShiJinDanXiangJi::pbtn_set_clicked()
 {
+	auto& _dlgProductSet = Modules::getInstance().uiModule._dlgProductSet;
 	_dlgProductSet->setFixedSize(this->width(), this->height());
 	_dlgProductSet->setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
 	_dlgProductSet->exec();
@@ -506,21 +495,11 @@ void QiXinShiJinDanXiangJi::pbtn_start_clicked()
 {
 	setIsModelImageLoaded(false);
 
-	//const std::string path = R"(C:\Users\zfkj4090\Desktop\Image_202410241655121382.jpg)";
-	//cv::Mat diskImg = cv::imread(path, cv::IMREAD_COLOR);
-	//if (diskImg.empty()) {
-	//	//读取失败，直接返回
-	//	return;
-	//}
-
 	auto& camera = Modules::getInstance().cameraModule.camera1;
 	if (camera)
 	{
 		camera->softwareTrigger();
 	}
-	
-	/*camera->setTriggerState(true);
-	auto result = camera->setTriggerLine(0);*/
 }
 
 void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)

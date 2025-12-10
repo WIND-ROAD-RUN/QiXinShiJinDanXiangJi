@@ -79,29 +79,5 @@ void CameraAndCardStateThreadQiXinShiJin::check_cameraState1()
 
 void CameraAndCardStateThreadQiXinShiJin::check_cardState()
 {
-	static bool isUpdateState = false;
-
-	auto& zmotion = Modules::getInstance().motionControllerModule.zmotion;
-
-	if (runtimeCounts != 0) {
-		return;
-	}
-
-	if (zmotion) {
-		if (zmotion->getConnectState()) {
-			if (!isUpdateState) {
-				emit updateCameraLabelState(0, true);
-				isUpdateState = true;
-			}
-		}
-		else {
-			emit destroyZMotion();
-			emit updateCameraLabelState(0, false);
-		}
-	}
-	else {
-		emit buildZMotion();
-		emit updateCameraLabelState(0, false);
-		isUpdateState = false;
-	}
+	
 }

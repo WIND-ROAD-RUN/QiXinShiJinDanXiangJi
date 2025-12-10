@@ -4,7 +4,6 @@
 #include <HalconCpp/HalconCpp.h>
 #include <memory>
 #include <atomic>
-#include "DlgProductSet.h"
 #include "rqw_LabelClickable.h"
 #include "DlgCloseForm.h"
 #include "oso_func.hpp"
@@ -26,7 +25,6 @@ public:
 	void build_ui();
 	void build_connect();
 	void build_QiXinShiJinDanXiangJiData();
-	void build_DlgProductSet();
 	void ini_clickableTitle();
 	void build_DlgCloseForm();
 public:
@@ -63,7 +61,7 @@ public:
 	void destroy_zmotion();
 public slots:
 	void changeLanguage(int index);
-private slots:
+public slots:
 	void updateCameraLabelState(int cameraIndex, bool state);
 
 	void onUpdateStatisticalInfoUI();
@@ -111,8 +109,6 @@ public slots:
 	void updateDefectButtonsFromVector();
 private:
 	rw::rqw::ClickableLabel* clickableTitle = nullptr;
-public:
-	DlgProductSet* _dlgProductSet = nullptr;
 	DlgCloseForm* _dlgCloseForm = nullptr;
 private:
 	Ui::QiXinShiJinDanXiangJiClass *ui;

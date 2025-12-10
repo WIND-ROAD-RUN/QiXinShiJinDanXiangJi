@@ -52,7 +52,7 @@ public:
 	CameraModule cameraModule;
 	ReconnectModule reconnectModule;
 	MotionControllerModule motionControllerModule;
-
+	UIModule uiModule;
 //#ifdef BUILD_WITHOUT_HARDWARE
 //public:
 //	TestModule test_module;
