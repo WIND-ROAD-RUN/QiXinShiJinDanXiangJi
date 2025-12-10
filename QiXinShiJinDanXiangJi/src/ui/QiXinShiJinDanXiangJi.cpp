@@ -334,16 +334,14 @@ void QiXinShiJinDanXiangJi::destroy_DetachUtiltyThread()
 
 void QiXinShiJinDanXiangJi::build_zmotion()
 {
-	auto& globalThread = GlobalThread::getInstance();
-	auto buildResult = globalThread.build_ZMotion();
-
-	updateCameraLabelState(0, buildResult);
+	auto& motionControllerModule = Modules::getInstance().motionControllerModule;
+	auto isBuildZmotion = motionControllerModule.zmotion->connect();
+	updateCameraLabelState(0, isBuildZmotion);
 }
 
 void QiXinShiJinDanXiangJi::destroy_zmotion()
 {
 	auto& globalThread = GlobalThread::getInstance();
-	globalThread.Destroy_ZMotion();
 }
 
 void QiXinShiJinDanXiangJi::changeLanguage(int index)

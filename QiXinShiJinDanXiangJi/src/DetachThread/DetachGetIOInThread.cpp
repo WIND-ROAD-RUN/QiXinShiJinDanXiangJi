@@ -1,6 +1,7 @@
 #include "DetachGetIOInThread.h"
 #include "GlobalStruct.hpp"
 #include "ImageProcessorModule.hpp"
+#include "Modules.hpp"
 
 DetachGetIOInThread::DetachGetIOInThread(QObject *parent) : QThread(parent)
 {
@@ -28,7 +29,7 @@ void DetachGetIOInThread::stopThread()
 
 void DetachGetIOInThread::process()
 {
-    auto& zmotion = GlobalThread::getInstance().zmotion;
+    auto& zmotion = Modules::getInstance().motionControllerModule.zmotion;
 
     bool status;
     if(zmotion->getConnectState())

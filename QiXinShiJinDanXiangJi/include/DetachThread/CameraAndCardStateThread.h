@@ -30,8 +30,6 @@ private:
 	void check_cardState();
 signals:
 	void updateCameraLabelState(int cameraIndex, bool state);
-	void updateCardLabelState(bool state);
-	void addWarningInfo(QString message, bool updateTimestampIfSame, int redDuration);
 
 signals:
 	void buildCamera(int index);

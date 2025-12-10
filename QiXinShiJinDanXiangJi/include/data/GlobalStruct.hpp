@@ -10,7 +10,6 @@
 #include "oso_StorageContext.hpp"
 #include "rqw_ImageSaveEngine.h"
 #include "ImageProcessorModule.hpp"
-#include "rqw_ZMotion.hpp"
 
 
 enum class RunningState
@@ -53,19 +52,9 @@ public:
 
 	void build_DetachUtiltyThread();
 	void destroy_DetachUtiltyThread();
-public:
-public:
-	std::shared_ptr<rw::rqw::ZMotion> zmotion{ nullptr };
-
-	bool build_ZMotion();
-	void Destroy_ZMotion();
 signals:
 	// 更新UI
 	void emit_updateUiLabels(int index, bool isConnected);
-public slots:
-	// 运动控制器重连
-	void rebuild_ZMotion();
-	void destroy_ZMotion();
 public:
 	bool isTargetCamera(const QString& cameraIndex, const QString& targetName);
 	rw::rqw::CameraMetaData cameraMetaDataCheck(const QString& cameraIndex, const QVector<rw::rqw::CameraMetaData>& cameraInfo);

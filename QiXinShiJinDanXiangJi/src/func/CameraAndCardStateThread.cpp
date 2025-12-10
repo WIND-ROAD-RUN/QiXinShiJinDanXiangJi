@@ -81,14 +81,14 @@ void CameraAndCardStateThreadQiXinShiJin::check_cardState()
 {
 	static bool isUpdateState = false;
 
-	auto& globalThread = GlobalThread::getInstance();
+	auto& zmotion = Modules::getInstance().motionControllerModule.zmotion;
 
 	if (runtimeCounts != 0) {
 		return;
 	}
 
-	if (globalThread.zmotion) {
-		if (globalThread.zmotion->getConnectState()) {
+	if (zmotion) {
+		if (zmotion->getConnectState()) {
 			if (!isUpdateState) {
 				emit updateCameraLabelState(0, true);
 				isUpdateState = true;

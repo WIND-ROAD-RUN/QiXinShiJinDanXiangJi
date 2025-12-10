@@ -79,33 +79,6 @@ void GlobalThread::destroy_DetachUtiltyThread()
 	}
 }
 
-bool GlobalThread::build_ZMotion()
-{
-	zmotion = std::make_shared<rw::rqw::ZMotion>(Utility::zmotionIp);
-	zmotion->setIp(Utility::zmotionIp);
-	bool isConnected = zmotion->connect();
-	return isConnected;
-}
-
-void GlobalThread::Destroy_ZMotion()
-{
-	if (zmotion)
-	{
-		bool isDisconnect = zmotion->disConnect();
-		zmotion.reset();
-	}
-}
-
-void GlobalThread::rebuild_ZMotion()
-{
-	build_ZMotion();
-}
-
-void GlobalThread::destroy_ZMotion()
-{
-	Destroy_ZMotion();
-}
-
 GlobalFuncObject& GlobalFuncObject::getInstance()
 {
 	static GlobalFuncObject instance;
