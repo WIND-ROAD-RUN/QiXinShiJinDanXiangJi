@@ -79,20 +79,6 @@ void GlobalThread::destroy_DetachUtiltyThread()
 	}
 }
 
-GlobalFuncObject& GlobalFuncObject::getInstance()
-{
-	static GlobalFuncObject instance;
-	return instance;
-}
-
-GlobalFuncObject::GlobalFuncObject()
-{
-}
-
-GlobalFuncObject::~GlobalFuncObject()
-{
-}
-
 GlobalData::GlobalData()
 {
 
@@ -101,25 +87,6 @@ GlobalData::GlobalData()
 GlobalData::~GlobalData()
 {
 
-}
-
-void GlobalFuncObject::buildConfigManager(rw::oso::StorageType type)
-{
-	storeContext = std::make_unique<rw::oso::StorageContext>(type);
-}
-
-void GlobalFuncObject::saveQiXinShiJinDanXiangJiConfig()
-{
-	auto& globalStruct = GlobalData::getInstance();
-	std::string generalConfigPath = globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString();
-	storeContext->saveSafe(globalStruct.qiXinShiJinDanXiangJiConfig, generalConfigPath);
-}
-
-void GlobalFuncObject::saveSetConfig()
-{
-	auto& globalStruct = GlobalData::getInstance();
-	std::string setConfigPath = globalPath.setConfigPath.toStdString();
-	storeContext->saveSafe(globalStruct.setConfig, setConfigPath);
 }
 
 bool GlobalThread::isTargetCamera(const QString& cameraIndex, const QString& targetName)

@@ -192,8 +192,8 @@ void halconPRocess(cv::Mat image, double& R1, double& C1, double& length, double
 {
 	isBad = false;
 
-	auto& setConfig = GlobalData::getInstance().setConfig;
-	auto& QiXinShiJinConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
+	auto& QiXinShiJinConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
 
 	auto modelimage = QiXinShiJinDanXiangJi::getModelImage();
 
@@ -304,7 +304,6 @@ void halconPRocess(cv::Mat image, double& R1, double& C1, double& length, double
 void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 {
 	auto& imgPro = *_imgProcess;
-	auto& qiXinShiJinConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
 	double R1 = 0;
 	double C1 = 0;
 	double length = 0;
@@ -330,7 +329,7 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 	positiveIsBadFuture.waitForFinished();
 	positiveIsBad = positiveIsBadFuture.result();
 
-	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	GlobalData::getInstance().statisticalInfo.bagLength = length / setConfig.xiangsudangliang;
 	GlobalData::getInstance().statisticalInfo.bagWidth = width / setConfig.xiangsudangliang;
 
@@ -372,7 +371,7 @@ void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 {
 	auto& globalStruct = GlobalData::getInstance();
 	auto& globalThread = GlobalThread::getInstance();
-	auto& setConfig = globalStruct.setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 
 	if (isbad)
 	{
@@ -512,7 +511,7 @@ void ImageProcessor::iniRunTextConfig()
 void ImageProcessor::drawBoundariesLines(QImage& image)
 {
 	auto& index = imageProcessingModuleIndex;
-	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	rw::imgPro::ConfigDrawLine configDrawLine;
 	configDrawLine.color = rw::imgPro::Color::Red;
 	configDrawLine.thickness = 3;
@@ -527,21 +526,21 @@ void ImageProcessor::drawBoundariesLines(QImage& image)
 
 void ImageProcessor::updateShieldWires()
 {
-	auto& globalStructSetConfig = GlobalData::getInstance().setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	auto& index = imageProcessingModuleIndex;
 	if (1 == index)
 	{
-		topShieldWire = globalStructSetConfig.shangxianwei;
-		bottomShieldWire = globalStructSetConfig.xiaxianwei;
+		topShieldWire = setConfig.shangxianwei;
+		bottomShieldWire = setConfig.xiaxianwei;
 	}
 
 }
 
 void ImageProcessor::updateDrawRec()
 {
-	auto& globalStruct = GlobalData::getInstance();
+	auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
 	auto& context = _imgProcess->context();
-	if (globalStruct.qiXinShiJinDanXiangJiConfig.isshibiekuang)
+	if (qiXinShiJinDanXiangJiConfig.isshibiekuang)
 	{
 		context.defectDrawCfg.isDrawDefects = true;
 		context.defectDrawCfg.isDrawDisableDefects = true;
@@ -559,9 +558,9 @@ void ImageProcessor::updateDrawRec()
 
 void ImageProcessor::updateDrawText()
 {
-	auto& globalStruct = GlobalData::getInstance();
+	auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
 	auto& context = _imgProcess->context();
-	if (globalStruct.qiXinShiJinDanXiangJiConfig.iswenzi)
+	if (qiXinShiJinDanXiangJiConfig.iswenzi)
 	{
 		context.runTextCfg.isDrawExtraText = true;
 	}
@@ -574,33 +573,34 @@ void ImageProcessor::updateDrawText()
 void ImageProcessor::updateParamMapsFromGlobalStruct()
 {
 	auto& context = _imgProcess->context();
-	auto& globalStruct = GlobalData::getInstance();
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
+
 
 	BadMap["classId"] = 0;
 	BadMap["maxArea"] = 0;
-	BadMap["maxScore"] = globalStruct.setConfig.score;
+	BadMap["maxScore"] = setConfig.score;
 	BadMap["enable"] = true;
 	if (1 == imageProcessingModuleIndex)
 	{
-		BadMap["pixToWorld"] = globalStruct.setConfig.xiangsudangliang;
+		BadMap["pixToWorld"] = setConfig.xiangsudangliang;
 	}
 
 	FengKouMap["classId"] = 1;
 	FengKouMap["maxArea"] = 0;
-	FengKouMap["maxScore"] = globalStruct.setConfig.score;
+	FengKouMap["maxScore"] = setConfig.score;
 	FengKouMap["enable"] = true;
 	if (1 == imageProcessingModuleIndex)
 	{
-		FengKouMap["pixToWorld"] = globalStruct.setConfig.xiangsudangliang;
+		FengKouMap["pixToWorld"] = setConfig.xiangsudangliang;
 	}
 
 	JiaoDaiMap["classId"] = 2;
 	JiaoDaiMap["maxArea"] = 0;
-	JiaoDaiMap["maxScore"] = globalStruct.setConfig.score;
+	JiaoDaiMap["maxScore"] = setConfig.score;
 	JiaoDaiMap["enable"] = true;
 	if (1 == imageProcessingModuleIndex)
 	{
-		JiaoDaiMap["pixToWorld"] = globalStruct.setConfig.xiangsudangliang;
+		JiaoDaiMap["pixToWorld"] = setConfig.xiangsudangliang;
 	}
 
 	rw::imgPro::EliminationInfoFunc::ClassIdWithConfigMap eliminationInfoGetConfigs;
@@ -699,7 +699,7 @@ ImageProcessingModule::~ImageProcessingModule()
 void ImageProcessingModule::onFrameCaptured(rw::rqw::MatInfo matInfo, size_t index)
 {
 	// 防抖动处理
-	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	const long long debounceMs = static_cast<long long>(std::max(0.0, setConfig.xiangjiguangdianpingbishijian));
 	const auto minInterval = std::chrono::milliseconds(debounceMs);
 

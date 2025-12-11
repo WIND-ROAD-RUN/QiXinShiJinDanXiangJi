@@ -3,6 +3,7 @@
 #include <QRegularExpression>
 
 #include "GlobalStruct.hpp"
+#include "Modules.hpp"
 #include "Utilty.hpp"
 
 CameraModule::CameraModule()
@@ -51,7 +52,7 @@ bool CameraModule::build_camera1()
 
 	auto cameraMetaData1 = cameraMetaDataCheck(Utility::cameraIp1, cameraList);
 
-	auto& globalDataSetConfig = GlobalData::getInstance().setConfig;
+	auto& globalDataSetConfig = Modules::getInstance().configManagerModule.setConfig;
 
 	if (cameraMetaData1.ip != "0")
 	{

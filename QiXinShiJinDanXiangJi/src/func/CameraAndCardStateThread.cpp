@@ -6,7 +6,7 @@
 size_t CameraAndCardStateThreadQiXinShiJin::runtimeCounts = 0;
 
 CameraAndCardStateThreadQiXinShiJin::CameraAndCardStateThreadQiXinShiJin(QObject* parent)
-	: QThread(parent), running(false), _dlgProductSet(GlobalData::getInstance().setConfig) {
+	: QThread(parent), running(false), _dlgProductSet(Modules::getInstance().configManagerModule.setConfig) {
 }
 
 CameraAndCardStateThreadQiXinShiJin::~CameraAndCardStateThreadQiXinShiJin()

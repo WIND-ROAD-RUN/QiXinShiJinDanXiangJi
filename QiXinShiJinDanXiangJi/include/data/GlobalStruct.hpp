@@ -5,8 +5,6 @@
 #include "DetachDefectThread.h"
 #include "DetachUtiltyThread.h"
 #include "dsl_Heap.hpp"
-#include "QiXinShiJinDanXiangJi.hpp"
-#include "SetConfig.hpp"
 #include "oso_StorageContext.hpp"
 #include "rqw_ImageSaveEngine.h"
 #include "ImageProcessorModule.hpp"
@@ -58,26 +56,6 @@ signals:
 public:
 	bool isTargetCamera(const QString& cameraIndex, const QString& targetName);
 	rw::rqw::CameraMetaData cameraMetaDataCheck(const QString& cameraIndex, const QVector<rw::rqw::CameraMetaData>& cameraInfo);
-
-};
-
-class GlobalFuncObject
-	:public QObject
-{
-	Q_OBJECT
-public:
-	static GlobalFuncObject& getInstance();
-
-	GlobalFuncObject(const GlobalFuncObject&) = delete;
-	GlobalFuncObject& operator=(const GlobalFuncObject&) = delete;
-private:
-	GlobalFuncObject();
-	~GlobalFuncObject() override;
-public:
-	std::unique_ptr<rw::oso::StorageContext> storeContext{ nullptr };
-	void buildConfigManager(rw::oso::StorageType type);
-	void saveQiXinShiJinDanXiangJiConfig();
-	void saveSetConfig();
 };
 
 class GlobalData
@@ -107,8 +85,4 @@ public:
 		std::atomic_uint64_t bagLength{ 0 };
 		std::atomic_uint64_t bagWidth{ 0 };
 	} statisticalInfo;
-
-public:
-	cdm::QiXinShiJinDanXiangJiConfig qiXinShiJinDanXiangJiConfig;
-	cdm::SetConfig setConfig;
 };

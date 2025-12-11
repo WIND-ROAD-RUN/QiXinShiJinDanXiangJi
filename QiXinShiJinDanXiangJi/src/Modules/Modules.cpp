@@ -24,6 +24,9 @@ Modules::~Modules()
 
 bool Modules::build()
 {
+	// 读取配置
+	auto configManagerBuild = configManagerModule.build();
+
 	// 构建相机
 	auto cameraBuild = cameraModule.build();
 
@@ -42,6 +45,7 @@ bool Modules::build()
 void Modules::destroy()
 {
 	cameraModule.destroy();
+	configManagerModule.destroy();
 	uiModule.destroy();
 	reconnectModule.destroy();
 	motionControllerModule.destroy();
@@ -50,6 +54,7 @@ void Modules::destroy()
 void Modules::start()
 {
 	uiModule.start();
+	configManagerModule.start();
 	motionControllerModule.start();
 	cameraModule.start();
 	reconnectModule.start();
@@ -60,6 +65,7 @@ void Modules::stop()
 	reconnectModule.stop();
 	cameraModule.stop();
 	motionControllerModule.stop();
+	configManagerModule.stop();
 	uiModule.stop();
 }
 

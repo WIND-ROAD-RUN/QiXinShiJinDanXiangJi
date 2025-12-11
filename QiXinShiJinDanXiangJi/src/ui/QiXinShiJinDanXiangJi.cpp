@@ -68,9 +68,8 @@ void QiXinShiJinDanXiangJi::build_connect()
 
 void QiXinShiJinDanXiangJi::build_QiXinShiJinDanXiangJiData()
 {
-	auto& globalStruct = GlobalData::getInstance();
-	auto& qiXinShiJinDanXiangJiConfig = globalStruct.qiXinShiJinDanXiangJiConfig;
-	auto& setConfig = globalStruct.setConfig;
+	auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	qiXinShiJinDanXiangJiConfig.isDebug = false;
 	qiXinShiJinDanXiangJiConfig.isDefect = true;		// 默认开启剔废
 	qiXinShiJinDanXiangJiConfig.isshibiekuang = true;
@@ -108,53 +107,6 @@ void QiXinShiJinDanXiangJi::build_DlgCloseForm()
 	_dlgCloseForm = new DlgCloseForm(this);
 }
 
-void QiXinShiJinDanXiangJi::read_config()
-{
-	auto& globalFuncObject = GlobalFuncObject::getInstance();
-	globalFuncObject.buildConfigManager(rw::oso::StorageType::Xml);
-
-	read_config_QiXinShiJinDanXiangJiConfig();
-	read_config_DlgProductSetConfig();
-}
-
-void QiXinShiJinDanXiangJi::read_config_QiXinShiJinDanXiangJiConfig()
-{
-	auto& globalFunc = GlobalFuncObject::getInstance();
-	auto& globalData = GlobalData::getInstance();
-
-	globalFunc.storeContext->ensureFileExistsSafe(globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString(), cdm::QiXinShiJinDanXiangJiConfig());
-	auto loadResult = globalFunc.storeContext->loadSafe(globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString());
-	if (!loadResult)
-	{
-		globalFunc.storeContext->saveSafe(cdm::QiXinShiJinDanXiangJiConfig(), globalPath.qiXinShiJinDanXiangJiConfigPath.toStdString());
-		return;
-	}
-	globalData.qiXinShiJinDanXiangJiConfig = *loadResult;
-}
-
-void QiXinShiJinDanXiangJi::read_config_DlgProductSetConfig()
-{
-	auto& globalFunc = GlobalFuncObject::getInstance();
-	auto& globalData = GlobalData::getInstance();
-
-	globalFunc.storeContext->ensureFileExistsSafe(globalPath.setConfigPath.toStdString(), cdm::SetConfig());
-	auto loadResult = globalFunc.storeContext->loadSafe(globalPath.setConfigPath.toStdString());
-	if (!loadResult)
-	{
-		globalFunc.storeContext->saveSafe(cdm::SetConfig(), globalPath.setConfigPath.toStdString());
-		return;
-	}
-	globalData.setConfig = *loadResult;
-}
-
-void QiXinShiJinDanXiangJi::save_config()
-{
-	auto& globalFuncObject = GlobalFuncObject::getInstance();
-
-	globalFuncObject.saveQiXinShiJinDanXiangJiConfig();
-	globalFuncObject.saveSetConfig();
-}
-
 void QiXinShiJinDanXiangJi::start_Threads()
 {
 	auto& globalThread = GlobalThread::getInstance();
@@ -177,8 +129,6 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 {
 	auto& globalThread = GlobalThread::getInstance();
 
-	read_config();
-
 	build_ui();
 
 	build_ImageProcessingModule();
@@ -189,7 +139,7 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 
 	build_PriorityQueue();
 
-	build_DetachDefectThreadDuckTongue();
+	build_DetachDefectThreadQiXinShiJin();
 
 	build_DetachUtiltyThread();
 
@@ -215,15 +165,13 @@ void QiXinShiJinDanXiangJi::destroyComponents()
 
 	destroy_DetachUtiltyThread();
 
-	destroy_DetachDefectThreadDuckTongue();
+	destroy_DetachDefectThreadQiXinShiJin();
 
 	destroy_PriorityQueue();
 
 	destroy_ImageProcessingModule();
 
 	destroy_zmotion();
-
-	save_config();
 }
 
 void QiXinShiJinDanXiangJi::build_camera()
@@ -297,13 +245,13 @@ void QiXinShiJinDanXiangJi::destroy_PriorityQueue()
 	globalThread.destroy_PriorityQueue();
 }
 
-void QiXinShiJinDanXiangJi::build_DetachDefectThreadDuckTongue()
+void QiXinShiJinDanXiangJi::build_DetachDefectThreadQiXinShiJin()
 {
 	auto& globalThread = GlobalThread::getInstance();
 	globalThread.build_DetachDefectThread();
 }
 
-void QiXinShiJinDanXiangJi::destroy_DetachDefectThreadDuckTongue()
+void QiXinShiJinDanXiangJi::destroy_DetachDefectThreadQiXinShiJin()
 {
 	auto& globalThread = GlobalThread::getInstance();
 	globalThread.destroy_DetachDefectThread();
@@ -381,7 +329,7 @@ void QiXinShiJinDanXiangJi::changeLanguage(int index)
 
 void QiXinShiJinDanXiangJi::updateCameraLabelState(int cameraIndex, bool state)
 {
-	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	switch (cameraIndex)
 	{
 	case 0:
@@ -553,16 +501,16 @@ void QiXinShiJinDanXiangJi::rbtn_removeFunc_checked(bool checked)
 
 void QiXinShiJinDanXiangJi::ckb_shibiekuang_checked(bool checked)
 {
-	auto& globalData = GlobalData::getInstance();
-	globalData.qiXinShiJinDanXiangJiConfig.isshibiekuang = ui->ckb_shibiekuang->isChecked();
+	auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
+	qiXinShiJinDanXiangJiConfig.isshibiekuang = ui->ckb_shibiekuang->isChecked();
 
 	emit shibiekuangChanged();
 }
 
 void QiXinShiJinDanXiangJi::ckb_wenzi_checked(bool checked)
 {
-	auto& globalData = GlobalData::getInstance();
-	globalData.qiXinShiJinDanXiangJiConfig.iswenzi = ui->ckb_wenzi->isChecked();
+	auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
+	qiXinShiJinDanXiangJiConfig.iswenzi = ui->ckb_wenzi->isChecked();
 
 	emit wenziChanged();
 }
@@ -580,9 +528,9 @@ void QiXinShiJinDanXiangJi::pbtn_bagLength_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于0的数值");
 			return;
 		}
-		auto& duckTongueConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
+		auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
 		ui->pbtn_bagLength->setText(value);
-		duckTongueConfig.setBagLength = value.toDouble();
+		qiXinShiJinDanXiangJiConfig.setBagLength = value.toDouble();
 	}
 }
 
@@ -599,15 +547,15 @@ void QiXinShiJinDanXiangJi::pbtn_bagWidth_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于0的数值");
 			return;
 		}
-		auto& duckTongueConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
+		auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
 		ui->pbtn_bagWidth->setText(value);
-		duckTongueConfig.setBagWidth = value.toDouble();
+		qiXinShiJinDanXiangJiConfig.setBagWidth = value.toDouble();
 	}
 }
 
 void QiXinShiJinDanXiangJi::pbtn_resetProduct_clicked()
 {
-	auto& qiXinShiJinDanXiangJiConfig = GlobalData::getInstance().qiXinShiJinDanXiangJiConfig;
+	auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
 
 	qiXinShiJinDanXiangJiConfig.totalProductionVolume = 0;
 	qiXinShiJinDanXiangJiConfig.totalDefectiveVolume = 0;

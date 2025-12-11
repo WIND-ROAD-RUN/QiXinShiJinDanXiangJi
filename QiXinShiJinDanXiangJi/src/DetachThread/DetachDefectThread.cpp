@@ -42,7 +42,7 @@ void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::Thread
 
 		if (isBad)
 		{
-			auto& setConfig = GlobalData::getInstance().setConfig;
+			auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 			auto& camera = Modules::getInstance().cameraModule.camera1;
 			queue->tryPopTop(isBad);
 			QThread::msleep(setConfig.tifeiyanshi);

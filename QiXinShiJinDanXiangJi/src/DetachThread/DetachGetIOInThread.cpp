@@ -40,7 +40,7 @@ void DetachGetIOInThread::process()
     if(1 == status)
     {
         auto& isBadVector = ImageProcessor::isBadVector;
-        auto& setConfig = GlobalData::getInstance().setConfig;
+        auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
         auto& jiange = setConfig.cipinguangdianjiange;
         {
             QMutexLocker locker(&ImageProcessor::isBadVectorMutex);

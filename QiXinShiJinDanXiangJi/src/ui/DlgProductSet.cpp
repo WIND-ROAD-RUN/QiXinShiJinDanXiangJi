@@ -32,7 +32,7 @@ void DlgProductSet::build_ui()
 
 void DlgProductSet::read_config()
 {
-	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 
 	// 普通参数
 	ui->btn_chuiqishijian->setText(QString::number(setConfig.chuiqishijian));
@@ -126,16 +126,13 @@ void DlgProductSet::changeLanguage(int index)
 		ui->lb_baoguang->setText("exposure");
 		ui->lb_zengyi->setText("gain");
 	}
-	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	setConfig.changeLanguageIndex = index;
 	emit emit_changeLanguage(index);
 }
 
 void DlgProductSet::btn_close_clicked()
 {
-	auto& globalFunc = GlobalFuncObject::getInstance();
-
-	globalFunc.saveSetConfig();
 	emit paramsChanged();
 	this->close();
 }
@@ -153,7 +150,7 @@ void DlgProductSet::btn_chuiqishijian_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_chuiqishijian->setText(value);
 		setConfig.chuiqishijian = value.toDouble();
 	}
@@ -172,7 +169,7 @@ void DlgProductSet::btn_xiangsudangliang_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_xiangsudangliang->setText(value);
 		setConfig.xiangsudangliang = value.toDouble();
 	}
@@ -191,7 +188,7 @@ void DlgProductSet::btn_jishuguangdianyanshi_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_jishuguangdianyanshi->setText(value);
 		setConfig.jishuguangdianyanshi = value.toDouble();
 	}
@@ -210,7 +207,7 @@ void DlgProductSet::btn_paizhaoyanshi_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_paizhaoyanshi->setText(value);
 		setConfig.paizhaoyanshi = value.toDouble();
 	}
@@ -229,7 +226,7 @@ void DlgProductSet::btn_tifeiyanshi_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_tifeiyanshi->setText(value);
 		setConfig.tifeiyanshi = value.toDouble();
 	}
@@ -248,7 +245,7 @@ void DlgProductSet::btn_score_clicked()
 			QMessageBox::warning(this, "提示", "请输入[0,100]]的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_score->setText(value);
 		setConfig.score = value.toDouble();
 	}
@@ -267,7 +264,7 @@ void DlgProductSet::btn_cipinguangdianjiange_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_cipinguangdianjiange->setText(value);
 		setConfig.cipinguangdianjiange = value.toDouble();
 	}
@@ -286,7 +283,7 @@ void DlgProductSet::btn_fenliaojishu_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_fenliaojishu->setText(value);
 		setConfig.fenliaojishu = value.toDouble();
 	}
@@ -305,7 +302,7 @@ void DlgProductSet::btn_xiangjiguangdianpingbishijian_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_xiangjiguangdianpingbishijian->setText(value);
 		setConfig.xiangjiguangdianpingbishijian = value.toDouble();
 	}
@@ -320,7 +317,7 @@ void DlgProductSet::btn_pidaiduibiyanse_clicked()
 	{
 		auto value = numKeyBord.getValue();
 
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_pidaiduibiyanse->setText(value);
 		setConfig.pidaiduibiyanse = value.toDouble();
 	}
@@ -328,7 +325,7 @@ void DlgProductSet::btn_pidaiduibiyanse_clicked()
 
 void DlgProductSet::btn_testTrigger1_clicked()
 {
-	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	auto& camera = Modules::getInstance().cameraModule.camera1;
 	// 剔废动作
 	rw::rqw::OutTriggerConfig outTriggerConfig;
@@ -343,7 +340,7 @@ void DlgProductSet::btn_testTrigger1_clicked()
 
 void DlgProductSet::btn_testTrigger2_clicked()
 {
-	auto& setConfig = GlobalData::getInstance().setConfig;
+	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	auto& camera = Modules::getInstance().cameraModule.camera1;
 	// 剔废动作
 	rw::rqw::OutTriggerConfig outTriggerConfig;
@@ -369,7 +366,7 @@ void DlgProductSet::btn_shangxianwei_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_shangxianwei->setText(value);
 		setConfig.shangxianwei = value.toDouble();
 	}
@@ -388,7 +385,7 @@ void DlgProductSet::btn_xiaxianwei_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		ui->btn_xiaxianwei->setText(value);
 		setConfig.xiaxianwei = value.toDouble();
 	}
@@ -407,7 +404,7 @@ void DlgProductSet::btn_baoguang_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		auto& camera = Modules::getInstance().cameraModule.camera1;
 		camera->setExposureTime(value.toInt());
 		ui->btn_baoguang->setText(value);
@@ -428,7 +425,7 @@ void DlgProductSet::btn_zengyi_clicked()
 			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
 			return;
 		}
-		auto& setConfig = GlobalData::getInstance().setConfig;
+		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		auto& camera = Modules::getInstance().cameraModule.camera1;
 		camera->setGain(value.toInt());
 		ui->btn_zengyi->setText(value);

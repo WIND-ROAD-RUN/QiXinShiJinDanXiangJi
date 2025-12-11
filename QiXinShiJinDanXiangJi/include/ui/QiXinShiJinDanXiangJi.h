@@ -28,11 +28,8 @@ public:
 	void ini_clickableTitle();
 	void build_DlgCloseForm();
 public:
-	void read_config();
-	void read_config_QiXinShiJinDanXiangJiConfig();
-	void read_config_DlgProductSetConfig();
+
 public:
-	void save_config();
 public:
 	void start_Threads();
 	void stop_Threads();
@@ -51,8 +48,8 @@ public:
 	void build_PriorityQueue();
 	void destroy_PriorityQueue();
 public:
-	void build_DetachDefectThreadDuckTongue();
-	void destroy_DetachDefectThreadDuckTongue();
+	void build_DetachDefectThreadQiXinShiJin();
+	void destroy_DetachDefectThreadQiXinShiJin();
 public:
 	void build_DetachUtiltyThread();
 	void destroy_DetachUtiltyThread();
