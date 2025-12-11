@@ -112,8 +112,6 @@ void QiXinShiJinDanXiangJi::start_Threads()
 	auto& globalThread = GlobalThread::getInstance();
 	// 启动异步剔废线程
 	globalThread.detachDefectThreadQiXinShiJin->startThread();
-	// 启动异步统计线程
-	globalThread.detachUtiltyThread->startThread();
 }
 
 void QiXinShiJinDanXiangJi::stop_Threads()
@@ -121,8 +119,6 @@ void QiXinShiJinDanXiangJi::stop_Threads()
 	auto& globalThread = GlobalThread::getInstance();
 
 	globalThread.detachDefectThreadQiXinShiJin->stopThread();
-
-	globalThread.detachUtiltyThread->stopThread();
 }
 
 void QiXinShiJinDanXiangJi::initializeComponents()
@@ -140,8 +136,6 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 	build_PriorityQueue();
 
 	build_DetachDefectThreadQiXinShiJin();
-
-	build_DetachUtiltyThread();
 
 	build_CameraAndBoardReconnectThread();
 
@@ -163,15 +157,11 @@ void QiXinShiJinDanXiangJi::destroyComponents()
 
 	destroy_CameraAndBoardReconnectThread();
 
-	destroy_DetachUtiltyThread();
-
 	destroy_DetachDefectThreadQiXinShiJin();
 
 	destroy_PriorityQueue();
 
 	destroy_ImageProcessingModule();
-
-	destroy_zmotion();
 }
 
 void QiXinShiJinDanXiangJi::build_camera()
@@ -191,7 +181,6 @@ void QiXinShiJinDanXiangJi::build_camera()
 void QiXinShiJinDanXiangJi::build_ImageProcessingModule()
 {
 	auto& globalThread = GlobalThread::getInstance();
-	auto& globalData = GlobalData::getInstance();
 
 	QDir dir;
 
@@ -257,32 +246,11 @@ void QiXinShiJinDanXiangJi::destroy_DetachDefectThreadQiXinShiJin()
 	globalThread.destroy_DetachDefectThread();
 }
 
-void QiXinShiJinDanXiangJi::build_DetachUtiltyThread()
-{
-	auto& globalThread = GlobalThread::getInstance();
-	globalThread.build_DetachUtiltyThread();
-
-	// 连接统计信息更新信号槽
-	QObject::connect(globalThread.detachUtiltyThread, &DetachUtiltyThread::updateStatisticalInfo,
-		this, &QiXinShiJinDanXiangJi::onUpdateStatisticalInfoUI);
-}
-
-void QiXinShiJinDanXiangJi::destroy_DetachUtiltyThread()
-{
-	auto& globalThread = GlobalThread::getInstance();
-	globalThread.destroy_DetachUtiltyThread();
-}
-
 void QiXinShiJinDanXiangJi::build_zmotion()
 {
 	auto& motionControllerModule = Modules::getInstance().motionControllerModule;
 	auto isBuildZmotion = motionControllerModule.zmotion->connect();
 	updateCameraLabelState(0, isBuildZmotion);
-}
-
-void QiXinShiJinDanXiangJi::destroy_zmotion()
-{
-	auto& globalThread = GlobalThread::getInstance();
 }
 
 void QiXinShiJinDanXiangJi::changeLanguage(int index)
@@ -387,7 +355,7 @@ void QiXinShiJinDanXiangJi::updateCameraLabelState(int cameraIndex, bool state)
 
 void QiXinShiJinDanXiangJi::onUpdateStatisticalInfoUI()
 {
-	auto& statisticalInfo = GlobalData::getInstance().statisticalInfo;
+	auto& statisticalInfo = Modules::getInstance().runtimeInfoModule.statisticalInfo;
 	ui->label_produceTotalValue->setText(QString::number(statisticalInfo.produceCount.load()));
 	ui->label_wasteProductsValue->setText(QString::number(statisticalInfo.wasteCount.load()));
 	ui->label_bagLength->setText(QString::number(statisticalInfo.bagLength.load()));
@@ -454,11 +422,11 @@ void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
 {
 	auto isRuning = ui->rbtn_removeFunc->isChecked();
 
-	auto& globalData = GlobalData::getInstance();
+	auto& runningState = Modules::getInstance().runtimeInfoModule.runningState;
 	auto& camera1 = Modules::getInstance().cameraModule.camera1;
 	if (!isRuning) {
 		if (checked) {
-			globalData.runningState = RunningState::Debug;
+			runningState = RunningState::Debug;
 			if (camera1)
 			{
 				camera1->setTriggerState(false);
@@ -466,7 +434,7 @@ void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
 			}
 		}
 		else {
-			globalData.runningState = RunningState::Stop;
+			runningState = RunningState::Stop;
 		}
 		ui->ckb_shibiekuang->setVisible(checked);
 		ui->ckb_wenzi->setVisible(checked);
@@ -478,11 +446,11 @@ void QiXinShiJinDanXiangJi::rbtn_debug_checked(bool checked)
 
 void QiXinShiJinDanXiangJi::rbtn_removeFunc_checked(bool checked)
 {
-	auto& globalData = GlobalData::getInstance();
+	auto& runningState = Modules::getInstance().runtimeInfoModule.runningState;
 	auto& camera1 = Modules::getInstance().cameraModule.camera1;
 	if (checked)
 	{
-		globalData.runningState = RunningState::OpenRemoveFunc;
+		runningState = RunningState::OpenRemoveFunc;
 		if (camera1)
 		{
 			camera1->setTriggerState(true);
@@ -495,7 +463,7 @@ void QiXinShiJinDanXiangJi::rbtn_removeFunc_checked(bool checked)
 	}
 	else
 	{
-		globalData.runningState = RunningState::Stop;
+		runningState = RunningState::Stop;
 	}
 }
 

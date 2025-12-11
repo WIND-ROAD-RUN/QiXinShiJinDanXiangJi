@@ -54,6 +54,7 @@ public:
 	MotionControllerModule motionControllerModule;
 	UIModule uiModule;
 	ConfigManagerModule configManagerModule;
+	RuntimeInfoModule runtimeInfoModule;
 //#ifdef BUILD_WITHOUT_HARDWARE
 //public:
 //	TestModule test_module;

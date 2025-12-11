@@ -65,30 +65,6 @@ void GlobalThread::destroy_DetachDefectThread()
 	}
 }
 
-void GlobalThread::build_DetachUtiltyThread()
-{
-	detachUtiltyThread = new DetachUtiltyThread(this);
-}
-
-void GlobalThread::destroy_DetachUtiltyThread()
-{
-	if (detachUtiltyThread)
-	{
-		delete detachUtiltyThread;
-		detachUtiltyThread = nullptr;
-	}
-}
-
-GlobalData::GlobalData()
-{
-
-}
-
-GlobalData::~GlobalData()
-{
-
-}
-
 bool GlobalThread::isTargetCamera(const QString& cameraIndex, const QString& targetName)
 {
 	QRegularExpression regex(R"((\d+)\.(\d+)\.(\d+)\.(\d+))");

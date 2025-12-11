@@ -17,8 +17,6 @@ public:
 	void stopThread();
 protected:
 	void run() override;
-private:
-	void CalculateBagInfos(size_t s);
 signals:
 	void updateStatisticalInfo();
 private:

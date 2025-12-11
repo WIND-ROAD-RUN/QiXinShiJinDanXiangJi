@@ -70,16 +70,7 @@ void ImageProcessor::run()
 			continue; // 跳过空帧
 		}
 
-		auto& globalData = GlobalData::getInstance();
-
-		// 获取当前时间点
-		auto now = std::chrono::system_clock::now();
-		// 转换为time_t格式
-		std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-		// 转换为本地时间
-		std::tm* local_time = std::localtime(&now_time);
-
-		auto currentRunningState = globalData.runningState.load();
+		auto currentRunningState = Modules::getInstance().runtimeInfoModule.runningState.load();
 		switch (currentRunningState)
 		{
 		case RunningState::Debug:
@@ -330,8 +321,9 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 	positiveIsBad = positiveIsBadFuture.result();
 
 	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
-	GlobalData::getInstance().statisticalInfo.bagLength = length / setConfig.xiangsudangliang;
-	GlobalData::getInstance().statisticalInfo.bagWidth = width / setConfig.xiangsudangliang;
+	auto& statisticalInfo = Modules::getInstance().runtimeInfoModule.statisticalInfo;
+	statisticalInfo.bagLength = length / setConfig.xiangsudangliang;
+	statisticalInfo.bagWidth = width / setConfig.xiangsudangliang;
 
 	// 更新屏蔽线
 	updateShieldWires();
@@ -365,17 +357,18 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
 	emit updateMainWindowShowBtn();
+	emit updateStatisticalInfo();
 }
 
 void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 {
-	auto& globalStruct = GlobalData::getInstance();
 	auto& globalThread = GlobalThread::getInstance();
 	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
+	auto& statisticalInfo = Modules::getInstance().runtimeInfoModule.statisticalInfo;
 
 	if (isbad)
 	{
-		++globalStruct.statisticalInfo.wasteCount;
+		++statisticalInfo.wasteCount;
 	}
 	else
 	{
@@ -398,7 +391,7 @@ void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 
 	if (imageProcessingModuleIndex == 1 || imageProcessingModuleIndex == 2)
 	{
-		++globalStruct.statisticalInfo.produceCount;
+		++statisticalInfo.produceCount;
 	}
 
 	if (isbad)
@@ -659,6 +652,8 @@ void ImageProcessingModule::BuildModule()
 		connect(processor, &ImageProcessor::imageReady, this, &ImageProcessingModule::imageReady, Qt::QueuedConnection);
 		connect(processor, &ImageProcessor::imageNGReady, this, &ImageProcessingModule::imageNGReady, Qt::QueuedConnection);
 		connect(processor, &ImageProcessor::updateMainWindowShowBtn, this, &ImageProcessingModule::updateMainWindowShowBtn, Qt::QueuedConnection);
+		connect(processor, &ImageProcessor::updateStatisticalInfo, this, &ImageProcessingModule::updateStatisticalInfo, Qt::QueuedConnection);
+
 
 		connect(this, &ImageProcessingModule::shibiekuangChanged, processor, &ImageProcessor::updateDrawRec, Qt::QueuedConnection);
 		connect(this, &ImageProcessingModule::wenziChanged, processor, &ImageProcessor::updateDrawText, Qt::QueuedConnection);

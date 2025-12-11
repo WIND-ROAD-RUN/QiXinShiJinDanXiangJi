@@ -47,6 +47,7 @@ signals:
 	void imageReady(QPixmap image);
 	void imageNGReady(QPixmap image, size_t index, bool isbad);
 	void updateMainWindowShowBtn();
+	void updateStatisticalInfo();
 private:
 	std::unique_ptr<rw::imgPro::ImageProcess> _imgProcess;
 public:
@@ -118,6 +119,7 @@ signals:
 	void wenziChanged();
 	void paramMapsChanged();
 	void updateMainWindowShowBtn();
+	void updateStatisticalInfo();
 public:
 	std::vector<ImageProcessor*> getProcessors() const {
 		return _processors;

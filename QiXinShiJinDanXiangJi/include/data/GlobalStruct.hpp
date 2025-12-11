@@ -3,19 +3,10 @@
 #include <qobject.h>
 
 #include "DetachDefectThread.h"
-#include "DetachUtiltyThread.h"
 #include "dsl_Heap.hpp"
 #include "oso_StorageContext.hpp"
 #include "rqw_ImageSaveEngine.h"
 #include "ImageProcessorModule.hpp"
-
-
-enum class RunningState
-{
-	Debug,
-	OpenRemoveFunc,
-	Stop
-};
 
 class GlobalThread
 	:public QObject
@@ -45,44 +36,10 @@ public:
 
 	void build_DetachDefectThread();
 	void destroy_DetachDefectThread();
-public:
-	DetachUtiltyThread* detachUtiltyThread;
-
-	void build_DetachUtiltyThread();
-	void destroy_DetachUtiltyThread();
 signals:
 	// 更新UI
 	void emit_updateUiLabels(int index, bool isConnected);
 public:
 	bool isTargetCamera(const QString& cameraIndex, const QString& targetName);
 	rw::rqw::CameraMetaData cameraMetaDataCheck(const QString& cameraIndex, const QVector<rw::rqw::CameraMetaData>& cameraInfo);
-};
-
-class GlobalData
-	:public QObject
-{
-	Q_OBJECT
-public:
-	static GlobalData& getInstance()
-	{
-		static GlobalData instance;
-		return instance;
-	}
-
-	GlobalData(const GlobalData&) = delete;
-	GlobalData& operator=(const GlobalData&) = delete;
-private:
-	GlobalData();
-	~GlobalData() override;
-public:
-	std::atomic<RunningState> runningState{ RunningState::OpenRemoveFunc };
-public:
-	// 统计信息
-	struct StatisticalInfo
-	{
-		std::atomic_uint64_t produceCount{ 0 };
-		std::atomic_uint64_t wasteCount{ 0 };
-		std::atomic_uint64_t bagLength{ 0 };
-		std::atomic_uint64_t bagWidth{ 0 };
-	} statisticalInfo;
 };

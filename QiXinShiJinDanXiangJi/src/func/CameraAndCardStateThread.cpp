@@ -6,7 +6,7 @@
 size_t CameraAndCardStateThreadQiXinShiJin::runtimeCounts = 0;
 
 CameraAndCardStateThreadQiXinShiJin::CameraAndCardStateThreadQiXinShiJin(QObject* parent)
-	: QThread(parent), running(false), _dlgProductSet(Modules::getInstance().configManagerModule.setConfig) {
+	: QThread(parent), running(false) {
 }
 
 CameraAndCardStateThreadQiXinShiJin::~CameraAndCardStateThreadQiXinShiJin()
@@ -52,7 +52,6 @@ void CameraAndCardStateThreadQiXinShiJin::check_cameraState1()
 {
 	auto& camera1 = Modules::getInstance().cameraModule.camera1;
 	static bool isUpdateState = false;
-
 
 	if (runtimeCounts != 0) {
 		return;
