@@ -30,7 +30,6 @@ public:
 		std::atomic_uint64_t bagWidth{ 0 };
 	} statisticalInfo;
 public:
-	std::atomic_bool isTakePictures{ false };
 	std::atomic<RunningState> runningState{ RunningState::Stop };
 public:
 	std::unique_ptr<DetachUtiltyThread> detachUtiltyThread{ nullptr };
