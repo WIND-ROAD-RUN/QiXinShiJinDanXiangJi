@@ -2,7 +2,7 @@
 
 void ReconnectModule::build()
 {
-	monitorCameraAndCardStateThread = std::make_unique<CameraAndCardStateThreadQiXinShiJin>();
+	monitorCameraAndCardStateThread = std::make_unique<CameraAndCardStateThreadQiXinShiJin>(this);
 }
 
 void ReconnectModule::destroy()
@@ -23,5 +23,6 @@ void ReconnectModule::stop()
 	if (monitorCameraAndCardStateThread)
 	{
 		monitorCameraAndCardStateThread->stopThread();
+		monitorCameraAndCardStateThread->wait();
 	}
 }

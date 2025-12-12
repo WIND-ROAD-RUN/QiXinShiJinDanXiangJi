@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	Modules::getInstance().build();
 
 	QiXinShiJinDanXiangJi w;
-
+	Modules::getInstance().uiModule._qiXinShiJinDanXiangJi = &w;
 	Modules::getInstance().connect();
 	Modules::getInstance().start();
 

@@ -36,16 +36,11 @@ public:
 public:
 	void build_camera();
 public:
-public:
-	void build_CameraAndBoardReconnectThread();
-	void destroy_CameraAndBoardReconnectThread();
-public:
 	void build_PriorityQueue();
 	void destroy_PriorityQueue();
 public:
 	void build_DetachDefectThreadQiXinShiJin();
 	void destroy_DetachDefectThreadQiXinShiJin();
-public:
 public:
 	void build_zmotion();
 
