@@ -18,37 +18,6 @@ GlobalThread::~GlobalThread()
 {
 }
 
-void GlobalThread::build_PriorityQueue()
-{
-	auto compareNodeEqual = [](const float& a, const float& b) {
-		return a == b;
-		};
-	auto compareNodePriority = [](const float& a, const float& b) {
-		return a < b;
-		};
-
-	priorityQueue = std::make_unique<rw::dsl::ThreadSafeHeap<bool>>();
-}
-
-void GlobalThread::destroy_PriorityQueue()
-{
-	priorityQueue.reset();
-}
-
-void GlobalThread::build_DetachDefectThread()
-{
-	detachDefectThreadQiXinShiJin = new DetachDefectThreadQiXinShiJin(this);
-}
-
-void GlobalThread::destroy_DetachDefectThread()
-{
-	if (detachDefectThreadQiXinShiJin)
-	{
-		delete detachDefectThreadQiXinShiJin;
-		detachDefectThreadQiXinShiJin = nullptr;
-	}
-}
-
 bool GlobalThread::isTargetCamera(const QString& cameraIndex, const QString& targetName)
 {
 	QRegularExpression regex(R"((\d+)\.(\d+)\.(\d+)\.(\d+))");

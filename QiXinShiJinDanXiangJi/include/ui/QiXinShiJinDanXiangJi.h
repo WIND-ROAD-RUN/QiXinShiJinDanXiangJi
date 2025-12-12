@@ -28,8 +28,6 @@ public:
 	void ini_clickableTitle();
 	void build_DlgCloseForm();
 public:
-	void start_Threads();
-	void stop_Threads();
 public:
 	void initializeComponents();
 	void destroyComponents();

@@ -57,6 +57,7 @@ public:
 	RuntimeInfoModule runtimeInfoModule;
 	ImgSaveModule imgSaveModule;
 	ImgProModule imgProModule;
+	EliminateModule eliminateModule;
 //#ifdef BUILD_WITHOUT_HARDWARE
 //public:
 //	TestModule test_module;

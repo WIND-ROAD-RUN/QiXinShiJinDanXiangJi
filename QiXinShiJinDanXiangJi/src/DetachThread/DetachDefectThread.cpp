@@ -65,8 +65,7 @@ void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::Thread
 
 void DetachDefectThreadQiXinShiJin::run()
 {
-	auto& globalThread = GlobalThread::getInstance();
-	auto& priorityQueue = globalThread.priorityQueue;
+	auto& priorityQueue = Modules::getInstance().eliminateModule.productPriorityQueue1;
 
 	while (running) {
 		QThread::msleep(1);

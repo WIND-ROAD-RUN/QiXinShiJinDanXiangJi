@@ -362,7 +362,6 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 
 void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 {
-	auto& globalThread = GlobalThread::getInstance();
 	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	auto& statisticalInfo = Modules::getInstance().runtimeInfoModule.statisticalInfo;
 
@@ -396,7 +395,7 @@ void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 
 	if (isbad)
 	{
-		globalThread.priorityQueue->push(true);
+		Modules::getInstance().eliminateModule.productPriorityQueue1->push(true);
 	}
 }
 

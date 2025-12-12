@@ -21,15 +21,6 @@ private:
 	GlobalThread();
 	~GlobalThread() override;
 public:
-	std::unique_ptr<rw::dsl::ThreadSafeHeap<bool>> priorityQueue;
-
-	void build_PriorityQueue();
-	void destroy_PriorityQueue();
-public:
-	DetachDefectThreadQiXinShiJin* detachDefectThreadQiXinShiJin;
-
-	void build_DetachDefectThread();
-	void destroy_DetachDefectThread();
 signals:
 	// 更新UI
 	void emit_updateUiLabels(int index, bool isConnected);

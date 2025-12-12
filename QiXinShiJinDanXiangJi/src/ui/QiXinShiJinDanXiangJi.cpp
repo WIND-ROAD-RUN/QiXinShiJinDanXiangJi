@@ -107,24 +107,8 @@ void QiXinShiJinDanXiangJi::build_DlgCloseForm()
 	_dlgCloseForm = new DlgCloseForm(this);
 }
 
-void QiXinShiJinDanXiangJi::start_Threads()
-{
-	auto& globalThread = GlobalThread::getInstance();
-	// 启动异步剔废线程
-	globalThread.detachDefectThreadQiXinShiJin->startThread();
-}
-
-void QiXinShiJinDanXiangJi::stop_Threads()
-{
-	auto& globalThread = GlobalThread::getInstance();
-
-	globalThread.detachDefectThreadQiXinShiJin->stopThread();
-}
-
 void QiXinShiJinDanXiangJi::initializeComponents()
 {
-	auto& globalThread = GlobalThread::getInstance();
-
 	build_ui();
 
 	build_camera();
@@ -137,8 +121,6 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 
 	build_connect();
 
-	start_Threads();
-
 #ifndef BUILD_WITHOUT_HARDWARE
 #endif
 
@@ -148,8 +130,6 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 void QiXinShiJinDanXiangJi::destroyComponents()
 {
 	auto& globalThread = GlobalThread::getInstance();
-
-	stop_Threads();
 
 	destroy_DetachDefectThreadQiXinShiJin();
 
@@ -173,25 +153,21 @@ void QiXinShiJinDanXiangJi::build_camera()
 void QiXinShiJinDanXiangJi::build_PriorityQueue()
 {
 	auto& globalThread = GlobalThread::getInstance();
-	globalThread.build_PriorityQueue();
 }
 
 void QiXinShiJinDanXiangJi::destroy_PriorityQueue()
 {
 	auto& globalThread = GlobalThread::getInstance();
-	globalThread.destroy_PriorityQueue();
 }
 
 void QiXinShiJinDanXiangJi::build_DetachDefectThreadQiXinShiJin()
 {
 	auto& globalThread = GlobalThread::getInstance();
-	globalThread.build_DetachDefectThread();
 }
 
 void QiXinShiJinDanXiangJi::destroy_DetachDefectThreadQiXinShiJin()
 {
 	auto& globalThread = GlobalThread::getInstance();
-	globalThread.destroy_DetachDefectThread();
 }
 
 void QiXinShiJinDanXiangJi::build_zmotion()
