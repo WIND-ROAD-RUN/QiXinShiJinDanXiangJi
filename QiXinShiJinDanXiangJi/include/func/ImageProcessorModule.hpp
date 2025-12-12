@@ -52,26 +52,6 @@ private:
 public:
 	// 构建模型引擎
 	void buildDetModelEngine(const QString& enginePath);
-
-	void iniIndexGetContext();
-	void iniEliminationInfoFunc();
-	void iniEliminationInfoGetContext();
-	void iniDefectResultInfoFunc();
-	void iniDefectResultGetContext();
-	void iniDefectDrawConfig();
-	void iniRunTextConfig();
-
-
-public:
-	// 在指定位置画横线
-	void drawBoundariesLines(QImage& image);
-	// 更新屏蔽线
-	void updateShieldWires();
-
-public slots:
-	void updateDrawRec();
-	void updateDrawText();
-	void updateParamMapsFromGlobalStruct();
 public:
 	// 判断是否有缺陷
 	static QMutex isBadVectorMutex;
@@ -79,18 +59,12 @@ public:
 	void initial_isBadVector();
 	int productGoodCount{ 0 };
 private:
-	std::map<std::string, double> BadMap{};
-	std::map<std::string, double> FengKouMap{};
-	std::map<std::string, double> JiaoDaiMap{};
-private:
 	QQueue<MatInfo>& _queue;
 	QMutex& _mutex;
 	QWaitCondition& _condition;
 	int _workIndex;
 public:
 	int imageProcessingModuleIndex;
-	int topShieldWire{ -1 };
-	int bottomShieldWire{ -1 };
 };
 
 
@@ -113,9 +87,6 @@ public slots:
 
 signals:
 	void imageReady(QPixmap image);
-	void shibiekuangChanged();
-	void wenziChanged();
-	void paramMapsChanged();
 	void updateMainWindowShowBtn();
 	void updateStatisticalInfo();
 public:

@@ -115,8 +115,12 @@ void Modules::connect()
 	QObject::connect(imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::imageReady,
 		uiModule._qiXinShiJinDanXiangJi, &QiXinShiJinDanXiangJi::onCamera1Display);
 
+	QObject::connect(uiModule._qiXinShiJinDanXiangJi, &QiXinShiJinDanXiangJi::shibiekuangChanged,
+		&imgProModule, &ImgProModule::onUpdateImgProContext);
+	QObject::connect(uiModule._qiXinShiJinDanXiangJi, &QiXinShiJinDanXiangJi::wenziChanged,
+		&imgProModule, &ImgProModule::onUpdateImgProContext);
 	QObject::connect(uiModule._dlgProductSet,&DlgProductSet::paramsChanged,
-		Modules::getInstance().imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::paramMapsChanged);
+		&imgProModule, &ImgProModule::onUpdateImgProContext);
 #pragma endregion
 
 #pragma region connect UIModules
@@ -144,7 +148,6 @@ void Modules::connect()
 	QObject::connect(runtimeInfoModule.detachUtiltyThread.get(), &DetachUtiltyThread::updateStatisticalInfo,
 		uiModule._qiXinShiJinDanXiangJi, &QiXinShiJinDanXiangJi::onUpdateStatisticalInfoUI, Qt::QueuedConnection);
 #pragma endregion
-
 }
 
 bool Modules::check()

@@ -88,12 +88,8 @@ void ImageProcessor::run_debug(MatInfo& frame)
 {
 	auto& imgPro = *_imgProcess;
 	imgPro(frame.image);
-	// 更新屏蔽线
-	updateShieldWires();
 	auto maskImg = imgPro.getMaskImg(frame.image);
 	auto defectResult = imgPro.getDefectResultInfo();
-
-	drawBoundariesLines(maskImg);
 
 	emit imageReady(QPixmap::fromImage(maskImg));
 }
@@ -324,8 +320,6 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 	statisticalInfo.bagLength = length / setConfig.xiangsudangliang;
 	statisticalInfo.bagWidth = width / setConfig.xiangsudangliang;
 
-	// 更新屏蔽线
-	updateShieldWires();
 	auto maskImg = imgPro.getMaskImg(frame.image);
 	auto defectResult = imgPro.getDefectResultInfo();
 
@@ -351,7 +345,6 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 
 	run_OpenRemoveFunc_emitErrorInfo(isBad);
 
-	drawBoundariesLines(maskImg);
 	DrawRotatedRectangle(maskImg, R1, C1, length / 2, width / 2, angle, QColor(0, 255, 0), 3);
 
 	emit imageReady(QPixmap::fromImage(maskImg));
@@ -407,228 +400,12 @@ void ImageProcessor::buildDetModelEngine(const QString& enginePath)
 	modelEngineConfig.letterBoxColor = cv::Scalar(114, 114, 114);
 	modelEngineConfig.modelPath = enginePath.toStdString();
 	auto engine = rw::ModelEngineFactory::createModelEngine(modelEngineConfig, rw::ModelType::Yolov11_Det_CudaAcc, rw::ModelEngineDeployType::TensorRT);
-
 	_imgProcess = std::make_unique<rw::imgPro::ImageProcess>(engine);
-
-	iniIndexGetContext();
-	iniEliminationInfoFunc();
-	iniEliminationInfoGetContext();
-	iniDefectResultInfoFunc();
-	iniDefectResultGetContext();
-	iniDefectDrawConfig();
-	iniRunTextConfig();
+	_imgProcess->context() = Modules::getInstance().imgProModule.imageProcessContext_Main;
+	_imgProcess->context().customFields["ImgProcessIndex"] = static_cast<int>(imageProcessingModuleIndex);
+	_imgProcess->context().customFields["stationIdx"] = static_cast<int>(_workIndex);
 
 	initial_isBadVector();
-}
-
-void ImageProcessor::iniIndexGetContext()
-{
-	auto& context = _imgProcess->context();
-
-	context.indexGetContext.removeIndicesIfByInfo = [this](const rw::DetectionRectangleInfo& info, const rw::imgPro::ImageProcessContext& imageProcessContext) {
-		bool isInShieldWires = false;
-		if (-1 == topShieldWire || -1 == bottomShieldWire)
-		{
-			return false;
-		}
-
-		if (info.center_y > topShieldWire && info.center_y < bottomShieldWire)
-		{
-			isInShieldWires = true;
-		}
-		return !isInShieldWires;
-		};
-}
-
-void ImageProcessor::iniEliminationInfoFunc()
-{
-	updateParamMapsFromGlobalStruct();
-}
-
-void ImageProcessor::iniEliminationInfoGetContext()
-{
-	auto& context = _imgProcess->context();
-
-	context.eliminationInfoGetContext.getEliminationItemFuncSpecialOperator = [this](rw::imgPro::EliminationItem& item,
-		const rw::DetectionRectangleInfo& info,
-		const rw::imgPro::EliminationInfoGetConfig& cfg) {
-
-		};
-}
-
-void ImageProcessor::iniDefectResultInfoFunc()
-{
-	auto& context = _imgProcess->context();
-
-	rw::imgPro::DefectResultInfoFunc::Config defectConfig;
-	rw::imgPro::DefectResultInfoFunc::ClassIdWithConfigMap defectConfigs;
-	defectConfig.isEnable = BadMap["enable"];
-	defectConfigs[ClassId::Bad] = defectConfig;
-	defectConfig.isEnable = FengKouMap["enable"];
-	defectConfigs[ClassId::FengKou] = defectConfig;
-	defectConfig.isEnable = JiaoDaiMap["enable"];
-	defectConfigs[ClassId::JiaoDai] = defectConfig;
-	context.defectCfg = defectConfigs;
-}
-
-void ImageProcessor::iniDefectResultGetContext()
-{
-	auto& context = _imgProcess->context();
-	context.defectResultGetContext.getDefectResultExtraOperate = [this](const rw::imgPro::EliminationItem& item, const rw::DetectionRectangleInfo& detectionRectangleInfo) {
-
-		};
-}
-
-void ImageProcessor::iniDefectDrawConfig()
-{
-	auto& context = _imgProcess->context();
-
-	rw::imgPro::DefectDrawFunc::ConfigDefectDraw drawConfig;
-	updateDrawRec();
-	drawConfig.setAllIdsWithSameColor({ 0,1,2 }, rw::rqw::RQWColor::Green, true);
-	drawConfig.setAllIdsWithSameColor({ 0,1,2 }, rw::rqw::RQWColor::Red, false);
-	drawConfig.fontSize = 30;
-	drawConfig.classIdNameMap[0] = "Bad";
-	drawConfig.classIdNameMap[1] = "封口";
-	drawConfig.classIdNameMap[2] = "胶带";
-	context.defectDrawCfg = drawConfig;
-}
-
-void ImageProcessor::iniRunTextConfig()
-{
-	updateDrawText();
-}
-
-void ImageProcessor::drawBoundariesLines(QImage& image)
-{
-	auto& index = imageProcessingModuleIndex;
-	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
-	rw::imgPro::ConfigDrawLine configDrawLine;
-	configDrawLine.color = rw::imgPro::Color::Red;
-	configDrawLine.thickness = 3;
-	if (index == 1)
-	{
-		configDrawLine.position = setConfig.shangxianwei;
-		rw::imgPro::ImagePainter::drawHorizontalLine(image, configDrawLine);
-		configDrawLine.position = setConfig.xiaxianwei;
-		rw::imgPro::ImagePainter::drawHorizontalLine(image, configDrawLine);
-	}
-}
-
-void ImageProcessor::updateShieldWires()
-{
-	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
-	auto& index = imageProcessingModuleIndex;
-	if (1 == index)
-	{
-		topShieldWire = setConfig.shangxianwei;
-		bottomShieldWire = setConfig.xiaxianwei;
-	}
-
-}
-
-void ImageProcessor::updateDrawRec()
-{
-	auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
-	auto& context = _imgProcess->context();
-	if (qiXinShiJinDanXiangJiConfig.isshibiekuang)
-	{
-		context.defectDrawCfg.isDrawDefects = true;
-		context.defectDrawCfg.isDrawDisableDefects = true;
-		context.defectDrawCfg.isDisAreaText = true;
-		context.defectDrawCfg.isDisScoreText = true;
-	}
-	else
-	{
-		context.defectDrawCfg.isDrawDefects = false;
-		context.defectDrawCfg.isDrawDisableDefects = false;
-		context.defectDrawCfg.isDisAreaText = false;
-		context.defectDrawCfg.isDisScoreText = false;
-	}
-}
-
-void ImageProcessor::updateDrawText()
-{
-	auto& qiXinShiJinDanXiangJiConfig = Modules::getInstance().configManagerModule.qiXinShiJinDanXiangJiConfig;
-	auto& context = _imgProcess->context();
-	if (qiXinShiJinDanXiangJiConfig.iswenzi)
-	{
-		context.runTextCfg.isDrawExtraText = true;
-	}
-	else
-	{
-		context.runTextCfg.isDrawExtraText = false;
-	}
-}
-
-void ImageProcessor::updateParamMapsFromGlobalStruct()
-{
-	auto& context = _imgProcess->context();
-	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
-
-
-	BadMap["classId"] = 0;
-	BadMap["maxArea"] = 0;
-	BadMap["maxScore"] = setConfig.score;
-	BadMap["enable"] = true;
-	if (1 == imageProcessingModuleIndex)
-	{
-		BadMap["pixToWorld"] = setConfig.xiangsudangliang;
-	}
-
-	FengKouMap["classId"] = 1;
-	FengKouMap["maxArea"] = 0;
-	FengKouMap["maxScore"] = setConfig.score;
-	FengKouMap["enable"] = true;
-	if (1 == imageProcessingModuleIndex)
-	{
-		FengKouMap["pixToWorld"] = setConfig.xiangsudangliang;
-	}
-
-	JiaoDaiMap["classId"] = 2;
-	JiaoDaiMap["maxArea"] = 0;
-	JiaoDaiMap["maxScore"] = setConfig.score;
-	JiaoDaiMap["enable"] = true;
-	if (1 == imageProcessingModuleIndex)
-	{
-		JiaoDaiMap["pixToWorld"] = setConfig.xiangsudangliang;
-	}
-
-	rw::imgPro::EliminationInfoFunc::ClassIdWithConfigMap eliminationInfoGetConfigs;
-	rw::imgPro::EliminationInfoGetConfig NgEliminationInfoGetConfig;
-	rw::imgPro::EliminationInfoGetConfig FengKouEliminationInfoGetConfig;
-	rw::imgPro::EliminationInfoGetConfig JiaoDaiEliminationInfoGetConfig;
-
-	NgEliminationInfoGetConfig.areaFactor = BadMap["pixToWorld"];//这里设置为像素当量
-	NgEliminationInfoGetConfig.scoreFactor = 100;//这里设置为百分比当量
-	NgEliminationInfoGetConfig.isUsingArea = false;//这里设置为使用面积
-	NgEliminationInfoGetConfig.isUsingScore = true;//这里设置为使用分数
-	NgEliminationInfoGetConfig.scoreRange = { 0,BadMap["maxScore"] };
-	NgEliminationInfoGetConfig.areaRange = { 0,BadMap["maxArea"] };
-	NgEliminationInfoGetConfig.scoreIsUsingComplementarySet = false;
-	eliminationInfoGetConfigs[ClassId::Bad] = NgEliminationInfoGetConfig;
-
-	FengKouEliminationInfoGetConfig.areaFactor = FengKouMap["pixToWorld"];//这里设置为像素当量
-	FengKouEliminationInfoGetConfig.scoreFactor = 100;//这里设置为百分比当量
-	FengKouEliminationInfoGetConfig.isUsingArea = false;//这里设置为使用面积
-	FengKouEliminationInfoGetConfig.isUsingScore = true;//这里设置为使用分数
-	FengKouEliminationInfoGetConfig.scoreRange = { 0,FengKouMap["maxScore"] };
-	FengKouEliminationInfoGetConfig.areaRange = { 0,FengKouMap["maxArea"] };
-	FengKouEliminationInfoGetConfig.scoreIsUsingComplementarySet = false;
-	eliminationInfoGetConfigs[ClassId::FengKou] = FengKouEliminationInfoGetConfig;
-
-	JiaoDaiEliminationInfoGetConfig.areaFactor = JiaoDaiMap["pixToWorld"];//这里设置为像素当量
-	JiaoDaiEliminationInfoGetConfig.scoreFactor = 100;//这里设置为百分比当量
-	JiaoDaiEliminationInfoGetConfig.isUsingArea = false;//这里设置为使用面积
-	JiaoDaiEliminationInfoGetConfig.isUsingScore = true;//这里设置为使用分数
-	JiaoDaiEliminationInfoGetConfig.scoreRange = { 0,JiaoDaiMap["maxScore"] };
-	JiaoDaiEliminationInfoGetConfig.areaRange = { 0,JiaoDaiMap["maxArea"] };
-	JiaoDaiEliminationInfoGetConfig.scoreIsUsingComplementarySet = false;
-	eliminationInfoGetConfigs[ClassId::JiaoDai] = JiaoDaiEliminationInfoGetConfig;
-
-	context.eliminationCfg = eliminationInfoGetConfigs;
-
-	iniDefectResultInfoFunc();
 }
 
 void ImageProcessor::initial_isBadVector()
@@ -651,10 +428,6 @@ void ImageProcessingModule::BuildModule()
 		connect(processor, &ImageProcessor::updateMainWindowShowBtn, this, &ImageProcessingModule::updateMainWindowShowBtn, Qt::QueuedConnection);
 		connect(processor, &ImageProcessor::updateStatisticalInfo, this, &ImageProcessingModule::updateStatisticalInfo, Qt::QueuedConnection);
 
-
-		connect(this, &ImageProcessingModule::shibiekuangChanged, processor, &ImageProcessor::updateDrawRec, Qt::QueuedConnection);
-		connect(this, &ImageProcessingModule::wenziChanged, processor, &ImageProcessor::updateDrawText, Qt::QueuedConnection);
-		connect(this, &ImageProcessingModule::paramMapsChanged, processor, &ImageProcessor::updateParamMapsFromGlobalStruct, Qt::QueuedConnection);
 		_processors.push_back(processor);
 		processor->start();
 	}
@@ -701,10 +474,6 @@ void ImageProcessingModule::onFrameCaptured(rw::rqw::MatInfo matInfo, size_t ind
 		return;
 	}
 
-	// 手动读取本地图片
-	//std::string imagePath = R"(C:\Users\zfkj4090\Desktop\Image_20241024165512138.jpg)"; // 替换为你的图片路径
-	//cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
-	//matInfo.mat = frame1.clone();
 	if (matInfo.mat.channels() == 4) {
 		cv::cvtColor(matInfo.mat, matInfo.mat, cv::COLOR_BGRA2BGR);
 	}
