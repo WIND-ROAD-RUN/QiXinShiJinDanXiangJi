@@ -36,16 +36,11 @@ public:
 	void ini_clickableTitle();
 	void build_DlgCloseForm();
 public:
-public:
 	void initializeComponents();
-
 public:
 	void build_camera();
 public:
-public:
-public:
 	void build_zmotion();
-
 public slots:
 	void changeLanguage(int index);
 public slots:

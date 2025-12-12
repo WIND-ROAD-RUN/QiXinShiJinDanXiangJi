@@ -28,6 +28,8 @@ QiXinShiJinDanXiangJi::QiXinShiJinDanXiangJi(QWidget* parent)
 
 QiXinShiJinDanXiangJi::~QiXinShiJinDanXiangJi()
 {
+	Modules::getInstance().stop();
+	Modules::getInstance().destroy();
 	delete ui;
 }
 

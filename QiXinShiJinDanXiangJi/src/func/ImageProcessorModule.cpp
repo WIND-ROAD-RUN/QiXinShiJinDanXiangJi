@@ -301,7 +301,6 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 	positiveIsBadFuture = QtConcurrent::run(
 		[this, &positiveIsBadFuture, &frame, &R1, &C1, &length, &width, &angle]()
 		{
-
 			bool isBad = false;
 
 			halconPRocess(frame.image, R1, C1, length, width, angle, isBad);
@@ -338,18 +337,25 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 	{
 		QMutexLocker locker(&isBadVectorMutex);
 		isBad = isBadVector[0];
-
-		isBadVector.erase(isBadVector.begin());
-		isBadVector.push_back(false);
 	}
+
+	emit updateMainWindowShowBtn();
 
 	run_OpenRemoveFunc_emitErrorInfo(isBad);
 
 	DrawRotatedRectangle(maskImg, R1, C1, length / 2, width / 2, angle, QColor(0, 255, 0), 3);
 
 	emit imageReady(QPixmap::fromImage(maskImg));
-	emit updateMainWindowShowBtn();
 	emit updateStatisticalInfo();
+
+	if (isBad)
+	{
+		QMutexLocker locker(&isBadVectorMutex);
+		{
+			isBadVector.erase(isBadVector.begin());
+			isBadVector.push_back(false);
+		}
+	}
 }
 
 void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
@@ -373,14 +379,17 @@ void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 			outTriggerConfig.lineSource = 5;
 			outTriggerConfig.durationValue = 500 * 1000; // 500ms
 			outTriggerConfig.strobeEnable = true;
-			camera->setOutTriggerConfig(outTriggerConfig);
-			camera->outTrigger();
+			if (camera)
+			{
+				camera->setOutTriggerConfig(outTriggerConfig);
+				camera->outTrigger();
+			}
 
 			productGoodCount = 0;
 		}
 	}
 
-	if (imageProcessingModuleIndex == 1 || imageProcessingModuleIndex == 2)
+	if (imageProcessingModuleIndex == 1)
 	{
 		++statisticalInfo.produceCount;
 	}
@@ -422,8 +431,8 @@ void ImageProcessingModule::BuildModule()
 		static size_t workIndexCount = 0;
 		ImageProcessor* processor = new ImageProcessor(_queue, _mutex, _condition, workIndexCount, this);
 		workIndexCount++;
-		processor->buildDetModelEngine(modelEnginePath);
 		processor->imageProcessingModuleIndex = index;
+		processor->buildDetModelEngine(modelEnginePath);
 		connect(processor, &ImageProcessor::imageReady, this, &ImageProcessingModule::imageReady, Qt::QueuedConnection);
 		connect(processor, &ImageProcessor::updateMainWindowShowBtn, this, &ImageProcessingModule::updateMainWindowShowBtn, Qt::QueuedConnection);
 		connect(processor, &ImageProcessor::updateStatisticalInfo, this, &ImageProcessingModule::updateStatisticalInfo, Qt::QueuedConnection);

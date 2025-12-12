@@ -332,8 +332,11 @@ void DlgProductSet::btn_testTrigger1_clicked()
 	outTriggerConfig.lineSource = 5;
 	outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;
 	outTriggerConfig.strobeEnable = true;
-	camera->setOutTriggerConfig(outTriggerConfig);
-	camera->outTrigger();
+	if (camera)
+	{
+		camera->setOutTriggerConfig(outTriggerConfig);
+		camera->outTrigger();
+	}
 }
 
 void DlgProductSet::btn_testTrigger2_clicked()
@@ -347,8 +350,11 @@ void DlgProductSet::btn_testTrigger2_clicked()
 	outTriggerConfig.lineSource = 5;
 	outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;
 	outTriggerConfig.strobeEnable = true;
-	camera->setOutTriggerConfig(outTriggerConfig);
-	camera->outTrigger();
+	if (camera)
+	{
+		camera->setOutTriggerConfig(outTriggerConfig);
+		camera->outTrigger();
+	}
 }
 
 void DlgProductSet::btn_shangxianwei_clicked()
@@ -404,7 +410,10 @@ void DlgProductSet::btn_baoguang_clicked()
 		}
 		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		auto& camera = Modules::getInstance().cameraModule.camera1;
-		camera->setExposureTime(value.toInt());
+		if (camera)
+		{
+			camera->setExposureTime(value.toInt());
+		}
 		ui->btn_baoguang->setText(value);
 		setConfig.baoguang = value.toDouble();
 	}
@@ -425,7 +434,10 @@ void DlgProductSet::btn_zengyi_clicked()
 		}
 		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 		auto& camera = Modules::getInstance().cameraModule.camera1;
-		camera->setGain(value.toInt());
+		if (camera)
+		{
+			camera->setGain(value.toInt());
+		}
 		ui->btn_zengyi->setText(value);
 		setConfig.zengyi = value.toDouble();
 	}

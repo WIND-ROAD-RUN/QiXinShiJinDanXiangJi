@@ -175,7 +175,7 @@ void ImgProModule::buildImgProContextMain()
 
 	rw::imgPro::DefectDrawConfigItem drawItemConfig;
 
-	drawItemConfig.fontSize = 50;
+	drawItemConfig.fontSize = 20;
 	drawItemConfig.textLocate = rw::imgPro::ConfigDrawRect::TextLocate::LeftTopIn;
 	drawItemConfig.isDisAreaText = false;
 	drawItemConfig.isDisScoreText = false;
@@ -202,7 +202,7 @@ void ImgProModule::buildImgProContextMain()
 
 			rw::imgPro::ConfigDrawLine configDrawLine;
 			configDrawLine.color = rw::imgPro::Color::Red;
-			configDrawLine.thickness = 20;
+			configDrawLine.thickness = 5;
 
 			configDrawLine.position = limitTop;
 			rw::imgPro::ImagePainter::drawHorizontalLine(img, configDrawLine);

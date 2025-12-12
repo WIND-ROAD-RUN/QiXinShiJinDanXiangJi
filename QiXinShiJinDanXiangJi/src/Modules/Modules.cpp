@@ -129,6 +129,9 @@ void Modules::connect()
 	QObject::connect(imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::imageReady,
 		uiModule._qiXinShiJinDanXiangJi, &QiXinShiJinDanXiangJi::onCamera1Display);
 
+	QObject::connect(imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::updateMainWindowShowBtn,
+		uiModule._qiXinShiJinDanXiangJi, &QiXinShiJinDanXiangJi::updateDefectButtonsFromVector);
+
 	QObject::connect(uiModule._qiXinShiJinDanXiangJi, &QiXinShiJinDanXiangJi::shibiekuangChanged,
 		&imgProModule, &ImgProModule::onUpdateImgProContext);
 	QObject::connect(uiModule._qiXinShiJinDanXiangJi, &QiXinShiJinDanXiangJi::wenziChanged,
