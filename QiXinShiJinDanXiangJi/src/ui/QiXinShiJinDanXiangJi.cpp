@@ -323,6 +323,8 @@ void QiXinShiJinDanXiangJi::pbtn_start_clicked()
 	if (camera)
 	{
 		camera->softwareTrigger();
+		camera->setTriggerState(true);
+		camera->setTriggerSource(rw::rqw::TriggerSource::Line0);
 	}
 }
 
