@@ -52,8 +52,11 @@ void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::Thread
 			outTriggerConfig.lineSource = 5;
 			outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;
 			outTriggerConfig.strobeEnable = true;
-			camera->setOutTriggerConfig(outTriggerConfig);
-			camera->outTrigger();
+			if (camera)
+			{
+				camera->setOutTriggerConfig(outTriggerConfig);
+				camera->outTrigger();
+			}
 		}
 	}
 	catch (const std::runtime_error&)

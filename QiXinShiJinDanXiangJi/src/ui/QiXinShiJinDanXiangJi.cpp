@@ -31,10 +31,32 @@ QiXinShiJinDanXiangJi::~QiXinShiJinDanXiangJi()
 	delete ui;
 }
 
+#ifdef BUILD_WITHOUT_HARDWARE
+void QiXinShiJinDanXiangJi::cBox_testPushImg_checked(bool checked)
+{
+	if (checked)
+	{
+		Modules::getInstance().test_module.testImgPush = true;
+	}
+	else
+	{
+		Modules::getInstance().test_module.testImgPush = false;
+	}
+}
+#endif
+
 void QiXinShiJinDanXiangJi::build_ui()
 {
 	build_QiXinShiJinDanXiangJiData();
 	build_DlgCloseForm();
+
+#ifdef BUILD_WITHOUT_HARDWARE
+	cBox_testPushImg = new QCheckBox(this);
+	cBox_testPushImg->setText("图像推送状态");
+	ui->gBox_infor->layout()->addWidget(cBox_testPushImg);
+	QObject::connect(cBox_testPushImg, &QCheckBox::clicked,
+		this, &QiXinShiJinDanXiangJi::cBox_testPushImg_checked);
+#endif
 }
 
 void QiXinShiJinDanXiangJi::build_connect()

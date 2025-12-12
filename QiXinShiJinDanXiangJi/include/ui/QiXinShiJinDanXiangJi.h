@@ -4,6 +4,8 @@
 #include <HalconCpp/HalconCpp.h>
 #include <memory>
 #include <atomic>
+#include <QCheckBox>
+
 #include "rqw_LabelClickable.h"
 #include "DlgCloseForm.h"
 #include "oso_func.hpp"
@@ -21,6 +23,12 @@ class QiXinShiJinDanXiangJi : public QMainWindow
 public:
 	QiXinShiJinDanXiangJi(QWidget *parent = nullptr);
 	~QiXinShiJinDanXiangJi();
+#ifdef BUILD_WITHOUT_HARDWARE
+public:
+	QCheckBox* cBox_testPushImg{ nullptr };
+public slots:
+	void cBox_testPushImg_checked(bool checked);
+#endif
 public:
 	void build_ui();
 	void build_connect();

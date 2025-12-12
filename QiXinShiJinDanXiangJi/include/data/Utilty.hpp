@@ -15,6 +15,8 @@ public:
 	QString modelPath = modelRootPath + R"(QiXinShiJin.engine)";
 public:
 	QString imageSaveRootPath = R"(D:\Images\)";
+public:
+	QString testImgDirPath = R"(D:\ImgStorage\QiXinShiJinDanXiangJi)";
 }globalPath;
 
 
