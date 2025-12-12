@@ -66,7 +66,7 @@ bool CameraModule::build_camera1()
 			camera1->setGain(static_cast<size_t>(globalDataSetConfig.zengyi));
 
 			QObject::connect(camera1.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
-				Modules::getInstance().imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::onFrameCaptured, Qt::DirectConnection);
+				this, &CameraModule::onFrameCaptured);
 
 			return true;
 		}
@@ -80,8 +80,6 @@ bool CameraModule::build_camera1()
 
 void CameraModule::destroy_camera1()
 {
-	QObject::disconnect(camera1.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
-		Modules::getInstance().imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::onFrameCaptured);
 	camera1.reset();
 }
 
