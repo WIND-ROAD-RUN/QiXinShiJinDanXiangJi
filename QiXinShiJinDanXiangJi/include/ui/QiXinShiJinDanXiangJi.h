@@ -30,15 +30,11 @@ public:
 public:
 public:
 	void initializeComponents();
-	void destroyComponents();
+
 public:
 	void build_camera();
 public:
-	void build_PriorityQueue();
-	void destroy_PriorityQueue();
 public:
-	void build_DetachDefectThreadQiXinShiJin();
-	void destroy_DetachDefectThreadQiXinShiJin();
 public:
 	void build_zmotion();
 

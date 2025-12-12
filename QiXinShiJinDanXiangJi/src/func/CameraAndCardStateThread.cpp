@@ -1,6 +1,4 @@
 #include "CameraAndCardStateThread.h"
-
-#include "GlobalStruct.hpp"
 #include "Modules.hpp"
 
 size_t CameraAndCardStateThreadQiXinShiJin::runtimeCounts = 0;

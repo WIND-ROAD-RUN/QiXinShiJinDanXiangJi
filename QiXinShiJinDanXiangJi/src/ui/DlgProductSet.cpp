@@ -4,8 +4,6 @@
 #include <QMessageBox>
 #include <QTabWidget>
 #include <QtConcurrent/qtconcurrentrun.h>
-
-#include "GlobalStruct.hpp"
 #include "Modules.hpp"
 #include "NumberKeyboard.h"
 

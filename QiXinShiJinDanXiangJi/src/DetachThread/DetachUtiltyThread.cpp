@@ -1,6 +1,4 @@
 #include"DetachUtiltyThread.h"
-
-#include"GlobalStruct.hpp"
 #include "Modules.hpp"
 
 DetachUtiltyThread::DetachUtiltyThread(QObject* parent)

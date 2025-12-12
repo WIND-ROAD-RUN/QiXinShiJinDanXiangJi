@@ -1,8 +1,6 @@
 #include "CameraModule.hpp"
 
 #include <QRegularExpression>
-
-#include "GlobalStruct.hpp"
 #include "Modules.hpp"
 #include "Utilty.hpp"
 

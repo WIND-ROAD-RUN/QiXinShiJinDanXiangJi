@@ -4,7 +4,6 @@
 #include <QMessageBox>
 
 #include "DlgProductSet.h"
-#include "GlobalStruct.hpp"
 #include "QiXinShiJinDanXiangJi.h"
 #include "QiXinShiJinDanXiangJi.hpp"
 #include "rqw_RunEnvCheck.hpp"

@@ -6,7 +6,6 @@
 #include <qfuture.h>
 #include <qtconcurrentrun.h>
 #include <atomic>
-#include "GlobalStruct.hpp"
 #include "Utilty.hpp"
 #include "halconcpp/HalconCpp.h"
 #include "Halcon.h"

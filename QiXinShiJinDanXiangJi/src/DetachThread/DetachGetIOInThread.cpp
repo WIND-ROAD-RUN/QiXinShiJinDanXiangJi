@@ -1,5 +1,4 @@
 #include "DetachGetIOInThread.h"
-#include "GlobalStruct.hpp"
 #include "ImageProcessorModule.hpp"
 #include "Modules.hpp"
 

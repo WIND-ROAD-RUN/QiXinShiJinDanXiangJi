@@ -8,7 +8,6 @@
 #include <QPushButton>
 
 #include "DlgProductSet.h"
-#include "GlobalStruct.hpp"
 #include "Modules.hpp"
 #include "NumberKeyboard.h"
 #include "rqw_RunEnvCheck.hpp"
@@ -29,7 +28,6 @@ QiXinShiJinDanXiangJi::QiXinShiJinDanXiangJi(QWidget* parent)
 
 QiXinShiJinDanXiangJi::~QiXinShiJinDanXiangJi()
 {
-	destroyComponents();
 	delete ui;
 }
 
@@ -115,25 +113,12 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 
 	build_zmotion();
 
-	build_PriorityQueue();
-
-	build_DetachDefectThreadQiXinShiJin();
-
 	build_connect();
 
 #ifndef BUILD_WITHOUT_HARDWARE
 #endif
 
 	pbtn_start_clicked();
-}
-
-void QiXinShiJinDanXiangJi::destroyComponents()
-{
-	auto& globalThread = GlobalThread::getInstance();
-
-	destroy_DetachDefectThreadQiXinShiJin();
-
-	destroy_PriorityQueue();
 }
 
 void QiXinShiJinDanXiangJi::build_camera()
@@ -148,26 +133,6 @@ void QiXinShiJinDanXiangJi::build_camera()
 		auto index = static_cast<int>(error);
 		updateCameraLabelState(index, false);
 	}
-}
-
-void QiXinShiJinDanXiangJi::build_PriorityQueue()
-{
-	auto& globalThread = GlobalThread::getInstance();
-}
-
-void QiXinShiJinDanXiangJi::destroy_PriorityQueue()
-{
-	auto& globalThread = GlobalThread::getInstance();
-}
-
-void QiXinShiJinDanXiangJi::build_DetachDefectThreadQiXinShiJin()
-{
-	auto& globalThread = GlobalThread::getInstance();
-}
-
-void QiXinShiJinDanXiangJi::destroy_DetachDefectThreadQiXinShiJin()
-{
-	auto& globalThread = GlobalThread::getInstance();
 }
 
 void QiXinShiJinDanXiangJi::build_zmotion()

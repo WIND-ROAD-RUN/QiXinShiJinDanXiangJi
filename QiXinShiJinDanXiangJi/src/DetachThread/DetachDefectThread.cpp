@@ -1,5 +1,4 @@
 #include "DetachDefectThread.h"
-#include "GlobalStruct.hpp"
 #include <chrono>
 
 #include "Modules.hpp"
