@@ -45,7 +45,6 @@ private:
 	void run_OpenRemoveFunc_emitErrorInfo(bool isbad);
 signals:
 	void imageReady(QPixmap image);
-	void imageNGReady(QPixmap image, size_t index, bool isbad);
 	void updateMainWindowShowBtn();
 	void updateStatisticalInfo();
 private:
@@ -114,7 +113,6 @@ public slots:
 
 signals:
 	void imageReady(QPixmap image);
-	void imageNGReady(QPixmap image, size_t index, bool isbad);
 	void shibiekuangChanged();
 	void wenziChanged();
 	void paramMapsChanged();

@@ -33,6 +33,9 @@ bool Modules::build()
 	// 构建显示信息模块
 	auto runtimeInfoModuleBuild = runtimeInfoModule.build();
 
+	// 构建图像处理模块
+	auto imgProModuleBuild = imgProModule.build();
+
 	// 构建UI模块
 	uiModule.build();
 
@@ -51,6 +54,7 @@ bool Modules::build()
 void Modules::destroy()
 {
 	runtimeInfoModule.destroy();
+	imgProModule.destroy();
 	cameraModule.destroy();
 	configManagerModule.destroy();
 	uiModule.destroy();
@@ -66,6 +70,7 @@ void Modules::start()
 	motionControllerModule.start();
 	runtimeInfoModule.start();
 	imgSaveModule.start();
+	imgProModule.start();
 	cameraModule.start();
 	reconnectModule.start();
 }
@@ -74,6 +79,7 @@ void Modules::stop()
 {
 	reconnectModule.stop();
 	cameraModule.stop();
+	imgProModule.stop();
 	imgSaveModule.stop();
 	runtimeInfoModule.stop();
 	motionControllerModule.stop();
@@ -85,7 +91,7 @@ void Modules::connect()
 {
 #pragma region connect camera and imgProModule
 	QObject::connect(&cameraModule, &CameraModule::frameCaptured1,
-		GlobalThread::getInstance().modelCamera1.get(), &ImageProcessingModule::onFrameCaptured, Qt::DirectConnection);
+		Modules::getInstance().imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::onFrameCaptured, Qt::DirectConnection);
 #pragma endregion
 
 #pragma region connect zmotion and ReconnectModule
@@ -101,8 +107,11 @@ void Modules::connect()
 #pragma endregion
 
 #pragma region connect UIModule and imgProModule
+	QObject::connect(imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::imageReady,
+		uiModule._qiXinShiJinDanXiangJi, &QiXinShiJinDanXiangJi::onCamera1Display);
+
 	QObject::connect(uiModule._dlgProductSet,&DlgProductSet::paramsChanged,
-		GlobalThread::getInstance().modelCamera1.get(), &ImageProcessingModule::paramMapsChanged);
+		Modules::getInstance().imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::paramMapsChanged);
 #pragma endregion
 
 #pragma region connect UIModules
@@ -122,7 +131,7 @@ void Modules::connect()
 #pragma endregion
 
 #pragma region connect imgProModule and RuntimeInfoModule
-	QObject::connect(GlobalThread::getInstance().modelCamera1.get(), &ImageProcessingModule::updateStatisticalInfo,
+	QObject::connect(imgProModule.imageProcessingModule1.get(), &ImageProcessingModule::updateStatisticalInfo,
 		runtimeInfoModule.detachUtiltyThread.get(), &DetachUtiltyThread::updateStatisticalInfo);
 #pragma endregion
 

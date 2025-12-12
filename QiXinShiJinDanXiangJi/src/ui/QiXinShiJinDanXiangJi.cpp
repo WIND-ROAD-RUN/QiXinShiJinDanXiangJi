@@ -127,8 +127,6 @@ void QiXinShiJinDanXiangJi::initializeComponents()
 
 	build_ui();
 
-	build_ImageProcessingModule();
-
 	build_camera();
 
 	build_zmotion();
@@ -160,8 +158,6 @@ void QiXinShiJinDanXiangJi::destroyComponents()
 	destroy_DetachDefectThreadQiXinShiJin();
 
 	destroy_PriorityQueue();
-
-	destroy_ImageProcessingModule();
 }
 
 void QiXinShiJinDanXiangJi::build_camera()
@@ -176,37 +172,6 @@ void QiXinShiJinDanXiangJi::build_camera()
 		auto index = static_cast<int>(error);
 		updateCameraLabelState(index, false);
 	}
-}
-
-void QiXinShiJinDanXiangJi::build_ImageProcessingModule()
-{
-	auto& globalThread = GlobalThread::getInstance();
-
-	QDir dir;
-
-	QString enginePathFull = globalPath.modelPath;
-
-	QFileInfo engineFile(enginePathFull);
-
-	if (!engineFile.exists()) {
-		QMessageBox::critical(this, "Error", "Engine file or Name file does not exist. The application will now exit.");
-		QApplication::quit();
-		return;
-	}
-
-	globalThread.buildImageProcessorModules(enginePathFull);
-
-	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModule::imageReady, this, &QiXinShiJinDanXiangJi::onCamera1Display);
-	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModule::imageNGReady, this, &QiXinShiJinDanXiangJi::onCameraNGDisplay);
-	QObject::connect(globalThread.modelCamera1.get(), &ImageProcessingModule::updateMainWindowShowBtn, this, &QiXinShiJinDanXiangJi::updateDefectButtonsFromVector);
-	QObject::connect(this, &QiXinShiJinDanXiangJi::shibiekuangChanged, globalThread.modelCamera1.get(), &ImageProcessingModule::shibiekuangChanged);
-	QObject::connect(this, &QiXinShiJinDanXiangJi::wenziChanged, globalThread.modelCamera1.get(), &ImageProcessingModule::wenziChanged);
-}
-
-void QiXinShiJinDanXiangJi::destroy_ImageProcessingModule()
-{
-	auto& globalThread = GlobalThread::getInstance();
-	globalThread.destroyImageProcessingModule();
 }
 
 void QiXinShiJinDanXiangJi::build_CameraAndBoardReconnectThread()
@@ -363,11 +328,6 @@ void QiXinShiJinDanXiangJi::onUpdateStatisticalInfoUI()
 }
 
 void QiXinShiJinDanXiangJi::onCamera1Display(QPixmap image)
-{
-	ui->label_imgDisplay_1->setPixmap(image.scaled(ui->label_imgDisplay_1->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-}
-
-void QiXinShiJinDanXiangJi::onCameraNGDisplay(QPixmap image, size_t index, bool isbad)
 {
 	ui->label_imgDisplay_1->setPixmap(image.scaled(ui->label_imgDisplay_1->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }

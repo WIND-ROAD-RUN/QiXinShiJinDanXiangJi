@@ -36,8 +36,6 @@ public:
 public:
 	void build_camera();
 public:
-	void build_ImageProcessingModule();
-	void destroy_ImageProcessingModule();
 public:
 	void build_CameraAndBoardReconnectThread();
 	void destroy_CameraAndBoardReconnectThread();
@@ -59,8 +57,6 @@ public slots:
 	void onUpdateStatisticalInfoUI();
 
 	void onCamera1Display(QPixmap image);
-
-	void onCameraNGDisplay(QPixmap image, size_t index, bool isbad);
 
 	void lb_title_clicked();
 private slots:

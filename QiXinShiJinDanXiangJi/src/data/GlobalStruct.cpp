@@ -18,22 +18,6 @@ GlobalThread::~GlobalThread()
 {
 }
 
-void GlobalThread::buildImageProcessorModules(const QString& path)
-{
-	modelCamera1 = std::make_unique<ImageProcessingModule>(1);
-
-	modelCamera1->modelEnginePath = path;
-
-	modelCamera1->index = 1;
-
-	modelCamera1->BuildModule();
-}
-
-void GlobalThread::destroyImageProcessingModule()
-{
-	modelCamera1.reset();
-}
-
 void GlobalThread::build_PriorityQueue()
 {
 	auto compareNodeEqual = [](const float& a, const float& b) {

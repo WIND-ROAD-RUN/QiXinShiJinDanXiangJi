@@ -56,6 +56,7 @@ public:
 	ConfigManagerModule configManagerModule;
 	RuntimeInfoModule runtimeInfoModule;
 	ImgSaveModule imgSaveModule;
+	ImgProModule imgProModule;
 //#ifdef BUILD_WITHOUT_HARDWARE
 //public:
 //	TestModule test_module;

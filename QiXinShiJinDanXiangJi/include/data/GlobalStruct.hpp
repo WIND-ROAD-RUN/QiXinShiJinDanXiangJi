@@ -21,12 +21,6 @@ private:
 	GlobalThread();
 	~GlobalThread() override;
 public:
-	// 图像处理模块
-	std::unique_ptr<ImageProcessingModule> modelCamera1 = nullptr;
-
-	void buildImageProcessorModules(const QString& path);
-	void destroyImageProcessingModule();
-public:
 	std::unique_ptr<rw::dsl::ThreadSafeHeap<bool>> priorityQueue;
 
 	void build_PriorityQueue();

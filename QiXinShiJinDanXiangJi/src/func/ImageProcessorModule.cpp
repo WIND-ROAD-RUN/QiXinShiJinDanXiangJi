@@ -355,7 +355,7 @@ void ImageProcessor::run_OpenRemoveFunc(MatInfo& frame)
 	drawBoundariesLines(maskImg);
 	DrawRotatedRectangle(maskImg, R1, C1, length / 2, width / 2, angle, QColor(0, 255, 0), 3);
 
-	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
+	emit imageReady(QPixmap::fromImage(maskImg));
 	emit updateMainWindowShowBtn();
 	emit updateStatisticalInfo();
 }
@@ -650,7 +650,6 @@ void ImageProcessingModule::BuildModule()
 		processor->buildDetModelEngine(modelEnginePath);
 		processor->imageProcessingModuleIndex = index;
 		connect(processor, &ImageProcessor::imageReady, this, &ImageProcessingModule::imageReady, Qt::QueuedConnection);
-		connect(processor, &ImageProcessor::imageNGReady, this, &ImageProcessingModule::imageNGReady, Qt::QueuedConnection);
 		connect(processor, &ImageProcessor::updateMainWindowShowBtn, this, &ImageProcessingModule::updateMainWindowShowBtn, Qt::QueuedConnection);
 		connect(processor, &ImageProcessor::updateStatisticalInfo, this, &ImageProcessingModule::updateStatisticalInfo, Qt::QueuedConnection);
 
