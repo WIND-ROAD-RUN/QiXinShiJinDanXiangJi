@@ -43,20 +43,20 @@ void DetachDefectThreadQiXinShiJin::processQueue(std::unique_ptr<rw::dsl::Thread
 		{
 			auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 			auto& camera = Modules::getInstance().cameraModule.camera1;
-			queue->tryPopTop(isBad);
 			QThread::msleep(setConfig.tifeiyanshi);
 			// 剔废动作
 			rw::rqw::OutTriggerConfig outTriggerConfig;
 			outTriggerConfig.lineSelector = 1;
 			outTriggerConfig.lineMode = 8;
 			outTriggerConfig.lineSource = 5;
-			outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;
+			outTriggerConfig.durationValue = setConfig.chuiqishijian * 1000;
 			outTriggerConfig.strobeEnable = true;
 			if (camera)
 			{
 				camera->setOutTriggerConfig(outTriggerConfig);
 				camera->outTrigger();
 			}
+			queue->tryPopTop(isBad);
 		}
 	}
 	catch (const std::runtime_error&)

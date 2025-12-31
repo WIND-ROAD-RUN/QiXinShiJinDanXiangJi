@@ -369,23 +369,17 @@ void ImageProcessor::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
 	}
 	else
 	{
-		++productGoodCount;
-		if (setConfig.fenliaojishu == productGoodCount)
+		auto& camera = Modules::getInstance().cameraModule.camera1;
+		rw::rqw::OutTriggerConfig outTriggerConfig;
+		outTriggerConfig.lineSelector = 2;
+		outTriggerConfig.lineMode = 8;
+		outTriggerConfig.lineSource = 5;
+		outTriggerConfig.durationValue = 50 * 1000; // 500ms
+		outTriggerConfig.strobeEnable = true;
+		if (camera)
 		{
-			auto& camera = Modules::getInstance().cameraModule.camera1;
-			rw::rqw::OutTriggerConfig outTriggerConfig;
-			outTriggerConfig.lineSelector = 2;
-			outTriggerConfig.lineMode = 8;
-			outTriggerConfig.lineSource = 5;
-			outTriggerConfig.durationValue = 500 * 1000; // 500ms
-			outTriggerConfig.strobeEnable = true;
-			if (camera)
-			{
-				camera->setOutTriggerConfig(outTriggerConfig);
-				camera->outTrigger();
-			}
-
-			productGoodCount = 0;
+			camera->setOutTriggerConfig(outTriggerConfig);
+			camera->outTrigger();
 		}
 	}
 
