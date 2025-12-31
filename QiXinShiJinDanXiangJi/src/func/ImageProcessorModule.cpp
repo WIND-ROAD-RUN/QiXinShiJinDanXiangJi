@@ -194,7 +194,10 @@ void halconPRocess(cv::Mat image, double& R1, double& C1, double& length, double
 	HalconCpp::MeanImage(image1, &image1, 3, 3);
 
 	HalconCpp::HObject ho_ImageSub, ho_Regions, ho_ConnectedRegions, ho_SelectedRegions, ho_RegionTrans;
-	SubImage(*modelimage, image1, &ho_ImageSub, 30, 255);
+
+
+
+	SubImage(*modelimage, image1, &ho_ImageSub, setConfig.pidaiduibiyanse, 255);
 
 	double daichang = QiXinShiJinConfig.setBagLength;
 	double daikuan = QiXinShiJinConfig.setBagWidth;
