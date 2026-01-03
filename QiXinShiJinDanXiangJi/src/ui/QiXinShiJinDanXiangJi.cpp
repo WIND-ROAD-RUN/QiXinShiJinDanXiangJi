@@ -24,6 +24,10 @@ QiXinShiJinDanXiangJi::QiXinShiJinDanXiangJi(QWidget* parent)
 	ui->setupUi(this);
 
 	initializeComponents();
+
+	const auto fixedSize = size();
+	setMinimumSize(fixedSize);
+	setMaximumSize(fixedSize);
 }
 
 QiXinShiJinDanXiangJi::~QiXinShiJinDanXiangJi()
