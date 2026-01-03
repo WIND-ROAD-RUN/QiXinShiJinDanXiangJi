@@ -195,40 +195,6 @@ QPushButton:pressed {
                </item>
               </layout>
              </item>
-             <item>
-              <layout class="QVBoxLayout" name="vLayout_cardState" stretch="3,2">
-               <item>
-                <widget class="QLabel" name="label_cardStateTitle">
-                 <property name="styleSheet">
-                  <string notr="true">QLabel {
-       font-size: 20px;        
-       font-weight: bold;        
-       color: rgb(232, 232, 232);         
-       padding: 5px 5px;     
-       border-bottom: 2px solid #cccccc; 
-    }</string>
-                 </property>
-                 <property name="text">
-                  <string>板卡状态</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_cardState">
-                 <property name="styleSheet">
-                  <string notr="true">QLabel {
-       font-size: 18px;        
-       font-weight: bold;        
-padding: 5px 5px;  
-    }</string>
-                 </property>
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
             </layout>
            </item>
           </layout>

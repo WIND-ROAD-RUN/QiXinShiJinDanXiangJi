@@ -177,7 +177,6 @@ void QiXinShiJinDanXiangJi::changeLanguage(int index)
 	{
 		clickableTitle->setText("湿巾检测");
 		ui->label_cameraStateTitle->setText("相机状态");
-		ui->label_cardStateTitle->setText("板卡状态");
 		ui->label_info->setText("统计信息");
 		ui->pbtn_resetProduct->setText("产量清零");
 		ui->label_produceTotal->setText("生产总量");
@@ -196,7 +195,6 @@ void QiXinShiJinDanXiangJi::changeLanguage(int index)
 	{
 		clickableTitle->setText("WetPaper\nDetection");
 		ui->label_cameraStateTitle->setText("CameraState");
-		ui->label_cardStateTitle->setText("CardState");
 		ui->label_info->setText("Statistics");
 		ui->pbtn_resetProduct->setText("Clear");
 		ui->label_produceTotal->setText("TotalProduction");
@@ -217,7 +215,7 @@ void QiXinShiJinDanXiangJi::updateCameraLabelState(int cameraIndex, bool state)
 	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 	switch (cameraIndex)
 	{
-	case 0:
+	/*case 0:
 		if (state) {
 			if (0 == setConfig.changeLanguageIndex)
 			{
@@ -240,7 +238,7 @@ void QiXinShiJinDanXiangJi::updateCameraLabelState(int cameraIndex, bool state)
 			}
 			ui->label_cardState->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);font-size: 18px;font - weight: bold;padding: 5px 5px;} "));
 		}
-		break;
+		break;*/
 	case 1:
 		if (state) {
 			if (0 == setConfig.changeLanguageIndex)
