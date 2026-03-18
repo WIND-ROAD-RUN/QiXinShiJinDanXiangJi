@@ -330,7 +330,7 @@ void DlgProductSet::btn_testTrigger1_clicked()
 	outTriggerConfig.lineSelector = 1;
 	outTriggerConfig.lineMode = 8;
 	outTriggerConfig.lineSource = 5;
-	outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;
+	outTriggerConfig.durationValue = setConfig.chuiqishijian * 1000;
 	outTriggerConfig.strobeEnable = true;
 	if (camera)
 	{
@@ -348,7 +348,7 @@ void DlgProductSet::btn_testTrigger2_clicked()
 	outTriggerConfig.lineSelector = 2;
 	outTriggerConfig.lineMode = 8;
 	outTriggerConfig.lineSource = 5;
-	outTriggerConfig.durationValue = setConfig.tifeiyanshi * 1000;
+	outTriggerConfig.durationValue = setConfig.chuiqishijian * 1000;
 	outTriggerConfig.strobeEnable = true;
 	if (camera)
 	{
