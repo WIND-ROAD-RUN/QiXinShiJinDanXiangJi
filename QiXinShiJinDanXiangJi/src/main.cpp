@@ -22,6 +22,7 @@ int main(int argc, char* argv[])
 
 #ifdef NDEBUG
 	w.showFullScreen();
+	w.setFixedSize(1024, 768);
 #else
 	w.show();
 #endif
