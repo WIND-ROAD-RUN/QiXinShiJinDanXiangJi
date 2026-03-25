@@ -278,7 +278,7 @@ void halconPRocess(cv::Mat image, double& R1, double& C1, double& length, double
 			kuan = hv_Length1 * 2;
 		}
 
-		if (chang > pixchang || kuan > pixkuan)
+		if (chang > pixchang || kuan > pixkuan || chang < pixchang / 2 || kuan < pixkuan / 2)
 		{
 			isBad = true;
 		}
